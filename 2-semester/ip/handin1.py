@@ -3,9 +3,7 @@ HANDIN 1 (down payment)
 
 This handin is done by (study ids and names of up to three students):
 
-    201500000 <student name>
-    201600000 <student name> 
-    201400000 <student name>
+    202004972 <Lucas Bagge>
 
 Reflection upon solution:
 
