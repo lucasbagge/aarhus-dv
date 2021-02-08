@@ -1,0 +1,137 @@
+---
+title: "Aflevering 1"
+author: "Lucas Bagge"
+date: "Og her er plads til datoen"
+output:
+  pdf_document: default
+  word_document: default
+  html_document: default
+documentclass: article
+classoption: a4paper
+---
+
+## Opgave 2.7, MSRR: Analyse af spruce datasættet
+
+
+```{r setup, include=FALSE}
+library(dplyr)
+library(ggplot2)
+library(jtools)
+library(tidyverse)
+```
+
+```{r, include=FALSE}
+my_theme <- function() {
+  theme_apa(legend.pos   = "none") +
+    theme(panel.background = element_rect(fill = "gray96", colour = "gray96"),
+          plot.background  = element_rect(fill = "gray96", colour = "gray96"),
+          plot.margin      = margin(1, 1, 1, 1, "cm"),
+          panel.border     = element_blank(),        # facet border
+          strip.background = element_blank())        # facet title background
+}
+
+```
+
+<!-- Beskriv gerne ganske kort datasættet. Var det et eksperiment? Hvad undersøges? -->
+
+<!-- Angiv så den kode som du bruger til at indlæse data, indenfor en R code chunk -->
+
+Til denne opgave skal vi bruge data som er beskrevet i afsnit 1.10.
+Data er blevet udarbejdet tilbage i 1990 af en biolog som var interesseret i
+at undersøge hvad der påvirker væksten af nåletræer. 
+
+Data indlæses som følger med funktionen `read_csv()`:
+
+```{r}
+df <- read.csv(file = "MatStat-R/data/Spruce.csv")
+```
+
+Herhefter bruger jeg `glimse()` til at få et overblik over data.
+
+```{r}
+df %>% glimpse()
+```
+
+Vi ser at data indholder `r nrow(df)` rækker og `r ncol(df)` kolonner. Vi har
+højde og dimensioner fra før undersøgelsen og 5 år efter. To interssante
+features er `Competition` og `Fertilizer` angiver de faktor der kan 
+påvirke nåletræets vækst. De sidste to features `Ht.change` og `Di.change` 
+beskriver ændringen i højden og diameteren efter 5 år. 
+
+
+
+### a) Numeriske deskriptorer, højdevækst
+
+<!-- 
+Compute the numeric summaries for the height changes (Ht.change) of the seedlings.
+Uddybende:
+Beregn de numeriske deskriptorer (summary statistics), og beregn også standardafvigelsen. 
+Kan man formode noget om formen af fordelingen ved at betragte deskriptorerne - er den symmetrisk eller skæv?  
+-->
+
+```{r}
+df %>%
+  summarise(
+    min = min(Ht.change),
+    ned_fraktil = quantile(Ht.change, c(0.25)),
+    mean_ht.change = mean(Ht.change),
+    øvre_fraktil = quantile(Ht.change, c(.75)),
+    max = max(Ht.change),
+    sd = sd(Ht.change)
+    ) 
+```
+
+
+
+### b) Histogram og normalfraktilplot, højdevækst
+
+<!-- 
+Create a histogram and normal quantile plot for the height changes of the seedlings. Is the distribution approximately normal?
+Husk at besvare spørgsmålet i opgaven: er fordelingen tilnærmelsesvis normal? Hvad mener du? 
+-->
+
+```{r}
+df %>% 
+  ggplot(aes(x = Ht.change)) +
+  geom_histogram(binwidth = 4,
+                 col = "red",
+                 alpha = 0.2) +
+  labs(title = "Histrogram over højde ændring",
+       x = 'Ændring',
+       y = 'Antal') +
+my_theme() 
+  
+```
+
+```{r}
+df %>% 
+  ggplot(aes(sample = Ht.change)) +
+  stat_qq() +
+  stat_qq_line() +
+  my_theme()
+```
+
+
+
+### c) Grafisk sammenligning af væksten i diameter, med og uden gødning 
+
+<!-- 
+Create a boxplot to compare the distribution of the change in diameters of the seedlings (Di.change) grouped by whether or not they were in fertilized plots.
+Uddyb:
+Kommenter lidt på resultaterne. Påvirker gødning væksten? Har fordelingerne i de to grupper den samme form? 
+-->
+
+
+### d) Numerisk sammenligning af væksten i diameter, med og uden gødning 
+
+<!-- 
+Use the tapply command to find the numeric summaries of the diameter changes for the two levels.
+Uddyb:
+Kommer du til de samme konklusioner som i c)? 
+-->
+
+### e) Sammenhæng mellem væksten i højde og væksten i diameter
+
+<!-- 
+Create a scatter plot of the height changes against the diameter changes, and describe the relationship.
+Husk gerne at kommentere på sammenhæng mellem vækst i diameter og vækst i højde. -->
