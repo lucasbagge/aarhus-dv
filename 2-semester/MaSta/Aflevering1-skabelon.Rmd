@@ -1,7 +1,7 @@
 ---
 title: "Aflevering 1"
 author: "Lucas Bagge"
-date: "Og her er plads til datoen"
+date: "2021-02-09"
 output:
   pdf_document: default
   word_document: default
@@ -90,6 +90,9 @@ Create a histogram and normal quantile plot for the height changes of the seedli
 Husk at besvare spørgsmålet i opgaven: er fordelingen tilnærmelsesvis normal? Hvad mener du? 
 -->
 
+Jeg laver herforneden to to efterspurgte grafer for et histrogram og
+normalfraktilplot.
+
 ```{r}
 df %>% 
   ggplot(aes(x = Ht.change)) +
@@ -111,7 +114,11 @@ df %>%
   my_theme()
 ```
 
-
+Ud fra histrogrammet og normalfraktilplot kan vi så bedømme om det er normalt
+fordelt. Man skal tolke normalfraktilplottet således at hvis punkter falder
+på den rette linje, så er data approximativ normal fordelt. Fra vorea qq plot 
+(normalfraktilplot) så falder de nogenlunde på linjen og vi kan konkluderer
+at data er approximativ normalt fordelt. 
 
 ### c) Grafisk sammenligning af væksten i diameter, med og uden gødning 
 
@@ -121,17 +128,57 @@ Uddyb:
 Kommenter lidt på resultaterne. Påvirker gødning væksten? Har fordelingerne i de to grupper den samme form? 
 -->
 
+I denne opgave skal jeg lavet et `boxplot`, som giver et overblik over de
+fem summary værdier.
+
+```{r}
+df %>% 
+  ggplot(aes(Fertilizer, Di.change, fill = Fertilizer, color = Fertilizer)) +
+  geom_boxplot(alpha = 0.4) +
+  labs(y = "Diameter ændring", color = NULL, fill = NULL) +
+  my_theme()
+```
+
+
+Ud fra boxplottet kan vi se der tydelig er en forskel i diameteren ud fra
+om nåletræerne har været `Fertilized` eller ej.
+
+Det ser ud til at de nåle træer i et Fertilized miljø ser en større dimeter ændring.
+Desuden ser det ud til at nåletræerne i (F) er mere højre skæve end dem som
+ikke får gødning.
+
 
 ### d) Numerisk sammenligning af væksten i diameter, med og uden gødning 
 
-<!-- 
-Use the tapply command to find the numeric summaries of the diameter changes for the two levels.
-Uddyb:
-Kommer du til de samme konklusioner som i c)? 
--->
+```{r}
+library(magrittr)
+tapply(df$Di.change, df$Fertilizer, quantile)
+```
+Foroven har jeg brugt funktionen `tapply` til at udregne de numeriske værdier
+for at sammenligne diameter ændring for de to niveauer. 
+
+Uden at udregne de præcise værdier i box plottet i opgave c, hvor jeg 
+jeg vurderer det ud fra en visual inspektion, så ser resultater ud til at
+være ens. Dermed kommer jeg frem til den samme konklusion.
+
 
 ### e) Sammenhæng mellem væksten i højde og væksten i diameter
 
-<!-- 
-Create a scatter plot of the height changes against the diameter changes, and describe the relationship.
-Husk gerne at kommentere på sammenhæng mellem vækst i diameter og vækst i højde. -->
+
+```{r}
+df %>% 
+  ggplot(aes(Ht.change, Di.change)) +
+  geom_point(alpha = 0.5, color = "midnightblue") +
+  coord_fixed() +
+  labs(y = "Diameter", x = "Højde",
+       title = "Scatter plot af højde og diameter",
+       subtitle = "Positiv linear forhold") +
+  my_theme()
+```
+Ud fra scatter plottet så ser vi et positiv lineær forhold mellem højde og
+diameter. Det giver god mening da begge mål er et udtryk for størrelsen
+af nåle træet og jeg tænker at et højere træ også må have en større diameter.
+
+> Det er ofte at man plotter den primær variable på y aksen. I dette tilfælde
+ved jeg ikke hvilken der har primær interesse, så jeg plotte diamerter på y aksen.
+
