@@ -1,0 +1,167 @@
+---
+title: "Aflevering 2"
+author: "Lucas Bagge"
+date: "2021-02-16"
+output:
+  pdf_document: default
+  word_document: default
+  html_document: default
+documentclass: article
+classoption: a4paper
+---
+
+## Opgave 3.15
+
+### a) Undersøg data og forklar om det er et matched par.
+
+Indsæt `Groceries` data.
+
+```{r}
+data <- read.csv("MatStat-R/data/Groceries.csv")
+```
+
+Så vil vi se på selve data:
+
+```{r}
+library(dplyr)
+
+glimpse(data)
+```
+
+Jeg lægger mærke til  at data indholder `r nrow(data)` rækker og `r ncol(data)` 
+kolonner. De `r ncol(data)` variabler er:
+
+- `Product`: De forskellig morgenmads produkter
+- `Size`: Størrelsen på produktet.
+- `Target` Er butikskæden Targets pris for det given produkt.
+- `Walmart` Er butikskæden Walmarts pris for det given produkt.
+
+Er dette data således et matched par?
+
+Med udtrykket matched par, så betyder det at forskellige samples har
+nøjagtig de samme karakteristika, på nær en, som er hvad man gerne vil 
+undersøge.
+
+I vores tilfælde har vi det samme produkt, den samme størrelse, men forskellen
+ligger i prisen. Derfor er dette data et eksempel på et matched par.
+
+
+### b) Beregn opsummerings statistik for priser for hver butik.
+
+Jeg vil her kun beregne `mean`. Det gør jeg af den simple årsag at de øvelser
+og eksempler der bliver gennemgået i bogen kun laver den beregning og den
+kan betragtes som *statistikken over alle statistikker*.
+
+```{r}
+library(glue)
+
+glue("
+     Gennemsnitprisen for Target er {round(mean(data$Target),2)},
+     men den for Wallmart er {round(mean(data$Walmart),2)}.
+     
+     ")
+```
+
+Ud fra gennemsnittet ser vi ikke den store forskel i priserne. 
+
+### c) Lav en permutation test of se om der er forskel i mean priser.
+
+Her jeg gerne se på følgende hypotese
+
+$$
+H_0:Pris_{target}=Pris_{walmart}
+$$
+
+$$
+H_1:Pris_{target} \neq Pris_{walmart}
+$$
+
+Jeg benytter mig af at lave et for løkke magen til det vi har set i bogen
+og beregne p værdien.
+
+```{r}
+mean_target <- mean(data$Target)
+mean_walmart <- mean(data$Walmart)
+
+ObsMeanDiff <-   mean_target - mean_walmart
+names(ObsMeanDiff) <- NULL
+
+target <- subset(data, select = Target, drop = TRUE)
+walmart <- subset(data, select = Walmart, drop = TRUE) 
+DA <- c(target, walmart)
+m <- length(target)
+n <- length(walmart)
+N <- 10^4 - 1
+Diff <- numeric(N)
+for (i in 1:N) {
+    index <- sample(m + n, m, replace = FALSE)
+    Diff[i] <- mean(DA[index]) - mean(DA[-index])
+}
+pvalue <- ((sum(Diff <= ObsMeanDiff) + 1)/N + 1) * 2
+format(pvalue,digits = 3)
+```
+
+Vi ser at pværdien er 3.1 og vi kan ikke forkaste H0. Det betyder at
+Så der er ingen bevis for at Target priser er højere end Walmart.
+
+### d) Lav et histogram over forskellen i priser og se på Quaker Oats life.
+
+Først laver jeg en ny kolonne `diff`, som beregner pris forskellen mellem
+walmart og target.
+
+```{r}
+data['diff'] <- data$Target - data$Walmart
+```
+
+Herefter laver jeg et histogram.
+
+```{r}
+hist(data$diff)
+```
+
+Ud for histogrammet kan vi vi se at vi har nærmest en normal fordeling, men
+vi har yderpunktet mellem -2 og -3 som driller ens øjne.
+
+I opgave teksten giver de et hint til at det er produktet **Quaker Oats life**
+som driller, så lav os hurtig kigge på den:
+
+```{r}
+knitr::kable(head(arrange(data, diff), 5))
+```
+Vi ser tydeligt at der er en stor forskel på prisen for Quaker Oats i de to kæder
+og den er meget højere i Walmart.
+
+
+### e) Lav den samme test, men uden den observation
+
+Jeg vil lave samme test, men uden den observatoin for at se om jeg rokker på
+min konklusion.
+
+```{r}
+data <- filter(data, data$Product != "Quaker Oats Life Cereal  Original ")
+mean_target <- mean(data$Target)
+mean_walmart <- mean(data$Walmart)
+
+ObsMeanDiff <-   mean_target - mean_walmart
+names(ObsMeanDiff) <- NULL
+
+target <- subset(data, select = Target, drop = TRUE)
+walmart <- subset(data, select = Walmart, drop = TRUE) 
+DA <- c(target, walmart)
+m <- length(target)
+n <- length(walmart)
+N <- 10^4 - 1
+Diff <- numeric(N)
+for (i in 1:N) {
+    index <- sample(m + n, m, replace = FALSE)
+    Diff[i] <- mean(DA[index]) - mean(DA[-index])
+}
+pvalue <- ((sum(Diff <= ObsMeanDiff) + 1)/N + 1) * 2
+format(pvalue,digits = 3)
+```
+
+I den tidligere opgave fik vi en p-værdi på 3.1, men forventligt nok ser
+vi p-væriden stiger efter vi får fjernet den meget høje observation.
+
+Dog ændre sig ikke på min konklusion og der er ikke den store prisforskel
+mellem de to kæder. 
