@@ -392,3 +392,8 @@ abline(v = observed, ,lty = 2, col = "blue")
 (sum(result <= observed) + 1)/(N + 1)
 ```
 
+
+> variansen ændre sig i 3b, snad for du ser -2
+
+### d) 
+

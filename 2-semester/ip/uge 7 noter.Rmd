@@ -1,0 +1,217 @@
+---
+title: "IP uge 7"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(reticulate)
+```
+
+## tuple
+
+- minder om lister, men man kan ikk eændre værdien.
+- de kan repræsenteres af træer.
+
+
+```{python}
+type((42,))
+```
+
+## tuple assigment
+
+- kan undlade parentes.
+
+```{python}
+point = (10,15)
+x,y = point
+print(x)
+print(y)
+```
+
+## nested tuple
+
+```{python}
+
+```
+
+## a += b
+
+- + betyder man får alle elementer med i de to tuples
+
+
+```{python}
+x = [1,2]
+print(x)
+y = x
+print(y)
+y +=[3,4]
+print(y)
+```
+
+## variable assigment
+
+```{python}
+(a,*b,c,d) = (1,2,3,4,5,6,7,8,9,10)
+print(b)
+```
+
+- med * så tilskriver vi værdier til b som ikke passer til nogen af de andre.
+
+## list comprehension
+
+- [expression for variable in sekvens]
+
+```{python}
+[x*x for x in [1,2,3]]
+```
+
+- vi beregner en liste hvor expression beregner hver element i sekvensen. 
+
+- for _ betyder vi er ligaglad med input. 
+
+- [expression for tuple of variables in sequence]
+
+```{python}
+point = [(3,4), (2,5), (4,7)]
+[(x,y, x*y) for x,y in point] # parentes er ligegyldig
+```
+
+- med list comprehension kan man have flere for loops.
+
+```{python}
+[(x,y) for x in range(1,3) for y in range(4,6)]
+```
+ 
+ 
+## any, all
+
+- checker om noget er sandt gælder for any.
+- all checke rom all er sandt eller ej. 
+
+```{python}
+L = (7, 42, 55)
+any([x == 7 for x in L])
+```
+
+```{python}
+all([x == 7 for x in L])
+```
+ 
+ ### beregnign af prime tal
+ 
+```{python}
+[x for x in range(2,50) if all([x % f for f in range(2,x)])]
+```
+ 
+- Kigger på om alle værdier er et prime tal. 
+
+## enumerate
+
+```{python}
+point = [(1,2), (3,4), (5,6)]
+[(idx, x*y) for idx, (x,y) in enumerate(point)]
+```
+
+- enumeratte gør vi løber punkter igennem.
+
+## zip
+
+- skal man arbejde med.
+- er til at parre lister sammen.
+
+```{python}
+x = [1,2,3]
+y = [4,5,6]
+point = list(zip(x,y))
+point
+```
+
+- vi får en længere liste af en blanding af x og y. 
+
+```{python}
+first = ['lucas', 'cecilie']
+last = ['bagge', 'thirup']
+
+for i, (a,b) in enumerate(zip(first, last), start = 1):
+  print(i,a,b)
+  
+```
+
+
+## simple functions
+
+- man kan med `def` lave sine egne funktioner med let.
+
+## geometric orientation test
+
+```{python}
+import matplotlib.pyplot as plt
+
+N = 256
+delta = 1/2**54
+q = (12,12)
+r = (24, 24)
+P = []
+
+```
+
+- måske skal vi bruge det til næste afevering. 
+
+## dict()
+
+- ordbog er en tabel hvor vi tilføjer en værdi. 
+- kan bruge `dict()` eller `{}`
+
+```{python}
+d = {'a': 42}
+d.keys()
+```
+
+```{python}
+d.items()
+```
+
+- man kan burge zip til at lave en dict. 
+- der er forskellige metoder til at lave dict, men burg `{}` metoden. 
+- `|` kan brugges til at merge dict. 
+- `**` bruges med dict, hvor man indsætter værdier i en dict. 
+
+## order list
+
+- der er en normal orden efter den du tilføjer, så hvis du har en dict og tilføjer
+  en nu element så vil den komme sidst. 
+  
+## dict comprehension
+
+```{python}
+names = {'mic', 'doc', 'tet'}
+dict(list(enumerate(names,start=1)))
+```
+
+## sets og frozenset
+
+- man kan se det som en anden form for at opbevarer sit data.
+- brug `set()` til at smide ting ind. 
+
+## set comprehension
+
+- {value for variable in list}
+- minder om hvad vi har set før, men forskellen ligger vi vi har en krølle.
+
+```{python}
+n = 101
+not_primes = {m for f in range(2,n) for m in range(2*f, n, f)}
+primes = set(range(2,n)) - not_primes
+print(primes)
+```
+
+## hash, equality, immutability
+
+- er man får en tal ud, som indikere en version, men man bruger det ikke.
+
+## module collections
+
+- deque,
+- name
+- igen noget man bare skal have hørt om.
