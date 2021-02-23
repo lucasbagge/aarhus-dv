@@ -140,14 +140,10 @@ def permute(L):
 print ("The shuffled list is : " +  str(permute(test))) 
 ```
 
-
-
-
-
 ```{python}
 import inspect
 lines = inspect.getsource(shuffle)
-print(lines)
+#print(lines)
 ```
 
 ### c)
@@ -175,3 +171,50 @@ tessa(L)
 Make a function canonical_triplets(A, B) that returns a list of all canonical triples where the left subtree contains a label from A and the right subtree is a pair from B.
 Example: canonical_triplets(['A', 'B'], ['C', 'D', 'E']) should return:
 [('A', ('C', 'D')), ('A', ('C', 'E')), ('A', ('D', 'E')), ('B', ('C', 'D')), ('B', ('C', 'E')), ('B', ('D', 'E'))
+
+```{python}
+L = (['A'], ['B'])
+{((x), (y)) for x in L for y in L if x != y}
+```
+
+```{python}
+L = (['A', 'B'], ['C', 'D', 'E'])
+{(x, (y,z)) for x in L for y in L for z in L if x != y and y != z and z != x}
+```
+
+```{python}
+colours = ['A', 'B']
+things = ['C', 'D', 'E']
+[(x, (y,z)) for x in colours for y in things for z in things if x != y and y != z and z != x]
+```
+
+```{python}
+L = (['A', 'B'], ['C', 'D', 'E'])
+[(x, (y,z)) for x in L[0] for y in L[1] for z in L[1] if x != y and y != z and z != x]
+```
+
+- der mangler lidt for at det spiller.
+- Afklaring om hvad den skal vise.
+
+### e) 
+
+Make a function anchored_triplets(L, R) that returns a list of all canonical triples anchored at a node where the left subtree contains the labels in the list L and the right subtree contains the labels in the list R.
+
+```{python}
+L = ['A', 'F', 'B'], ['D', 'C', 'E']
+
+test = [(x, (y,z)) for x in L[0] for y in L[1] for z in L[1] if x != y and y != z and z != x]
+```
+
+```{python}
+def anchored_triplets(A,B):
+  tri = [(x, (y,z)) for x in A for y in B for z in B if x != y and y != z and z != x]
+  return tri
+```
+
+```{python}
+tri_1 = anchored_triplets(['A', 'F', 'B'], ['D', 'C', 'E'])
+print(len(tri_1))
+print(tri_1)
+```
+
