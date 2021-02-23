@@ -1,0 +1,295 @@
+---
+title: "Untitled"
+description: |
+  A new article created using the Distill format.
+author:
+  - name: Nora Jones 
+    url: https://example.com/norajones
+    affiliation: Spacely Sprockets
+    affiliation_url: https://example.com/spacelysprokets
+date: "`r Sys.Date()`"
+output: distill::distill_article
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+library(tidyverse)
+library(alfred)
+library(tidymodels)
+library(modeltime)
+library(tidyverse)
+library(timetk)
+library(keras)
+library(tensorflow)
+library(tidyquant)
+library(tfdatasets)
+library(magrittr)
+library(highcharter)
+```
+
+Distill is a publication format for scientific and technical writing, native to the web. 
+
+Learn more about using Distill for R Markdown at <https://rstudio.github.io/distill>.
+
+
+## Introduktion
+
+I denne analyse vil jeg udnytte avanceret machine learning og
+neurale netværks modeller til at forudsige olie prisen.
+
+Jeg vil ikke komme til at gennemgå meget af koden og matematikken bag, da
+formålet er at vise nogle teknikker, som kan bruges oveni de traditionelle
+værktøjer.
+
+## Data
+
+Min analyse kommer til at bygge på den europædiske spot pris for olie.
+Generalt er olie en volatil råvarer og kan dermed være svær at forudsige. Især
+har der i 2020 sket en række begivenheder, som har været uforudsigelige for
+prisen.
+
+Til at hente data benytter jeg af pakken `alfred`, der henter data fra
+[denne side](https://alfred.stlouisfed.org/). Siden er kent for at dens database,
+som indeholder økonomisk data.
+
+```{r}
+brent <-  
+  as_tibble(get_fred_series("DCOILBRENTEU",
+                            "Brent", 
+                            observation_start = "2015-01-02")) %>% 
+  set_names(c("date", "value")) %>% 
+  tidyr::drop_na()
+```
+
+## Modellering
+
+I dette afsnit vil jeg bygge diverse modeller, hvor jeg vil vise
+nogle traditionelle machine learning modeller og nogle deep learning
+modeller.
+
+### Machine learning
+
+Når man arbejder på et machine learning projekt er der en række trin,
+som er væsentlig, men i denne analyse går jeg direkte til bords.
+
+For en god ordens skyld lad mig først introducere data
+
+```{r}
+brent %>%
+  hchart("line", hcaes(x = date, y = value))
+```
+
+For at plotte olie prisen benytter jeg `highcharter`, som er en wrapper
+for apien `highcharts`.
+
+
+### Split data
+
+```{r}
+splits <- brent %>%
+  time_series_split(assess = "5 months", cumulative = TRUE)
+
+splits %>%
+  tk_time_series_cv_plan() %>%
+  plot_time_series_cv_plan(date, value)
+```
+
+```{r}
+train <- training(splits)
+test <- testing(splits)
+```
+
+
+### recipe
+
+```{r}
+recipe_spec <- recipe(value ~ date, training(splits)) %>%
+  step_timeseries_signature(date) %>%
+  step_rm(contains("am.pm"), contains("hour"), contains("minute"),
+          contains("second"), contains("xts")) %>%
+  step_fourier(date, period = 365, K = 5) 
+```
+
+
+### linear model
+
+```{r}
+model_spec_lm <- 
+  linear_reg(mode = "regression") %>%
+  set_engine("lm")
+
+workflow_lm <- workflow() %>%
+  add_recipe(recipe_spec) %>%
+  add_model(model_spec_lm)
+
+workflow_fit_lm <- workflow_lm %>% fit(data = training(splits))
+```
+
+
+```{r}
+model_spec_prophet_boost <- prophet_boost(
+   mtry = 10,
+  trees = 50,
+  min_n = 10,
+  tree_depth = 1000,
+  learn_rate = 0.02
+) %>%
+  set_engine("prophet_xgboost") 
+
+workflow_fit_prophet_boost <- workflow() %>%
+  add_model(model_spec_prophet_boost) %>%
+  add_recipe(recipe_spec) %>%
+  fit(training(splits))
+```
+
+
+```{r}
+model_spec_rf <- rand_forest(trees = 500, min_n = 50) %>%
+  set_engine("randomForest")
+
+workflow_fit_rf <- workflow() %>%
+  add_model(model_spec_rf) %>%
+  add_recipe(recipe_spec %>% step_rm(date)) %>%
+  fit(training(splits))
+```
+
+
+```{r}
+model_spec_svm <- 
+  svm_rbf(cost = 10, rbf_sigma = 0.1) %>%
+  set_engine("kernlab")
+
+workflow_fit_svm <- workflow() %>%
+  add_model(model_spec_svm) %>%
+  add_recipe(recipe_spec) %>%
+  fit(training(splits))
+```
+
+```{r}
+model_table <- modeltime_table(
+  workflow_fit_lm,
+  workflow_fit_prophet_boost,
+  workflow_fit_rf,
+  workflow_fit_svm
+) 
+
+calibration_table <- model_table %>%
+  modeltime_calibrate(testing(splits))
+
+calibration_table %>%
+  modeltime_forecast(actual_data = brent) %>%
+  plot_modeltime_forecast()
+```
+
+
+```{r}
+calibration_table %>%
+  modeltime_accuracy() %>%
+  table_modeltime_accuracy()
+```
+
+## Deep learning
+
+```{r}
+recipe_test <- 
+  recipe(value ~ ., brent) %>% 
+  step_timeseries_signature(date) %>% 
+  step_rm(contains("am.pm"), contains("hour"), contains("minute"),
+          contains("second"), contains("xts")) %>% 
+  step_fourier(date, period = 365, K = 5) %>% 
+  prep()
+
+df <- bake(recipe_test, brent)
+
+splits <- df %>%
+  time_series_split(assess = "5 months", cumulative = TRUE)
+
+train <- training(splits) %>% 
+  select_if(is.numeric)
+
+train_X <- train %>% select(-value)
+train_y <- train %$% value 
+
+test <- testing(splits) %>% 
+  select_if(is.numeric)
+test_y <- test %$% value  
+test_X <- test %>% select(-value)
+
+train_data <- train_X %>% as.matrix()
+train_targets <- train_y %>% as.matrix()
+train_targets %>% class()
+
+test_data <- test_X %>% as.matrix()
+test_targets <- test_y %>% as.matrix()
+
+mean <- apply(train_data, 2, mean)                                  
+std <- apply(train_data, 2, sd)
+train_data <- scale(train_data, center = mean, scale = std)         
+test_data <- scale(test_data, center = mean, scale = std)
+
+build_model <- function() {                                
+  model <- keras_model_sequential() %>%
+    layer_dense(units = 1000, activation = "tanh",
+                 input_shape = dim(train_data)[[2]]) %>%
+    layer_dense(units = 500, kernel_initializer='normal') %>% 
+    layer_dense(units = 500, activation = "relu") %>%
+  layer_dense(units = 600, activation = "sigmoid") %>% 
+    layer_dense(units = 700, 
+                kernel_initializer = 'normal',
+                activation = "linear") %>% 
+    layer_dense(units = 1)
+  
+  model %>% compile(
+    optimizer = optimizer_rmsprop(),
+    loss = "mse",
+    metrics = c("mae")
+  )
+}
+
+model <- build_model()
+model %>% 
+  fit(train_data, 
+      train_targets,                    
+      epochs = 10, 
+      batch_size = 5, 
+      verbose = 0)
+
+result <- model %>% evaluate(test_data, test_targets)
+
+ltsm_model <- model %>% predict(test_data) %>% as_tibble() %>% set_names("pred") 
+```
+
+```{r}
+pro_xgb_comp <- calibration_table$.calibration_data[[2]] %>% 
+  select(.prediction) %>% 
+  rename(  pro_xgb = .prediction)
+ran_comp <- calibration_table$.calibration_data[[3]] %>% 
+  select(.prediction) %>% 
+  rename(ran = .prediction)
+svm_comp <- calibration_table$.calibration_data[[4]] %>% 
+  select(.prediction) %>% 
+  rename(svm = .prediction)
+all_comp <- bind_cols(pro_xgb_comp, ran_comp, svm_comp) 
+```
+
+
+```{r}
+testing(splits) %>% 
+  select(date,value) %>% 
+  set_names(c("date", "value")) %>% 
+  bind_cols(ltsm_model, all_comp)  %>% 
+  full_join(brent %>% 
+              set_names(c("date", "value")),
+            by = "date"
+  ) %>% 
+  select(-value.x) %>% 
+  pivot_longer(cols = c(value.y, pred, pro_xgb,ran,svm),
+               names_to = "id",
+               values_to = "value") %>% 
+  arrange(date) %>%    
+  filter(date > "2020-05-01") %>% 
+  hchart(
+       "line", hcaes(x = date, y = value, group = id))
+```
+
+

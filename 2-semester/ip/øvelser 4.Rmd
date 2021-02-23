@@ -1,0 +1,177 @@
+title: "Øvelser uge 7"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(reticulate)
+```
+
+## 5.1
+
+can be represented by a tuple (c0, c1, ..., ck), e.g. the polynomial 3x3-2x2+0x+5 can be represented by a tuple (5, 0, -2, 3). Use list comprehension, enumerate, and sum to evaluate a polynomial given by its coefficients. E.g. for x = 7 and coefficients (5, 0, -2, 3) your code should compute the value 936.
+
+```{python}
+[3*x**3-2*x**2+0*x+5 for x in [7]]
+```
+
+- meget simpel :).
+
+## 5.2
+
+Given a list of first names first = ['Donald', 'Mickey', 'Scrooge'] and last names last = ['Duck', 'Mouse', 'McDuck'], use list comprehension, zip, and sorted to generate an alphabetically sorted list of names 'lastname, firstname', i.e. generates the list ['Duck, Donald', 'McDuck, Scrooge', 'Mouse, Mickey'].
+
+```{python}
+first = ['Donald', 'Mickey', 'Scrooge']
+last =  ['Duck', 'Mouse', 'McDuck']
+list(sorted(zip(last, first)))
+```
+
+## 5.3
+
+Implement your own version my_zip of zip, such that my_zip([L1,L2,...,Lk]) == list(zip(L1,L2,...,Lk)).
+
+```{python}
+def my_zip(h):
+  n = []
+  for i in h:
+    b = (i,)
+    n.append(b)
+  return n
+
+a =([1,2], [3,4], [4,5])
+print(my_zip(a))
+```
+
+## 5.4
+
+Make a method flatten(L) that given a list of lists L = [L1,L2,...,Lk] returns one list that is the concatenation of all lists, i.e. L1+L2+···+Lk. Your implementation should use list comprehension.
+
+```{python}
+
+```
+
+
+# Lecture 6 (Dictionaries and sets)
+
+## Exercise 6.1 (histogram)
+
+```{python}
+let = ['A', 'B', 'A', 'A', 'C', 'E', 'C']
+
+{name: idx for idx, name in enumerate(let, start=1)}
+```
+
+
+```{python}
+import collections
+histogram = list(collections.Counter(['A', 'B', 'A', 'A', 'C', 'E', 'C']).items())
+print(histogram)
+```
+
+```{python}
+def histogram(n):
+  dicto = {}
+  for x in n:
+    if x not in dicto:
+      dicto[x] = 1
+    else:
+      dicto[x] += 1
+  return list(dict.items(dicto))
+
+print(histogram(['A', 'B', 'A', 'A', 'C', 'E', 'C']))
+```
+
+### 6.2
+
+```{python}
+import re
+txt = open('saxo.txt').read()
+txt = txt.lower()
+words = re.split('[^a-z]+', txt)
+most_freq = sorted([(freq, word) for word, 
+            freq in histogram(words) if len(word) >= 6], reverse = True)[:10]
+print(most_freq)
+```
+
+
+## aflevering 3
+
+### a)
+
+Make a function generate_labels(n), that given an integer n returns a list of n distinct strings, e.g. 'A', 'B', ... or "L1", 'L2' ...
+Example: generate_labels(5) could return ['A', 'B', 'C', 'D', 'E']
+
+
+```{python}
+def generate_labels(n):
+  letters = [chr(x) for x in range(ord('a'), ord('a') + n)]
+  return letters
+
+print("An example of the function: ", generate_labels(2))
+```
+
+### b)
+
+Make a function permute(L), that given a list L, returns a new list containing a random permutation of the elements in L.
+Hint: Construct the new list left-to-right by randomly selecting an element not selected so far. To generate a random integer in the interval [a,b], you can you the function randint(a,b) from the module random (use from random import randint to get access to the function).
+Note. Using the function shuffle from the module random to solve the question would be considered cheating.
+Example: permute(['A', 'B', 'C']) could return ['B', 'C', 'A'].
+
+```{python}
+from random import randint
+
+test = generate_labels(5)
+```
+```{python}
+print ("The original list is : " + str(test)) 
+```
+
+```{python}
+def permute(L):
+  for i in reversed(range(1, len(L))): 
+    j = random.randint(0, i + 1)  
+    L[i], L[j] = L[j], L[i]
+    return L
+```
+
+
+```{python}
+print ("The shuffled list is : " +  str(permute(test))) 
+```
+
+
+
+
+
+```{python}
+import inspect
+lines = inspect.getsource(shuffle)
+print(lines)
+```
+
+### c)
+
+Make a function pairs(L), that given a list of comparable elements, returns a list of all pairs, i.e. tuples with two elements, (a, b) where a < b.
+Example: pairs(['A', 'F', 'B']) should return [('A', 'F'), ('A', 'B'), ('B', 'F')].
+
+```{python}
+L = ['A', 'F', 'B']
+def pairs(L):
+        result = []
+        for p1 in range(len(L)):
+                for p2 in range(p1+1,len(L)):
+                        result.append([L[p1],L[p2]])
+        result = tuple(result)
+        return sorted(result)
+```
+
+```{python}
+tessa(L)
+```
+
+### d)
+
+Make a function canonical_triplets(A, B) that returns a list of all canonical triples where the left subtree contains a label from A and the right subtree is a pair from B.
+Example: canonical_triplets(['A', 'B'], ['C', 'D', 'E']) should return:
+[('A', ('C', 'D')), ('A', ('C', 'E')), ('A', ('D', 'E')), ('B', ('C', 'D')), ('B', ('C', 'E')), ('B', ('D', 'E'))
