@@ -97,6 +97,10 @@ print(most_freq)
 
 ## aflevering 3
 
+```{python}
+from random import randint
+```
+
 ### a)
 
 Make a function generate_labels(n), that given an integer n returns a list of n distinct strings, e.g. 'A', 'B', ... or "L1", 'L2' ...
@@ -105,10 +109,10 @@ Example: generate_labels(5) could return ['A', 'B', 'C', 'D', 'E']
 
 ```{python}
 def generate_labels(n):
-  letters = [chr(x) for x in range(ord('a'), ord('a') + n)]
+  letters = [chr(x) for x in range(ord('A'), ord('A') + n)]
   return letters
 
-print("An example of the function: ", generate_labels(2))
+print("An example of the function: ", generate_labels(8))
 ```
 
 ### b)
@@ -119,32 +123,23 @@ Note. Using the function shuffle from the module random to solve the question wo
 Example: permute(['A', 'B', 'C']) could return ['B', 'C', 'A'].
 
 ```{python}
-from random import randint
-
-test = generate_labels(5)
-```
-```{python}
-print ("The original list is : " + str(test)) 
-```
-
-```{python}
-def permute(L):
-  for i in reversed(range(1, len(L))): 
-    j = random.randint(0, i + 1)  
-    L[i], L[j] = L[j], L[i]
-    return L
+def permute(n):
+  for i in reversed(range(1, len(n))): 
+    j = randint(0, i + 1)  
+    n[i], n[j] = n[j], n[i]
+    return n
 ```
 
 
 ```{python}
-print ("The shuffled list is : " +  str(permute(test))) 
+test = generate_labels(2)
+test
 ```
 
 ```{python}
-import inspect
-lines = inspect.getsource(shuffle)
-#print(lines)
+permute(generate_labels(3))
 ```
+
 
 ### c)
 
@@ -152,18 +147,14 @@ Make a function pairs(L), that given a list of comparable elements, returns a li
 Example: pairs(['A', 'F', 'B']) should return [('A', 'F'), ('A', 'B'), ('B', 'F')].
 
 ```{python}
-L = ['A', 'F', 'B']
-def pairs(L):
-        result = []
-        for p1 in range(len(L)):
-                for p2 in range(p1+1,len(L)):
-                        result.append([L[p1],L[p2]])
-        result = tuple(result)
-        return sorted(result)
+def pairs(n):
+  par = [(x,y) for x in n for y in n if x != y and x < y]
+  return par 
 ```
 
 ```{python}
-tessa(L)
+L = ['A', 'F', 'B']
+pairs(['A', 'F', 'B'])
 ```
 
 ### d)
@@ -172,39 +163,20 @@ Make a function canonical_triplets(A, B) that returns a list of all canonical tr
 Example: canonical_triplets(['A', 'B'], ['C', 'D', 'E']) should return:
 [('A', ('C', 'D')), ('A', ('C', 'E')), ('A', ('D', 'E')), ('B', ('C', 'D')), ('B', ('C', 'E')), ('B', ('D', 'E'))
 
+
 ```{python}
-L = (['A'], ['B'])
-{((x), (y)) for x in L for y in L if x != y}
+def canonical_triplets(A, B):
+  can = [(x, (y,z)) for x in A for y in B for z in B if x != y and y != z and z != x and y < z]
+  return can
 ```
 
 ```{python}
-L = (['A', 'B'], ['C', 'D', 'E'])
-{(x, (y,z)) for x in L for y in L for z in L if x != y and y != z and z != x}
+canonical_triplets(['A', 'B'], ['C', 'D', 'E'])
 ```
-
-```{python}
-colours = ['A', 'B']
-things = ['C', 'D', 'E']
-[(x, (y,z)) for x in colours for y in things for z in things if x != y and y != z and z != x]
-```
-
-```{python}
-L = (['A', 'B'], ['C', 'D', 'E'])
-[(x, (y,z)) for x in L[0] for y in L[1] for z in L[1] if x != y and y != z and z != x]
-```
-
-- der mangler lidt for at det spiller.
-- Afklaring om hvad den skal vise.
 
 ### e) 
 
 Make a function anchored_triplets(L, R) that returns a list of all canonical triples anchored at a node where the left subtree contains the labels in the list L and the right subtree contains the labels in the list R.
-
-```{python}
-L = ['A', 'F', 'B'], ['D', 'C', 'E']
-
-test = [(x, (y,z)) for x in L[0] for y in L[1] for z in L[1] if x != y and y != z and z != x]
-```
 
 ```{python}
 def anchored_triplets(A,B):
@@ -218,3 +190,9 @@ print(len(tri_1))
 print(tri_1)
 ```
 
+```{python}
+from random import shuffle
+import inspect
+lines = inspect.getsource(shuffle)
+print(lines)
+```

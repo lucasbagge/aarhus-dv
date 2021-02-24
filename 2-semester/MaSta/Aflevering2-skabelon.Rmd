@@ -80,29 +80,21 @@ Jeg benytter mig af at lave et for løkke magen til det vi har set i bogen
 og beregne p værdien.
 
 ```{r}
-mean_target <- mean(data$Target)
-mean_walmart <- mean(data$Walmart)
-
-ObsMeanDiff <-   mean_target - mean_walmart
-names(ObsMeanDiff) <- NULL
-
-target <- subset(data, select = Target, drop = TRUE)
-walmart <- subset(data, select = Walmart, drop = TRUE) 
-DA <- c(target, walmart)
-m <- length(target)
-n <- length(walmart)
-N <- 10^4 - 1
-Diff <- numeric(N)
-for (i in 1:N) {
-    index <- sample(m + n, m, replace = FALSE)
-    Diff[i] <- mean(DA[index]) - mean(DA[-index])
+Diff <- data$Walmart - data$Target  
+observed <- abs(mean(Diff))                           
+N <- 10^5-1
+result <- numeric(N)
+for (i in 1:N){
+  Sign <- sample(nrow(data) + nrow(data), nrow(data), replace=TRUE) 
+  Diff2 <-  Sign*Diff
+  result[i] <- mean(Diff2)
 }
-pvalue <- ((sum(Diff <= ObsMeanDiff) + 1)/N + 1) * 2
-format(pvalue,digits = 3)
+2*(sum(result >= observed + 1)/(N+1))
 ```
 
-Vi ser at pværdien er 3.1 og vi kan ikke forkaste H0. Det betyder at
-Så der er ingen bevis for at Target priser er højere end Walmart.
+
+Vi får en p værdi på 0.18 som fortæller os at chance alene er med til at 
+afgøre forskellen i prisen. 
 
 ### d) Lav et histogram over forskellen i priser og se på Quaker Oats life.
 
@@ -138,30 +130,18 @@ Jeg vil lave samme test, men uden den observatoin for at se om jeg rokker på
 min konklusion.
 
 ```{r}
-data <- filter(data, data$Product != "Quaker Oats Life Cereal  Original ")
-mean_target <- mean(data$Target)
-mean_walmart <- mean(data$Walmart)
-
-ObsMeanDiff <-   mean_target - mean_walmart
-names(ObsMeanDiff) <- NULL
-
-target <- subset(data, select = Target, drop = TRUE)
-walmart <- subset(data, select = Walmart, drop = TRUE) 
-DA <- c(target, walmart)
-m <- length(target)
-n <- length(walmart)
-N <- 10^4 - 1
-Diff <- numeric(N)
+data_reduced <- filter(data, data$Product != "Quaker Oats Life Cereal  Original ")
+Diff <- data_reduced$Walmart - data_reduced$Target  
+observed <- (mean(Diff))                           
+N <- 10^5-1
+result <- numeric(N)
 for (i in 1:N) {
-    index <- sample(m + n, m, replace = FALSE)
-    Diff[i] <- mean(DA[index]) - mean(DA[-index])
+  Sign <- sample(nrow(data_reduced) + nrow(data_reduced), nrow(data_reduced), replace=TRUE) 
+  Diff2 <-  Sign*Diff
+  result[i] <- mean(Diff2)
 }
-pvalue <- ((sum(Diff <= ObsMeanDiff) + 1)/N + 1) * 2
-format(pvalue,digits = 3)
+2*(sum(result >= observed + 1)/(N+1))
 ```
 
-I den tidligere opgave fik vi en p-værdi på 3.1, men forventligt nok ser
-vi p-væriden stiger efter vi får fjernet den meget høje observation.
-
-Dog ændre sig ikke på min konklusion og der er ikke den store prisforskel
-mellem de to kæder. 
+Vi ser at vi får en p værdi på nul, som indikerer vi vil forkaste H0.
+Dermed når vi den modsatte konklusion end vi så tidligere. 
