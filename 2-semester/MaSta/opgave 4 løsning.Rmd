@@ -1,0 +1,199 @@
+---
+title: "Øvelse 4"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+## 2.09
+
+Let x1 <x2 <···<xn and y1 <y2 <···<yn be two sets of data with means x, y and medians mx , my , respectively. Let wi = xi + yi for i = 1,2,...,n.
+a) Proveorgiveacounterexample:x+yisthemeanofw1,w2,...,wn.
+b) Prove or give a counterexample: mx + my is the median of w1,w2,...,wn.
+
+(a)True.(w1 +w2 +···+wn)∕n=(nx+ny)∕n=x+y.(b)True.
+
+
+## 3.10
+
+In the black spruce case study in Section 1.10, seedlings were planted in plots that were either subject to competition (from other plants) or not. Use the data set Spruce to conduct a test to see if the mean difference in how much the seedlings grew (in height) over the course of the study under these two treatments is statistically significant.
+
+```{r}
+data <- read.csv("MatStat-R/data/Spruce.csv")
+```
+
+```{r}
+mv <- tapply(data$Ht.change, data$Competition, mean)
+mv
+```
+
+```{r}
+obs_diff = abs(mv[1] - mv[2])
+obs_diff
+```
+
+```{r}
+nsim <-  10^4 - 1
+sim_differens <- numeric(nsim)
+set.seed(1234)
+
+for(i in 1:nsim) {
+  sim_vaekst <- tapply(data$Ht.change, sample(data$Competition), mean)
+  sim_differens[i] <- abs(sim_vaekst[1] - sim_vaekst[2])
+}
+```
+
+```{r}
+options(scipen = 999)
+p_lower <- (sum(sim_differens <= obs_diff) + 1) / (nsim + 1)
+p_greater <- (sum(sim_differens >= obs_diff) + 1) / (nsim + 1)
+
+pval <- 2* min(p_lower, p_greater)
+pval
+```
+
+Vores null hypotese antager at der ikke er noget forhold mellem de to means.
+Med en lav p værdi forkaster vi H0 og dermed er resultater statistik signifikant
+og der er en klar sammenhæng.
+
+## 4.10
+
+Suppose the heights of boys in a certain large city follow a distribution with mean 48 in. and variance 81. Use the CLT approximation to estimate the probability that in a random sample of 30 boys, the mean height is more than 51 in.
+
+vi bruger pbinom
+
+```{r}
+1 - pnorm((51 - 48) / sqrt(81 / 30))
+```
+
+
+
+## 4.14
+
+According to the 2000 census, 28.6% of the US adult population received a high school diploma. In a random sample of 800 US adults, what is the probability that between 220 and 230 (inclusive) people have a high school diploma? Use the CLT approximation with continuity correction, and compare with the exact probability (use pbinom in R).
+
+Vores model blive
+
+X ~ binom(n = 800, p = 0.286)
+
+Her leder vi efter 
+
+P(220 <= X <= 230)
+
+```{r}
+pbinom(230, 800, 0.286) - pbinom(219, 800, 0.286)
+```
+
+Uden kontinutetiskorrektur.
+
+```{r}
+ex = 800 * 0.286
+
+varx <- 800*0.286 *(1-0.286)
+
+
+```
+
+## OMS 4.A
+
+## MSRR 4.26
+
+Prove Theorem 4.2.1.
+
+Vink: Teoremet vistes for den uniforme fordeling U[0, 1] under forelæsningen d. 18.2.
+
+
+
+## MSRR 4.24
+
+Let X1 , X2 , ... , X30 ∼ Exp(1∕3) and let X denote the sample mean.
+
+### a) Simulate the sampling distribution of X in R.
+
+```{r}
+sample_means = rep(NA, 1000)
+for(i in 1:1000){
+  sample_means[i] = mean(rexp(40,0.2))
+}
+```
+
+
+
+
+
+
+## b) Find the mean and standard error of the sampling distribution, and
+compare with the theoretical results.
+
+```{r}
+library(tidyverse)
+set.seed(123)
+sims <- 1000
+xbar <- numeric(sims)
+xvar <- numeric(sims)
+for(i in 1:sims){
+  xbar[i] <- mean(rexp(30, 1/3))
+  xvar[i] <- sd(rexp(30, 1/3))  
+}
+mean(xbar)
+sd(xvar)
+```
+
+the theoretical mean
+
+```{r}
+1/ (1/3)
+```
+
+theoreticl variance
+
+```{r}
+the_var <- ((1/(1/3))^2)/30
+the_var^0.5
+```
+
+
+
+c) From your simulation, find P(X ≤ 3.5).
+
+
+
+d) Estimate P(X ≤ 3.5) by assuming the CLT approximation holds. Compare this result with the one in part (c).
+
+
+
+## MSRR 4.30
+
+i.i.d. −𝜆x LetX1,X2,...,Xn ∼ Exp(𝜆)withpdff(x)=𝜆e ,𝜆>0,x>0.
+a) Find the pdf fmin(x) for the sample minimum Xmin. Recognize this as the pdf of a known distribution.
+
+b) Simulate in R the sampling distribution of Xmin of samples of size n = 25 from the exponential distribution with 𝜆 = 7. Compare the theoretical expected value of Xmin with the simulated expected value.
+
+
+## MSRR 4.21
+
+Let X1,X2,...,Xn be a random sample from N(0,1). Let W = X12 + X2 + ... + Xn2. Describe the sampling distribution of W by running a simula- tion, using n = 2. What is the mean and variance of the sampling distri- bution of W? Repeat using n = 4, n = 5. What observations or conjec- tures do you have for general n?
+
+## MSRR 4.34
+
+## OMS 4.B
+
+## MSRR 4.18
+
+
+Let X ∼ Pois(4), Y ∼ Pois(12), U ∼ Pois(3) be independent random vari- ables.
+a) What is the exact sampling distribution of W = X + Y + U?
+b) Use R to simulate the sampling distribution of W and plot your results. Check that the simulated mean and standard error are close to the theoretical mean and standard error.
+c) Use the simulated sampling distribution to estimate P(W ≤ 14) and then check your estimate with an exact calculation.
+
+## MSRR 4.20
+
+Let X1,X2,...,X9 ∼ N(7,3 ), and Y1,Y2,...,Y12 ∼ N(10,5 ). Let W =
+X−Y.
+a) GivetheexactsamplingdistributionofW.
+b) Simulate the sampling distribution of W in R, and plot your results
+(adapt code from the previous exercise). Check that the simulated mean and standard error are close to the theoretical mean and stan- dard error.
+c) Use your simulation to find P(W < −1.5). Calculate an exact answer and compare.
