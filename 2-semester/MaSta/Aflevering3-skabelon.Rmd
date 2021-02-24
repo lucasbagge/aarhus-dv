@@ -66,5 +66,5 @@ abline(v = 12, col = "blue")
 ```
 
 Ud fra histogrammet, hvor rød indikere mexxan og blå indikere Marias sample mean. 
-Da værdien ikke falder ud over vores konfidensbånd, så vil jeg ikke sige at 12 er en usædvanlig sample mean. 
 
+Da værdien ikke falder ud over vores konfidensbånd, så vil jeg ikke sige at 12 er en usædvanlig sample mean. 
