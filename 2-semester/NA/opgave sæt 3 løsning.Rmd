@@ -90,7 +90,22 @@ A@A
 
 ### a) hvor mange har en sti af længe 2 til c5
 
+vi ser på 5 række og summer den
+
+det er der 7 computer
+
+### b) hvor mange pc har en sti af længde 2 til c7
+
+vi ser på den 7 række og sumer den og ser det er 3.
+
+
 ### c) computer kan nås fra c9 med en sti længde 3
+
+```{python}
+A+A@A+A@A@A
+```
+
+
 
 ```{python}
 from numpy.linalg import matrix_power
