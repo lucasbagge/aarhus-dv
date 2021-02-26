@@ -98,6 +98,22 @@ varx <- 800*0.286 *(1-0.286)
 
 ## OMS 4.A
 
+### a) 
+
+![svar a](4.A.a.png)
+
+### b) noget med varians
+
+![b svar](4.A.b.png)
+
+### c)
+
+![svar c](4.Ac.png)
+
+### d) 
+
+![](4.Ad.png)
+
 
 
 ## MSRR 4.26
@@ -111,7 +127,7 @@ Suppose we have continuous random variables X1, X2, ... , Xn that are i.i.d. wit
 
 Uniform fordeling?
 
-
+![4.26](4.26.png)
 
 
 ## MSRR 4.24
@@ -125,6 +141,7 @@ sample_means = rep(NA, 1000)
 for(i in 1:1000){
   sample_means[i] = mean(rexp(40,0.2))
 }
+hist(sample_means)
 ```
 
 
@@ -162,6 +179,16 @@ the_var^0.5
 
 c) From your simulation, find P(X ≤ 3.5).
 
+$$
+P(\frac{\bar{X}-\mu}{\frac{\sigma}{\sqrt(n)} }<=z)=\sigma(z)
+$$
+
+```{r}
+z = (3.5-3)/(sqrt(9))/(sqrt(30))
+pnorm(z)
+```
+
+
 
 
 d) Estimate P(X ≤ 3.5) by assuming the CLT approximation holds. Compare this result with the one in part (c).
@@ -171,7 +198,10 @@ d) Estimate P(X ≤ 3.5) by assuming the CLT approximation holds. Compare this r
 ## MSRR 4.30
 
 i.i.d. −𝜆x LetX1,X2,...,Xn ∼ Exp(𝜆)withpdff(x)=𝜆e ,𝜆>0,x>0.
+
 ### a) Find the pdf fmin(x) for the sample minimum Xmin. Recognize this as the pdf of a known distribution.
+
+![4.30 TA svar](4.30.png)
 
 Vores pdf er
 
@@ -190,11 +220,36 @@ $$
 f_{min}(x)=n(1-F(x))^{n-1}f(x)
 $$
 $$
-n(1+e^{-\lambda\cdot x}-e^{-\lambda})^{n-1}\cdot\lambda\cdot e^{-\lambda x}
+n(1-1-e^{-\lambda})^{n-1}\cdot\lambda\cdot e^{-\lambda x}
+$$
+$$
+=n(e^{-\lambda\cdot x})^{n-1}\lambda e^{-\lambda x}
+$$
+$$
+=\lambda n e^{-\lambda n x}
 $$
 
 
-## b) Simulate in R the sampling distribution of Xmin of samples of size n = 25 from the exponential distribution with 𝜆 = 7. Compare the theoretical expected value of Xmin with the simulated expected value.
+
+
+### b) Simulate in R the sampling distribution of Xmin of samples of size n = 25 from the exponential distribution with 𝜆 = 7. Compare the theoretical expected value of Xmin with the simulated expected value.
+
+```{r}
+N <- 10^4
+result <- numeric(N)
+
+for (i in 1:N){
+  result[i] <- min(rexp(25,7))
+}
+
+mean(result)
+min(result)
+x <- seq(0,300,50)
+hist(result, freq=F)
+curve(dexp(x,25*7), add =T)
+
+```
+
 
 
 ## MSRR 4.21
@@ -230,6 +285,24 @@ glue(
 
 > Let X1, X2, ... , Xn be independent random variables from N(𝜇, 𝜎2). We
 are interested in the sampling distribution of the variance. Run the fol- lowing script in R, which draws random samples of size 20 from N (25, 72 ) and calculates the variance for each sample.
+
+```{r}
+sims <- 1000
+W <- numeric(sims)
+N <- c(25,50,200)
+for (n in N){
+  for (i in 1:sims) {
+    X <- rnorm(n, 25, 7)
+    W[i] <- var(X)
+  }
+  mean(W)
+  sd(W)
+  hist(W)
+}
+
+
+```
+
 
 ```{r}
 W <- numeric(1000)
@@ -320,7 +393,7 @@ ry <- rpois(500,12)
 ru <- rpois(500,3)
 rw <- rx+ry+ru
 plot(c(1:500),rw,type='p')
-
+hist(rw,prob = TRUE)
 mean_w <- mean(rw)
 mean_w
 sd_w <- sqrt(var(rw))
@@ -351,14 +424,32 @@ X−Y.
 sample fordelingen vil være
 
 $$
-7-10=-3
-9-25=-16
+X_1,..,X_9 \sim N(7,3^2)
 $$
 
 $$
-N(-3,-16)
+Y_1,..Y_12 \sim N(10,5^2)
 $$
 
+Gør brug af:
+
+> corollary A.5.3: Lad X være uafhængig nor al random variable med fælles mean og varians. Lad $\bar{X}$ betegne sample mean. Så vil $\bar{X}$ være normalt fordelt med mean mu og varians $\frac{\sigma^2}{n}$
+
+$$
+\bar{X} \sim N(7,1)
+$$
+
+$$
+\bar{Y} \sim N(10,2.08)
+$$
+
+$$
+W\sim N(-3,3.083)
+$$
+
+Brug også
+
+> theorem A.5.1 Lad X være en normal random variable med mean mu1, og varians1 og lad Y være en anden random variable med mean2 og varians2. Antag de er ufhænigg. Så vil X+-Y være en normal random variable med mean mu1 +- mu2 og var sigma +-sigma2.
 
 ### b) Simulate the sampling distribution of W in R, and plot your results (adapt code from the previous exercise). Check that the simulated mean and standard error are close to the theoretical mean and stan- dard error.
 
@@ -368,12 +459,13 @@ size <- 1000
 xDis <- numeric(1000)
 yDis <- numeric(1000)
 for(i in 1:size){
-  xDis[i] <- mean(rnorm(9, 7, 3^2))
-  yDis[i] <- mean(rnorm(12, 10, 5^2))
+  xDis[i] <- mean(rnorm(9, 7, 3))
+  yDis[i] <- mean(rnorm(12, 10, 5))
 }
 wDis <- xDis - yDis
-mean(wDis)
-sd(wDis)
+hist(wDis)
+paste0("simulated: ", mean(wDis))
+paste0("simulated: ", var(wDis))
 ```
 
 

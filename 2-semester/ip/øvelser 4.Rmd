@@ -15,7 +15,21 @@ can be represented by a tuple (c0, c1, ..., ck), e.g. the polynomial 3x3-2x2+0x+
 [3*x**3-2*x**2+0*x+5 for x in [7]]
 ```
 
-- meget simpel :).
+```{python}
+def poly(x, coefs):
+    return sum([c * x ** k for k, c in enumerate(coefs)])
+
+def pol2(lst, x):
+    total = []
+    for power, coeff in enumerate(lst):
+        total.append((x ** power) * coeff)
+        return sum(total)
+```
+
+```{r}
+poly(7, (5, 0, -2, 3))
+```
+
 
 ## 5.2
 
@@ -27,20 +41,35 @@ last =  ['Duck', 'Mouse', 'McDuck']
 list(sorted(zip(last, first)))
 ```
 
+```{python}
+def zip_names(first_name, last_name):
+  return [f'{last}, {first}' for last, first in sorted(zip(last_name, first_name))]
+
+zip_names(first, last)
+```
+
 ## 5.3
 
 Implement your own version my_zip of zip, such that my_zip([L1,L2,...,Lk]) == list(zip(L1,L2,...,Lk)).
 
 ```{python}
-def my_zip(h):
-  n = []
-  for i in h:
-    b = (i,)
-    n.append(b)
-  return n
+def my_zip_snyd(L):
+    return list(zip(*L))
 
-a =([1,2], [3,4], [4,5])
-print(my_zip(a))
+
+def my_zip_comprehension(L):
+    return [tuple(lst[i] for lst in L) for i in range(min([len(lst) for lst in L]))]
+
+
+def my_zip_nested(L):
+    min_lenght = min([len(lst) for lst in L])
+    res = []
+    for i in range(min_lenght):
+        tup = []
+        for lst in L:
+            tup.append(lst[i])
+        res.append(tuple(tup))
+    return res
 ```
 
 ## 5.4
@@ -48,7 +77,8 @@ print(my_zip(a))
 Make a method flatten(L) that given a list of lists L = [L1,L2,...,Lk] returns one list that is the concatenation of all lists, i.e. L1+L2+···+Lk. Your implementation should use list comprehension.
 
 ```{python}
-
+def flatten1(L):
+    return [ele for lst in L for ele in lst]
 ```
 
 
@@ -57,9 +87,13 @@ Make a method flatten(L) that given a list of lists L = [L1,L2,...,Lk] returns o
 ## Exercise 6.1 (histogram)
 
 ```{python}
-let = ['A', 'B', 'A', 'A', 'C', 'E', 'C']
-
-{name: idx for idx, name in enumerate(let, start=1)}
+def histogram(L):
+    dic = {}
+    for ele in L:
+        if ele not in dic:
+            dic[ele] = 0
+        dic[ele] += 1
+    return [(ele, num) for ele, num in dic.items()]
 ```
 
 
@@ -86,12 +120,28 @@ print(histogram(['A', 'B', 'A', 'A', 'C', 'E', 'C']))
 
 ```{python}
 import re
-txt = open('saxo.txt').read()
+
+txt = open("saxo.txt").read()
 txt = txt.lower()
 words = re.split('[^a-z]+', txt)
-most_freq = sorted([(freq, word) for word, 
-            freq in histogram(words) if len(word) >= 6], reverse = True)[:10]
-print(most_freq)
+
+# list_com
+most_freq = sorted(
+    [(freq, word) for word, freq in histogram(words) if len(word) >= 6], reverse=True)[:10]
+```
+
+```{python}
+# simplere
+most_freq = []
+for word, freq in histogram(words):
+    if len(word) >= 6:
+        most_freq.append((freq, word))
+most_freq = sorted(most_freq, reverse=True)[:10]
+
+print('Rank Freq. Word')
+print('====================')
+for idx, (occ, word) in enumerate(most_freq):
+    print(f'{idx + 1:4d}{occ:5d} {word}')
 ```
 
 
