@@ -1,0 +1,187 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+
+```{r}
+library(reticulate)
+```
+
+## 1) den inverse matrix
+
+-   Sidst gang så vi på lineært lignignsystem $Ax=b$ som reoræsenteres af den udvidede matrix $[A|b]$.
+
+-   Så også på **elementære rækkeoperationer**
+
+    -   i) byt om påm rækker
+
+    -   skalær R med en faktor s.
+
+    -   læg t gange række j til række i.
+
+-   Det kan i bruge til at få **echelonform**. Hvor en pivotelement er ledende et taller og de resterende er frie variabler.
+
+-   Reelle tal: 3x=7 løses til $x=\frac{7}{3}$. En **inverse matrix** har samme egenskab. Nul har ikke nogen inverse. Inverse gælder kun for **kvadratisk**.
+
+-   $A^{-1}\in R^{n x n}$ er en kvadratisk matrix.
+
+    -   1) $A^{-1}A=I_n$
+
+-   Ser på opskrift på invers som han genemgår og udledning.
+
+-   Størrelsen $ad-bc$ kaldes for **determinanten**.
+
+-   Anvendelse:
+
+    -   Hvis A har en inverse så kan vi løse Ax=b.
+
+-   Tag et eksempel
+
+$$
+2x+3y=1, \\
+x+2y=2
+$$
+
+$$
+\begin{bmatrix}
+x\\y
+\end{bmatrix}
+= \begin{bmatrix} 2 & 3 \\ 1 & 2 \end{bmatrix}^{-1} \begin{bmatrix} 1\\2 \end{bmatrix}=\begin{bmatrix} 2 & 3 \\-1&2 \end{bmatrix} \begin{bmatrix}  1 \\2\end{bmatrix}=\begin{bmatrix} -4 \\ 3 \end{bmatrix}
+$$
+
+-   Snakker om rotation af en matrix og cos og sin.
+
+-   Invers af et produkt her gennemgår man nogle regler regler:
+
+    -   $(AB)^{-1}=B^{-1}A^{-1}$
+
+    -   $(B^{-1}A^{-1})(AB)=I_n$
+
+        -   Kan ses i hans lektionen.
+
+```{python}
+import numpy as np
+```
+
+```{python}
+a = np.array([[1.0,1.0],[1.000000001,1.0]])
+a
+```
+
+-   vi ser den som 1, men se nærmere på den
+
+```{python}
+a[1,0]
+```
+
+```{python}
+# inverse
+a_inv = np.linalg.inv(a)
+a_inv
+```
+
+-   vi får nogle store tal. Vi starter med små tal, men får nogle store indgange. Hvad skal vi gøre?
+
+```{python}
+# determinan
+det = a[0,0]*a[1,1]-a[0,1]*a[1,0]
+det
+```
+
+-   ligger tæt pp nul.
+
+-   Det er et problem. Den inverse eksploderer.
+
+```{python}
+a_inv @ a
+```
+
+-   vi får identitetsmatricen.
+
+```{python}
+a= np.array([[1.,-1.,-1.,], [0.,1.,-1.], [0.,0.,1.]] )
+np.linalg.inv(a)
+```
+
+-   pæner end 2 x 2 matricen
+
+-   gør det større
+
+```{python}
+a= np.array([[1., -1., -1., -1.],
+             [0., 1., -1., -1.], 
+             [0., 0., 1., -1.],
+             [0., 0., 0., 1.]]  )
+a
+np.linalg.inv(a)
+```
+
+-   har udvidet til en større matric og vi får pæn resultat.
+
+```{python}
+np.linalg.inv(a) @ a
+```
+
+-   vi frå et problem jo større.
+
+```{python}
+n = 100
+a = np.triu(2 * np.eye(n) - np.ones((n,n))) # laver stor
+a 
+
+```
+
+-   Ovenstående laver en stor matrix.
+
+```{python}
+a_inv = np.linalg.inv(a)
+a_inv
+```
+
+-   Vi får noget stort og grimt. Tallene er igen meget store.
+
+-   Overflow man kan ikke løse det.
+
+-   Inverse skal man ikke bruge grundet det problem.
+
+## 2) om eksistens
+
+-   Definition: kvadratisk er hvor A er invertibel.
+
+-   Homogene lineære lignignsystemer er $Ax=0$ . Hvis A er invertibel så har den en løsning. Det medføre at variable er bundne og vi får en klar echelonform.
+
+-   **Elementær matrix E** er resultater af elementær rækkeoperstioner på $I_n$ . Han gennemgår et eksempel med n=2. Her ser vi at hver række operationer er invertibel. Det betyder vi kan lave den omvendte operation.
+
+-   Hvis vi udføre elementære rækkeoperationer er det samme som matrix multiplication. Det betyder at om vi ganger to produkter CA sammen og udføre række operatoiner, så vil det være ens på om vi gjorde det på A eller C først.
+
+-   Hvis en matrix $A^{-1}\in R^{nxn}$ opfylder \$A\^{-1}A=I_n\$ så er A invertibel og \$A\^{-1}\$ er den inverse. Det skyldes at man kun har en løsning. Dermed kan vi rækkereducer A til I. Så vi kan altså gange elementær matricer, E til at få I. E er altså invertibel, så A består af komponenter af E.
+
+$$
+A=E^{-1}_0...E^{-1}_{r-1}
+$$
+
+-   og omvendt.
+
+-   Dermed har vi en formel for den inverse som vi sr på i beregninsmetode.
+
+## 3) beregningsmetode
+
+-   Her stil po en matrix $[A|I_n]$ . og række reducer til \$[I_n\|A\^{-1}].
+
+-   går igennem en eksempel. Eksempelet går jeg ikke igennem, men kan ses i lektion 7.
+
+## 4) standard indre produkt
+
+-   Lad \$u,v\\in R \$
+
+$$
+<u,v> = u^Tv=u_0v_0+u_1v_1+...+u_{n-1}v_{n-1}
+$$
+
+-   Det kaldes **standard indre produkt**.
+
+-   Her er u,v **ortogonal** hvis produktet er nul.
+
+-   Viser nogle regne regler.
+
+-   Viser også **pythagoras sætning**.
