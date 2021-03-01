@@ -33,9 +33,9 @@ print("a) output af generate_labels : ", generate_labels(8))
 # b)
 def permute(n):
   for i in reversed(range(1, len(n))): 
-    j = randint(0, i + 1)  
+    j = randint(0, i)  
     n[i], n[j] = n[j], n[i]
-    return n
+  return n
 
 print("b) output af permute: ",permute(generate_labels(5)))
 
@@ -48,15 +48,15 @@ print("c) output af pairs: ", pairs(['A', 'F', 'B']))
 
 # d)
 def canonical_triplets(A, B):
-  can = [(x, (y,z)) for x in A for y in B for z in B if x != y and y != z and z != x and y < z]
+  can = [(x, (y,z)) for x in A for y in B for z in B if y < z]
   return can
 
 print("d) output af canonical_triplets: ", canonical_triplets(['A', 'B'], ['C', 'D', 'E']))
 
 # e)
 def anchored_triplets(A,B):
-  tri = [(x, (y,z)) for x in A for y in B for z in B if x != y and y != z and z != x]
-  return tri
-
-print("e) output af anchored_triplets: ", anchored_triplets(['A', 'F', 'B'], ['D', 'C', 'E']))
+  left = canonical_triplets(A,B)
+  right = canonical_triplets(B,A)
+  return (left, right)
+print(anchored_triplets(['A', 'F', 'B'], ['D', 'C', 'E']))
 ...

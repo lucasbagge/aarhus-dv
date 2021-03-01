@@ -198,7 +198,7 @@ Example: pairs(['A', 'F', 'B']) should return [('A', 'F'), ('A', 'B'), ('B', 'F'
 
 ```{python}
 def pairs(n):
-  par = [(x,y) for x in n for y in n if x != y and x < y]
+  par = [(x,y) for x in n for y in n if x < y]
   return par 
 ```
 
@@ -216,12 +216,11 @@ Example: canonical_triplets(['A', 'B'], ['C', 'D', 'E']) should return:
 
 ```{python}
 def canonical_triplets(A, B):
-  can = [(x, (y,z)) for x in A for y in B for z in B if x != y and y != z and z != x and y < z]
+  can = [(x, (y,z)) for x in A for y in B for z in B if  y < z]
   return can
-```
 
-```{python}
-canonical_triplets(['A', 'B'], ['C', 'D', 'E'])
+print(canonical_triplets(['A', 'B'], ['C', 'D', 'E']))
+print(canonical_triplets(['C', 'D', 'E'], ['A', 'B']))
 ```
 
 ### e) 
@@ -230,9 +229,16 @@ Make a function anchored_triplets(L, R) that returns a list of all canonical tri
 
 ```{python}
 def anchored_triplets(A,B):
-  tri = [(x, (y,z)) for x in A for y in B for z in B if x != y and y != z and z != x]
-  return tri
+  left = canonical_triplets(A,B)
+  right = canonical_triplets(B,A)
+  return (left, right)
+print(anchored_triplets(['A', 'F', 'B'], ['D', 'C', 'E']))
 ```
+
+```{python}
+
+```
+
 
 ```{python}
 tri_1 = anchored_triplets(['A', 'F', 'B'], ['D', 'C', 'E'])

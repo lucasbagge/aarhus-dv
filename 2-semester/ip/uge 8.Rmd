@@ -330,6 +330,12 @@ def relabel(tree, new_names):
 ```
 
 ```{python}
+
+
+```
+
+
+```{python}
 relabel(('a', ('b', 'c')), {'a': 'x', 'c': 'y'})
 ```
 
@@ -337,4 +343,48 @@ relabel(('a', ('b', 'c')), {'a': 'x', 'c': 'y'})
 
 
 ### 8.5 Make a recursive function extract(tree, leaves) that takes a binary tree tree and a set of leaves, generates a new binary tree only containing the leaves in leaves, i.e. repeatedly all other leaves are pruned, previous internal nodes with no children are removed, and previous internal nodes with only one child are replaced by the child.
+
+## Afleveringhandin 4 (triplet distance - part II)
+
+### a) Make a recursive function generate_tree(L), that given a list of labels L, returns a random binary tree where the list of leaf labels from left to right in the tree equals L.
+
+```{python}
+def generate_tree(L):
+    # base case
+    if len(L) == 1: 
+        return L[0]
+    split = randint(1, len(L)-1)
+    left = L[:split]
+    right = L[split:]
+    # recursion
+    return (generate_tree(left), generate_tree(right))
+```
+
+```{python}
+#tri = [(x, (y,z)) for x in A for y in B for z in B if x != y and y != z and z != x]
+L = ['A', 'B', 'C', 'D', 'E', 'F']
+generate_tree(L)
+  
+```
+
+
+### b) Make a recursive function generate_triplets(T) that returns a pair (labels, triplets) where labels is a list of all leaf labels of T, and triplets is a list of all canonical triplets anchored at some node of T.
+
+
+```{python}
+def generate_triplets(T):
+  if isinstance(T, str)
+  
+```
+
+```{python}
+def relabel(tree, new_names):
+  if isinstance(tree, str):
+    if tree in new_names:
+      return new_names[tree]
+    else:
+      return tree
+  return (relabel(tree[0], new_names), relabel(tree[1], new_names))
+      
+```
 
