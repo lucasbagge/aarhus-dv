@@ -28,7 +28,6 @@ Til at lave plottet af den ovenstående funktino benytter jeg mig af modulet
 x = np.linspace(0, 6, 100)
 y = 9 * np.sin(x) - 2 * np.sin(5*x)
 fig, ax = plt.subplots()
-ax.set_aspect("equal")
 ax.plot(x, y)
 plt.show()
 ```
@@ -49,7 +48,6 @@ støj = rng.standard_normal(n)
 ```{python}
 y_støj = y + støj
 fig, ax = plt.subplots()
-ax.set_aspect("equal")
 ax.plot(x, y_støj)
 plt.show()
 ```
@@ -59,7 +57,7 @@ plt.show()
 
 Givet en vektor v og et heltal offset vil funktionen np.diag(v, offset)
 danne en matrix med v langs en skrå linje hvor start punktet er forskudt
-fra det øverste venstre hjørne med offset. Brug np.diag, eventuelt kombineret med np.ones(), tre gange til at konstruere matricen 𝐴 ∈ ℝ𝑛×𝑛
+fra det øverste venstre hjørne med offset. Brug np.diag, eventuelt kombineret med np.ones(), tre gange til at konstruere matricen A.
 der har formen
 
 ```{python}
@@ -77,9 +75,8 @@ Foroven har jeg forsøgt a kontruer den ønskede matrice.
 på ystøj.
 
 ```{python}
-A_y_støj = A*y + støj
+A_y_støj = A @ y + støj
 fig, ax = plt.subplots()
-ax.set_aspect("equal")
 ax.plot(x, A_y_støj)
 plt.show()
 ```
@@ -94,10 +91,20 @@ vi fjerne noget støj.
 
 ## e) Ændre på vægtning i A og lave en matrix B, som er bedre end A.
 
-Jeg vil ikke kaste mig ud i denne da jeg ikke komme til at ramme plet i
-forhold til at kunne lave et plot.
+```{python}
+for n in range(1,101):
+  v = 2 * np.ones((1, n))
+  B1 = np.diag(v[0], -1) 
+  B2 = np.diag(v[0], 0)
+  B3 =  np.diag(v[0], 1)
+  B = B1[0:n, 0:n] + B2[0:n, 0:n] + B3[0:n, 0:n]
+  
+B_y_støj = B @ y + støj
+fig, ax = plt.subplots()
+ax.plot(x, B_y_støj)
+plt.show()
+```
 
-Men selvfølgelig kan vi reducerer mere støj ved at lave en mere optimal
-vægtning ved at inkluderer en Matrix B.
-
-> Husk at gå igang lidt før, så du kan afklare tvivl sprøgsmål.
+I ovenstående B matrice har jeg ændret den relative vægtning fra 1/3 til 2.
+Her ses det tydeligt at den højere vægtning går at støjen bliver reduceret
+kraftigt og giver os et plot der minder om en ren effekt.

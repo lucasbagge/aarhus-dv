@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.21 (TeX Live 2020) (preloaded format=pdflatex 2021.2.24)  26 FEB 2021 12:52
+This is pdfTeX, Version 3.14159265-2.6-1.40.21 (TeX Live 2020) (preloaded format=pdflatex 2021.2.24)  1 MAR 2021 22:22
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -343,8 +343,7 @@ tex.def
 File: l3backend-pdftex.def 2021-02-18 L3 backend support: PDF output (pdfTeX)
 \l__color_backend_stack_int=\count281
 \l__pdf_internal_box=\box50
-)
-No file aflevering-2.aux.
+) (./aflevering-2.aux)
 \openout1 = `aflevering-2.aux'.
 
 LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 110.
@@ -392,6 +391,7 @@ Package: gettitlestring 2019/12/15 v1.6 Cleanup title references (HO)
 LaTeX Info: Redefining \ref on input line 110.
 LaTeX Info: Redefining \pageref on input line 110.
 LaTeX Info: Redefining \nameref on input line 110.
+(./aflevering-2.out) (./aflevering-2.out)
 \@outlinefile=\write4
 \openout4 = `aflevering-2.out'.
 
@@ -478,47 +478,77 @@ File: t1lmtt.fd 2009/10/30 v1.6 Font defs for Latin Modern
 )
 LaTeX Font Info:    Font shape `T1/lmtt/bx/n' in size <10> not available
 (Font)              Font shape `T1/lmtt/b/n' tried instead on input line 136.
-<aflevering-2_files/figure-latex/unnamed-chunk-2-1.pdf, id=4, 469.755pt x 325.2
-15pt>
+<aflevering-2_files/figure-latex/unnamed-chunk-2-1.pdf, id=24, 469.755pt x 325.
+215pt>
 File: aflevering-2_files/figure-latex/unnamed-chunk-2-1.pdf Graphic file (type 
 pdf)
 <use aflevering-2_files/figure-latex/unnamed-chunk-2-1.pdf>
 Package pdftex.def Info: aflevering-2_files/figure-latex/unnamed-chunk-2-1.pdf 
- used on input line 145.
+ used on input line 144.
 (pdftex.def)             Requested size: 469.75386pt x 325.2142pt.
 [1
 
 {/Users/lucasbagge/Library/TinyTeX/texmf-var/fonts/map/pdftex/updmap/pdftex.map
 }]
 
-LaTeX Warning: Command \o invalid in math mode on input line 154.
+LaTeX Warning: Command \o invalid in math mode on input line 153.
 
-<aflevering-2_files/figure-latex/unnamed-chunk-4-1.pdf, id=20, 469.755pt x 325.
+<aflevering-2_files/figure-latex/unnamed-chunk-4-1.pdf, id=39, 469.755pt x 325.
 215pt>
 File: aflevering-2_files/figure-latex/unnamed-chunk-4-1.pdf Graphic file (type 
 pdf)
 <use aflevering-2_files/figure-latex/unnamed-chunk-4-1.pdf>
 Package pdftex.def Info: aflevering-2_files/figure-latex/unnamed-chunk-4-1.pdf 
- used on input line 175.
+ used on input line 173.
 (pdftex.def)             Requested size: 469.75386pt x 325.2142pt.
 [2 <./aflevering-2_files/figure-latex/unnamed-chunk-2-1.pdf>]
-
-! Package inputenc Error: Unicode character 𝐴 (U+1D434)
-(inputenc)                not set up for use with LaTeX.
-
-See the inputenc package documentation for explanation.
-Type  H <return>  for immediate help.
- ...                                              
-                                                  
-l.183 ...tre gange til at konstruere matricen 𝐴
-                                                   ∈ ℝ𝑛×𝑛 
+<aflevering-2_files/figure-latex/unnamed-chunk-6-1.pdf, id=63, 469.755pt x 325.
+215pt>
+File: aflevering-2_files/figure-latex/unnamed-chunk-6-1.pdf Graphic file (type 
+pdf)
+<use aflevering-2_files/figure-latex/unnamed-chunk-6-1.pdf>
+Package pdftex.def Info: aflevering-2_files/figure-latex/unnamed-chunk-6-1.pdf 
+ used on input line 213.
+(pdftex.def)             Requested size: 469.75386pt x 325.2142pt.
+[3 <./aflevering-2_files/figure-latex/unnamed-chunk-4-1.pdf>]
+<aflevering-2_files/figure-latex/unnamed-chunk-7-1.pdf, id=84, 469.755pt x 325.
+215pt>
+File: aflevering-2_files/figure-latex/unnamed-chunk-7-1.pdf Graphic file (type 
+pdf)
+<use aflevering-2_files/figure-latex/unnamed-chunk-7-1.pdf>
+Package pdftex.def Info: aflevering-2_files/figure-latex/unnamed-chunk-7-1.pdf 
+ used on input line 244.
+(pdftex.def)             Requested size: 469.75386pt x 325.2142pt.
+[4 <./aflevering-2_files/figure-latex/unnamed-chunk-6-1.pdf>] [5 <./aflevering-
+2_files/figure-latex/unnamed-chunk-7-1.pdf>] (./aflevering-2.aux)
+Package rerunfilecheck Info: File `aflevering-2.out' has not changed.
+(rerunfilecheck)             Checksum: 0DCBFB71C6CC81D3E0535FC9231CD1B5;1814.
+ ) 
 Here is how much of TeX's memory you used:
- 10374 strings out of 480971
- 151790 string characters out of 5906691
- 453860 words of memory out of 5000000
- 27414 multiletter control sequences out of 15000+600000
+ 10412 strings out of 480971
+ 152928 string characters out of 5906691
+ 455528 words of memory out of 5000000
+ 27434 multiletter control sequences out of 15000+600000
  440360 words of font info for 64 fonts, out of 8000000 for 9000
  14 hyphenation exceptions out of 8191
- 71i,5n,74p,246b,324s stack positions out of 5000i,500n,10000p,200000b,80000s
+ 71i,6n,74p,619b,324s stack positions out of 5000i,500n,10000p,200000b,80000s
+{/Users/lucasbagge/Library/TinyTeX/texmf-dist/fonts/enc/dvips/lm/lm-rm.enc}{/
+Users/lucasbagge/Library/TinyTeX/texmf-dist/fonts/enc/dvips/lm/lm-mathit.enc}{/
+Users/lucasbagge/Library/TinyTeX/texmf-dist/fonts/enc/dvips/lm/lm-ec.enc}{/User
+s/lucasbagge/Library/TinyTeX/texmf-dist/fonts/enc/dvips/lm/lm-mathsy.enc}</User
+s/lucasbagge/Library/TinyTeX/texmf-dist/fonts/type1/public/lm/lmbx12.pfb></User
+s/lucasbagge/Library/TinyTeX/texmf-dist/fonts/type1/public/lm/lmmi10.pfb></User
+s/lucasbagge/Library/TinyTeX/texmf-dist/fonts/type1/public/lm/lmmi7.pfb></Users
+/lucasbagge/Library/TinyTeX/texmf-dist/fonts/type1/public/lm/lmr10.pfb></Users/
+lucasbagge/Library/TinyTeX/texmf-dist/fonts/type1/public/lm/lmr17.pfb></Users/l
+ucasbagge/Library/TinyTeX/texmf-dist/fonts/type1/public/lm/lmr7.pfb></Users/luc
+asbagge/Library/TinyTeX/texmf-dist/fonts/type1/public/lm/lmsy10.pfb></Users/luc
+asbagge/Library/TinyTeX/texmf-dist/fonts/type1/public/lm/lmtk10.pfb></Users/luc
+asbagge/Library/TinyTeX/texmf-dist/fonts/type1/public/lm/lmtt10.pfb>
+Output written on aflevering-2.pdf (5 pages, 171361 bytes).
+PDF statistics:
+ 163 PDF objects out of 1000 (max. 8388607)
+ 107 compressed objects within 2 object streams
+ 16 named destinations out of 1000 (max. 500000)
+ 61 words of extra memory for PDF output out of 10000 (max. 10000000)
 
-!  ==> Fatal error occurred, no output PDF file produced!

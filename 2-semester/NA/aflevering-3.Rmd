@@ -1,0 +1,95 @@
+---
+title: "aflevering 3"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(reticulate)
+```
+
+```{python}
+import numpy as np
+import matplotlib.pyplot as plt
+```
+
+### a) Plot grafen svarende til de overstående datapunkter.
+
+```{python}
+x = np.array([2.0, 5.0, 8.0, 10.0])
+y = np.array([35.0, 40., 50., 65.])
+fig, ax = plt.subplots()
+ax.plot(x, y, marker = 'o')
+plt.show()
+```
+
+### b)  Opstil et lineært ligningssystem for at p går igennem de sidste tre datapunkter. Løs ligningssystemet ved hjælp af elementære rækkeoperationer. Plot resultatet
+
+
+```{python}
+a = np.array([[5., 8., 10.],
+              [40., 50., 65.]])
+              
+a
+
+aub = a
+aub
+```
+
+```{python}
+aub[1, :] += (-8) * aub[0, :]
+aub
+```
+```{python}
+aub[0,:] *= 1/5
+aub
+```
+
+
+```{python}
+aub[1,:] *= (-1/14)
+aub
+```
+
+```{python}
+aub[0,:] += (-8/5 * aub[1,:])
+aub
+```
+Vi har altså de følgende ligninger:
+
+$$
+x = 28.57 \\
+y = 1.07
+$$
+
+Laver efterfølgende plottet af de to optimale punkter.
+
+```{python}
+x = np.array([1.07])
+y = np.array([28.57])
+fig, ax = plt.subplots()
+ax.plot(x, y, marker = 'o')
+plt.show()
+```
+
+### c) (c) Hvis man vil have et polynomium p(x) der går igennem alle 4 datapunkter, hvad er den mindst mulige grad for p? Bestem sådan et polynomium,
+
+
+```{python}
+x = np.array([2.0, 5.0, 8.0, 10.0])
+y = np.array([35.0, 40., 50., 65.])
+
+x = np.array([5.0, 8.0, 10.0])
+y = np.array([40., 50., 65.])
+
+np.linalg.solve()
+
+A = np.array([[2.0, 5.0, 8.0, 10.0], [35.0, 40., 50., 65.]])
+B = np.array([0, 0, 0,0])
+X2 = np.linalg.solve(A[0],A[1])
+
+print(X2)
+```
+
+
+

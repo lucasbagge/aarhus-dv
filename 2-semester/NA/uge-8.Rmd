@@ -15,7 +15,9 @@ library(reticulate)
 
 -   Så også på **elementære rækkeoperationer**
 
-    -   i) byt om påm rækker
+    -   
+
+        i)  byt om påm rækker
 
     -   skalær R med en faktor s.
 
@@ -27,7 +29,9 @@ library(reticulate)
 
 -   $A^{-1}\in R^{n x n}$ er en kvadratisk matrix.
 
-    -   1) $A^{-1}A=I_n$
+    -   
+
+        1)  $A^{-1}A=I_n$
 
 -   Ser på opskrift på invers som han genemgår og udledning.
 
@@ -192,7 +196,7 @@ $$
 
 ## Sidste gang
 
--   Så på **standard indre produkt**. $\langle  u,v \rangle=u^Tv$
+-   Så på **standard indre produkt**. $\langle u,v \rangle=u^Tv$
 
 -   Gennemgår igen de regneregler vi så på.
 
