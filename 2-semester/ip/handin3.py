@@ -41,7 +41,7 @@ print("b) output af permute: ",permute(generate_labels(5)))
 
 # c)
 def pairs(n):
-  par = [(x,y) for x in n for y in n if x != y and x < y]
+  par = [(x,y) for x in n for y in n if x < y]
   return par 
 
 print("c) output af pairs: ", pairs(['A', 'F', 'B']))
@@ -58,5 +58,5 @@ def anchored_triplets(A,B):
   left = canonical_triplets(A,B)
   right = canonical_triplets(B,A)
   return (left, right)
-print(anchored_triplets(['A', 'F', 'B'], ['D', 'C', 'E']))
+print("e) ourput af anchored_triplets",anchored_triplets(['A', 'F', 'B'], ['D', 'C', 'E']))
 ...

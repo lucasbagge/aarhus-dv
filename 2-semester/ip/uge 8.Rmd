@@ -203,25 +203,15 @@ en recursion funktion består af to dele, base og den repitative. Tager et kompe
 ```{python}
 # lav fibonacci der udregner n th tal.
 def fib(n):
-   # de forrig fib skal udregnes sammen
-  #1,1,2,3,5,8,13
-  # mest simpel at løse
   if n == 1 or n ==2:
     return 1
-  # den anden del er svære
-  # den handler om hvordan vi skal bryde problemet ned. 
-  # Hvis vi skal bestemme 10 th fib så skal vi have 8 og 9 tal. 
   print(f"calculating fib1, {n=}")
   fib1 = fib(n - 1)
   print(f"calculating fib2, {n=}")
   fib2 = fib(n - 2)
   return fib1 + fib2
-# deler op i mindre bid
-# ofte vil det virke.
-```
 
-```{python}
-fib(6)
+print(fib(6))
 ```
 
 det 10 er 55. Ved at lave det simple vi kan besvarer så får vi en løsning og finder ud af hvordan vi kan løse de andre dele.
@@ -233,11 +223,6 @@ Som han nævner for nedenstående så kan vi tage to permutation eller ingen, s�
 ### 8.1 Make a recursive function cases(s) that given a string s, generates a list of all possible upper and lower case combinations of the letters in the string. E.g. cases("abcB") should return a list containing the following 16 strings ['abCb', 'abCB', 'abcb', 'abcB', 'aBCb', 'aBCB', 'aBcb', 'aBcB', 'AbCb', 'AbCB', 'Abcb', 'AbcB', 'ABCb', 'ABCB', 'ABcb', 'ABcB'].
 
 ```{python}
-# fra timen
-# tag base case med et bogstav.
-# Den måde at bevæge sig fra den simple til svære minder om induks beviser.
-# 
-
 def cases(s):
   if len(s) == 1:
     lower = str.lower(s)
@@ -250,7 +235,6 @@ def cases(s):
     var = [i + j for i in left
                      for j in right]
   return var
-
 print(cases("abc"))
 ```
 
@@ -340,8 +324,6 @@ relabel(('a', ('b', 'c')), {'a': 'x', 'c': 'y'})
 ```
 
 
-
-
 ### 8.5 Make a recursive function extract(tree, leaves) that takes a binary tree tree and a set of leaves, generates a new binary tree only containing the leaves in leaves, i.e. repeatedly all other leaves are pruned, previous internal nodes with no children are removed, and previous internal nodes with only one child are replaced by the child.
 
 ## Afleveringhandin 4 (triplet distance - part II)
@@ -358,23 +340,23 @@ def generate_tree(L):
     right = L[split:]
     # recursion
     return (generate_tree(left), generate_tree(right))
-```
 
-```{python}
-#tri = [(x, (y,z)) for x in A for y in B for z in B if x != y and y != z and z != x]
 L = ['A', 'B', 'C', 'D', 'E', 'F']
 generate_tree(L)
-  
 ```
-
-
 ### b) Make a recursive function generate_triplets(T) that returns a pair (labels, triplets) where labels is a list of all leaf labels of T, and triplets is a list of all canonical triplets anchored at some node of T.
+Hint. Use isinstance(T, str) to check if T is a leaf.
+Example: For the tree (a) in part I of this exercise generate_triplets(((('A','F'),'B'),('D',('C','E')))) should return the following pair consisting of a list with the 6 leaf labels, and a list with the 20 canonical triplets anchored in the tree.
 
 
 ```{python}
 def generate_triplets(T):
-  if isinstance(T, str)
-  
+  if isinstance(T, str):
+    return T[0]
+  else:
+    
+    first = T[:] 
+  return [(x,y) for x in n for y in n if x < y]
 ```
 
 ```{python}
@@ -387,4 +369,23 @@ def relabel(tree, new_names):
   return (relabel(tree[0], new_names), relabel(tree[1], new_names))
       
 ```
+
+
+### c) Make a function triplet_distance(T1, T2) that computes the triplet distance between the trees T1 and T2.
+
+Hint. Recall that the triplet distance equals n(n-1)(n-2)/6 minus the number of common triplets between T1 and T2, and use Python set to handle the sets of computed triplets.
+Example: For the two trees above
+triplet_distance(((('A','F'),'B'),('D',('C','E'))), (((('D','A'),'B'),'F'),('C','E'))
+should return 10.
+
+```{python}
+
+def triplet_distance(T1, T2):
+  
+  
+
+triplet_distance(((('A','F'),'B'),('D',('C','E'))), (((('D','A'),'B'),'F'),('C','E'))
+```
+
+### d) What is the order of the tree sizes you can handle with generate_tree and triplet_distance in reasonable time - say about 10 seconds? Tens, hundreds, thousands, millions... of leaves? Use the function generate_tree to generate random trees of increasing sizes and measure the time for generate_tree and triplet_distance separately.
 
