@@ -175,9 +175,9 @@ Example: permute(['A', 'B', 'C']) could return ['B', 'C', 'A'].
 ```{python}
 def permute(n):
   for i in reversed(range(1, len(n))): 
-    j = randint(0, i + 1)  
+    j = randint(0, i)  
     n[i], n[j] = n[j], n[i]
-    return n
+  return n
 ```
 
 

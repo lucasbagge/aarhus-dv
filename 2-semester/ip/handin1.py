@@ -40,5 +40,6 @@ while P > 0:
         new_p = 0
     P = round(new_p, 2)
     print("month number :", count, "remaining debt:", new_p)
+print()
 ...
 

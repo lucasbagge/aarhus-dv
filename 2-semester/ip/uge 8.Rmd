@@ -1,0 +1,340 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+
+```{r}
+library(reticulate)
+```
+
+## functions
+
+<https://www.youtube.com/watch?v=CS2u04CdH9c&feature=youtu.be>
+
+### functions
+
+Bruger her **def** til at definerer funktionen og husk :.
+
+### lokale variabler i funktioner
+
+Lokale variabler er dem inde funktionen og som kun bruges i funktionen.
+
+### globale variable
+
+Det er bare funktione som eksister udenfor funktionen.
+
+### global vs lokal variabler
+
+lokal kommer før global.
+
+Man kan skrive global counter før noget så vi siger at en variabel er en global.
+
+### arbitrary number of arguments
+
+hvis man vil have en ekstra argument bruger man \***L**, som betyder man kan bruger flere argumenter.
+
+### unpacking a list of arguments in a functions call
+
+**f(*L)*** betyder man pakker funktionen ud.
+
+### keyword arguments
+
+har en bestemt position i funktioner og man skriver dem i funktionen.
+
+### default values
+
+er bare nogle værdier funktionen antager hvis andet ikke er bestemt.
+
+### default values mutable
+
+i en funktion kan man gøre den kan varier
+
+```{python}
+def list_append(e, L=[]):
+  L.append(e)
+  return L
+list_append('x', ['y', 'z'])
+```
+
+Husk at hvis man giver en default værdi så vil den blive kaldt til alle dele af koden.
+
+\*\* notation betyder man overføre noget til en funktion. Det kan være en ide hvor man vil trække ting ud og give nogle farver, tema eller et eller andet.
+
+### forwarding functions arguments
+
+hvis man vil lave sin egen funktion ud for eksisterende, her kan man bruge \*\*keyword_arguments til at kalde de andre argumenter i en funkgion.
+
+### lokal funkion
+
+Vil bare sige vi har lokale funktioner.
+
+### nonlocal
+
+betyder man referer til tidligere variabler. **nonlocal y** eksempel.
+
+### positional and keywoard only arguments
+
+/ og \* gør at og definere noget om argument må være positional eller ej.
+
+## recursion
+
+[side](%5B%3Chttps://www.youtube.com/watch?v=appcgfquLW0&feature=youtu.be%3E%5D(https://www.youtube.com/watch?v=appcgfquLW0&feature=youtu.be)%7B.uri%7D)
+
+recursion betuder at en funktion kalder sig en eller flere gange.
+
+Binomial coefficient
+
+```{python}
+def binomial(n,k):
+  if k==0 or k ==n:
+    return 1
+  return binomil(n-1, k) + binomil(n-1, k - 1)
+# ikke en god løsning da den er langsom
+```
+
+En bedre måde
+
+```{python}
+def binomial(n, k):
+  return factorial(n) // factorial(k) // factoril(n - k)
+
+binomial(2,2)
+```
+
+```{python}
+# bedste løsning
+def binomiaal(n, k):
+  if k == 0:
+    return 1
+  else:
+    return binomiaal(n - 1, k - 1) * n // k
+```
+
+```{python}
+binomiaal(10, 2)
+```
+
+### maximum recursion depth
+
+```{python}
+import sys
+sys.setrecursionlimit(10)
+```
+
+sætter en recursion grænse, men man kan ikke stole på den.
+
+### kock curves
+
+laver en plot af nogle kock kurver (som jeg i
+
+## Øvelser 7
+
+### 7.1
+
+#### a) Write a function average2(x,y) that computes the average of x and y, i.e. (x+y)/2.
+
+```{python}
+def average2(x,y):
+  return (x+y) / 2
+
+
+average2(2,2)
+```
+
+#### b) Write a function list_average(L) that computes the average of the numbers in the list L.
+
+```{python}
+def list_average(lst):
+  return sum(lst) / len(lst)
+
+list_average([15,9,55])
+```
+
+#### c) Write a function average(x~1~,...,x~k~) that takes an arbitray number of arguments (but at least one) and computes the average of x~1~, ..., x~k~.
+
+```{python}
+def av(*a):
+  return sum(a)/len(a)
+```
+
+-   kan også bruges til at pakke ting ud
+
+```{python}
+L = []
+```
+
+positional argument handler om at der er en række følge til ens argumenter.
+
+\
+
+### 7.2 (sum of squares)
+
+#### a) Make a function that can take any number of arguments, and returns the sum of the squares of the values, i.e. square_sum(x~1~,x~2~,x~3~) returns x~1~^2^+ x~2~^2^+ x~3~^2^.
+
+```{python}
+def summation(*x):
+    sq = [number ** 2 for number in list(x)]
+    return sum(sq)
+```
+
+```{python}
+summation(3, 4, 5)
+```
+
+#### b) Given a list L, e.g. L = [1,2,3,4], use your square_sum function to compute the sum of squares of the values in L:
+
+```{python}
+def sqsum(*L):
+  sq_num = [number ** 2 for number in L]
+  return sum(sq_num)
+```
+
+```{python}
+L = [3,4, 5]
+sqsum(*L)
+```
+
+tupler kan vi ikke ændre inde i dem.
+
+## eksempel på recursion
+
+en recursion funktion består af to dele, base og den repitative. Tager et kompeks problem og deler op i mindre dele.
+
+```{python}
+# lav fibonacci der udregner n th tal.
+def fib(n):
+   # de forrig fib skal udregnes sammen
+  #1,1,2,3,5,8,13
+  # mest simpel at løse
+  if n == 1 or n ==2:
+    return 1
+  # den anden del er svære
+  # den handler om hvordan vi skal bryde problemet ned. 
+  # Hvis vi skal bestemme 10 th fib så skal vi have 8 og 9 tal. 
+  print(f"calculating fib1, {n=}")
+  fib1 = fib(n - 1)
+  print(f"calculating fib2, {n=}")
+  fib2 = fib(n - 2)
+  return fib1 + fib2
+# deler op i mindre bid
+# ofte vil det virke.
+```
+
+```{python}
+fib(6)
+```
+
+det 10 er 55. Ved at lave det simple vi kan besvarer så får vi en løsning og finder ud af hvordan vi kan løse de andre dele.
+
+Generelt opforeer ta at vi for simpler opgaverne.
+
+Som han nævner for nedenstående så kan vi tage to permutation eller ingen, så kan vi også se på den.
+
+### 8.1 Make a recursive function cases(s) that given a string s, generates a list of all possible upper and lower case combinations of the letters in the string. E.g. cases("abcB") should return a list containing the following 16 strings ['abCb', 'abCB', 'abcb', 'abcB', 'aBCb', 'aBCB', 'aBcb', 'aBcB', 'AbCb', 'AbCB', 'Abcb', 'AbcB', 'ABCb', 'ABCB', 'ABcb', 'ABcB'].
+
+```{python}
+# fra timen
+# tag base case med et bogstav.
+# Den måde at bevæge sig fra den simple til svære minder om induks beviser.
+# 
+
+def cases(s):
+  if len(s) == 1:
+    lower = str.lower(s)
+    upper = str.upper(s)
+    return [lower, upper]
+  else:
+    mid = len(s) //2
+    left = cases(s[:mid])
+    right = cases(s[mid:])
+    var = [i + j for i in left
+                     for j in right]
+  return var
+
+print(cases("abc"))
+```
+
+```{python}
+def product(*args, repeat=1):
+    pools = [tuple(pool) for pool in args] * repeat
+    result = [[]]
+    for pool in pools:
+        result = [x+[y] for x in result for y in pool]
+    for prod in result:
+        yield tuple(prod)
+```
+
+```{python}
+def cases(s):
+    return list(map(''.join, product(*(sorted(set((c.upper(), c.lower())))
+                                       for c in s))))
+```
+
+```{python}
+cases("abCB")
+```
+
+### 8.2 Make a recursive function subsets(L) that given a list L returns a list of all subsets of L (each subset being a list). E.g. subsets([1, 2]) should return [[], [1], [2], [1, 2]]. The order of the returned lists can be arbitrary.
+
+```{python}
+def subsets(set_inp):
+    if set_inp == []:
+        return [[]]
+    x = subsets(set_inp[1:])
+    return sorted( x + [[set_inp[0]] + y for y in x])
+```
+
+Han kan godt lide at tegne tingene
+
+```{python}
+# timen
+# lett eksempe
+def subsets(L):
+  if L == []:
+    return [[]]
+  # minder dele
+  first = L[0] # første af listen
+  tail = subsets(L[1:]) # resten af listen. 
+  # nu kan vi bruge induktions recursion
+  return tail + [[first] + subsets for subset in tail] # skal have flere delmængde
+
+```
+
+```{python}
+subsets([1,2,3])
+```
+
+
+```{python}
+print(subsets([1,2]))
+```
+
+### 8.3 Make a recursive function relabel(tree, new_names) that takes a tree tree and a dictionary new_names = { *old_name* : *new_name*, ... }, and returns a new tree where labels in the dictionary new_names are replaced by the corresponding values in the dictionary. Leaves not in the dictionary remain unchanged.
+
+vi skal lave en recursive funktion
+
+vi skal lave et træ med nye labels. 
+
+Han viser vi har nogle binær træer. Hver end point viser ((A,B), C), men
+vi zoom ind på et enkelt punkt: (A,B) og C. Base case er vi har et blad. 
+
+```{python}
+def relabel(tree, new_names):
+  if isinstance(tree, str):
+    if tree in new_names:
+      return new_names[tree]
+    else:
+      return tree
+  return (relabel(tree[0], new_names), relabel(tree[1], new_names))
+      
+```
+
+```{python}
+relabel(('a', ('b', 'c')), {'a': 'x', 'c': 'y'})
+```
+
+
+
+
+### 8.5 Make a recursive function extract(tree, leaves) that takes a binary tree tree and a set of leaves, generates a new binary tree only containing the leaves in leaves, i.e. repeatedly all other leaves are pruned, previous internal nodes with no children are removed, and previous internal nodes with only one child are replaced by the child.
+

@@ -7,6 +7,8 @@ output: html_notebook
 library(reticulate)
 ```
 
+# Forlæsning 7
+
 ## 1) den inverse matrix
 
 -   Sidst gang så vi på lineært lignignsystem $Ax=b$ som reoræsenteres af den udvidede matrix $[A|b]$.
@@ -185,3 +187,232 @@ $$
 -   Viser nogle regne regler.
 
 -   Viser også **pythagoras sætning**.
+
+# Forlæsning 8
+
+## Sidste gang
+
+-   Så på **standard indre produkt**. $\langle  u,v \rangle=u^Tv$
+
+-   Gennemgår igen de regneregler vi så på.
+
+-   Ortogonal: $||v||_2$ kan også kaldes **2-normen**.
+
+```{python}
+import numpy as np
+u = np.array([3,2,-1.])[:,np.newaxis]
+u
+
+```
+
+```{python}
+v = np.array([0.,2.,1.])[: np.newaxis]
+```
+
+```{python}
+u.T @ v
+```
+
+```{python}
+np.vdot(u, v)
+```
+
+```{python}
+np.linalg.norm(np.array([1.,-1.,2.])[:, np.newaxis])
+```
+
+```{python}
+np.sqrt(6.)
+```
+
+-   Anbefaler vi bruger vdot for indre produkt.
+
+## Vinkler
+
+-   ser på vinkler vi har vinklen:
+
+$$
+cos \ \theta = \frac{\langle u,v \rangle}{ ||u||_2 ||v||_2}
+$$
+
+-   Den giver en værdi melem -1 og +1. Definition er rimelig hvis vi kan vise det.
+
+-   Det sker når u er ortogonal på v, og dermed vil den være 0.
+
+-   Ser på et eksempel med digital ur. Hvor tal vises i dem. Han viser en tegnign, med hvordan man kan bruge en vektor til at illustrer hvilke elementer ved uret er lyst op. Ser på *digitale ure* i python:
+
+```{python}
+v = np.empty((7,10), dtype = float)
+v[:, 0] = np.array([1,1,1,0,1,1,1])
+v
+```
+
+```{python}
+u = np.array([0, 1, 0, 1, 1, 1, 0])[:, np.newaxis]
+u
+```
+
+-   hvordan sammenligner vi? Tag det indre produkt.
+
+```{python}
+# indre produkt af hver søjle af v med u. 
+v.T @ u 
+# række søjer produkt
+```
+
+-   vi vil se på vinklen men vil ikke få det samme som Andrew.
+
+```{python}
+v_nor = np.empty_like(v)
+for i in range(10):
+  v_nor[:, i] = v[:, i] / np.linalg.norm(v[:, i])
+  
+u_nor = u/ np.linalg.norm(u)
+
+cosines = v_nor / u_nor.T @ u_nor
+cosines
+```
+
+-   koden virker ikke fordi jeg mangler at skrive noget af koden fra tidligere.
+
+-   I outputtet kan man se påm hvilken værdi er højst og mindst.
+
+```{python}
+np.nonzero(cosines == cosiens.max())
+```
+
+-   forløkken læger gennem søjlerne og gør dem til en enhedsvektor.
+
+-   outputter siger det ligger i række 6 søjle 0, med det bedste udkom.
+
+```{python}
+x = np.empty((3,3), dtype = int)
+x[0,0] = 0.1
+x.dtype
+x
+```
+
+-   Vi skal bruge **floats** som giver mening når vi har med decimal tal at gøre.
+
+-   **Cauchy schawarz ulighed**:
+
+$$
+|\langle u,v \rangle \leq ||u||_2 ||v||_2
+$$
+
+-   Det væsentlig med ulighed er vi kan se hvad der sker hvis vi får en lighed. Det meføre vi får en parallel form. Derme er u og v parallelle.
+
+-   Der gennemgås en udregning af cs (cauchy Schawarz) uligheden.
+
+## Projektion
+
+-   Det gives ved det indre produkt. Man bruger $pr_v(u)$ .
+
+-   Han regler frem. Man bruger en andengrads ligning med formlen for toppunktet. Vi beregner en afstand og ser på den mindste afstand.
+
+$$
+s=\langle u,v \rangle / ||v||_2^2
+$$
+
+-   er toppunkt formlen.
+
+-   Projektionen har nogle egenskaber, som vi kan bruge. For at regne om noget er vinkelret så kan vi regne det indre produkt.
+
+$$
+\langle u-pr_vu,v\rangle=\langle pr_vu,v \rangle =\langle u,v \rangle-
+$$
+
+-   kan ikke nå at skrive det ned. Han tager et eksempel
+
+$$
+v = (3,1) \\ u = (2,3) \\ pr_v(u)=\frac{\langle u,v \rangle}{||v||_2^2}
+$$
+
+$$
+\langle u,v\rangle=3*2 +1*3=9 \\ ||v||_2^2=4^2+1^2=10 \\pr_v(u)=\frac{9}{10}v=\frac{27}{10},\frac{9}{10}
+$$
+
+-   Det er en nogenlunde simpel regne metode. Det er for to dimensional tid.
+
+-   Ser på **projektionsmatrix**. Her ser vi igen på en formel
+
+$$
+P=\frac{1}{||v||_2^2}vv^T
+$$
+
+### Ortogonalitet
+
+-   gør det let at arbejde med. Hvis all vektor er desuden af længde 1, så siges samlingen at være **ortonormal**. Han viser et eksempel med tre vektor der er ortonormal.
+
+-   De er gode at regne med.
+
+-   han viser en lignign som kaldes **parsevals identitet**.
+
+```{python}
+import matplotlib.pyplot as plt
+```
+
+```{python}
+#apporkismer exp(x for -1 <= x <=1 så godt som muliged med polynomier af grad 2. 
+
+n = 100 # evaluer i højt antal punkter
+x = np.linspace(-1, 1, n)
+
+# x^0
+v0 = np.ones((n, 1))
+# x^1
+v1 = x[:, np.newaxis]
+#x^2
+w = (x**2)[:, np.newaxis]
+# de tre vektor svarer til 2. grad pol.  som er funktioenr.
+
+```
+
+```{python}
+np.vdot(v0,v1)
+```
+
+```{python}
+# stort set ul
+```
+
+```{python}
+# v1 er næsten vinkel ret på w
+np.vdot(v1,w)
+```
+
+-   følge med i projektionen af w på v0 fra w.
+
+```{python}
+v2 = w- np.vdot(w,v0) / np.vdot(v0,v0) * v0
+np.vdot(v2, v0), np.vdot(v1,v0)
+```
+
+```{python}
+u = np.exp(x)[:, np.newaxis]
+```
+
+-   vi vil approxis exp
+
+```{python}
+u_proj = 1/np.vdot(v0,v0) * v0 @ (v0.T @ u) + \
+         1/np.vdot(v1,v1) * v1 @ (v1.T @ u) + \
+         1/np.vdot(v2,v2) * v2 @ (v2.T @ u)
+```
+
+```{python}
+fig, ax = plt.subplots()
+ax.plot(x, u.flat)
+plt.show()
+```
+
+-   det er eksponential funktionen.
+
+```{python}
+fig, ax = plt.subplots()
+ax.plot(x, u.flat)
+ax.plot(x, u_proj.flat)
+plt.show()
+```
+
+-   de ligger tæt ovenpå hinanden så vi rammer meget godt.
