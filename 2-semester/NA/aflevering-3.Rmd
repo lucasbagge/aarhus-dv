@@ -91,5 +91,17 @@ X2 = np.linalg.solve(A[0],A[1])
 print(X2)
 ```
 
+```{python}
+def anchored_triplets(A,B):
+  left = canonical_triplets(A,B)
+  right = canonical_triplets(B,A)
+  return list((left, right))
+print("e) ourput af anchored_triplets", anchored_triplets(['A', 'F', 'B'], ['D', 'C', 'E']) 
+)
+```
+```{python}
+test = anchored_triplets(['A', 'F', 'B'], ['D', 'C', 'E'])
+type(test)
+```
 
 

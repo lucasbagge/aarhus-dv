@@ -57,6 +57,6 @@ print("d) output af canonical_triplets: ", canonical_triplets(['A', 'B'], ['C', 
 def anchored_triplets(A,B):
   left = canonical_triplets(A,B)
   right = canonical_triplets(B,A)
-  return (left, right)
-print("e) ourput af anchored_triplets",anchored_triplets(['A', 'F', 'B'], ['D', 'C', 'E']))
+  return list((left, right))
+print("e) ourput af anchored_triplets", anchored_triplets(['A', 'F', 'B'], ['D', 'C', 'E']) )
 ...
