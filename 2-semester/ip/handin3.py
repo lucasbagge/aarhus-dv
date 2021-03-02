@@ -7,17 +7,7 @@ This handin is done by (study ids and names of up to three students):
 
 Reflection upon solution:
     <
-    I denne aflevering har jeg kommet rundt omkring de forskellige tuples og
-    list comprehension vi har fået undervisning i.
-    I a) definerer jeg en string der generarer flere labels, hvor jeg brug `chr` til at give mig en string.
-    Den del af denne aflevering jeg er mest i tvivl om er b), hvor jeg har bruge en for løkke til at bytte rundt,
-    om tuplen. Der går noget galt da jeg skal kører den 3 gange får mit output er korrekt, så den kan forbedres.
-    I ophave c) bruger jeg hintet givet i opgave beskrive og skriver `x < y`, som sørger vi får det korrekte output.
-    De sidste to opgaver d og e bruger jeg næsten den samme metode, hvor jeg i d egentlig er mere restiktiv med min
-    definition, hvor jeg tilføjer y < z, mens i e undlader jeg den restriktion.
-    Nogle ting der kan forbedres er i opgave b, som jeg er i tvivl om vil blive godkent og så tænker jeg at
-    man kan kombinerer nogle af mine funktioner i hinanden.
-
+    Rettede koden til at fik lavede det til en liste i min anchored_triplet funktion.
     >
 """
 
