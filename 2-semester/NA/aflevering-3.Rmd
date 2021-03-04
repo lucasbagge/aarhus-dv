@@ -19,89 +19,213 @@ import matplotlib.pyplot as plt
 x = np.array([2.0, 5.0, 8.0, 10.0])
 y = np.array([35.0, 40., 50., 65.])
 fig, ax = plt.subplots()
-ax.plot(x, y, marker = 'o')
+ax.plot(x, y, 'r')
 plt.show()
 ```
 
 ### b)  Opstil et lineært ligningssystem for at p går igennem de sidste tre datapunkter. Løs ligningssystemet ved hjælp af elementære rækkeoperationer. Plot resultatet
 
+I den anden del af opgaven opstiller jeg mit koefficient matrict for systemet
+og benytter mid af Andrew python metodik til at løse systemet.
+
 
 ```{python}
-a = np.array([[5., 8., 10.],
-              [40., 50., 65.]])
-              
-a
+a = np.array([[1, 5, 25, 40],
+              [1, 8, 64, 50],
+              [1, 10, 100, 65]])
+```
 
+```{python}
 aub = a
 aub
 ```
 
+
 ```{python}
-aub[1, :] += (-8) * aub[0, :]
+aub[1, :] += (-1) * aub[0, :]
 aub
 ```
+
 ```{python}
-aub[0,:] *= 1/5
+aub[2, :] += (-1) * aub[0, :]
+aub
+```
+
+```{python}
+def switch_rows(A,i,j):
+    "Switch rows i and j in matrix A."
+    n = A.shape[0]
+    E = np.eye(n)
+    E[i,i] = 0
+    E[j,j] = 0
+    E[i,j] = 1
+    E[j,i] = 1
+    return E @ A
+```
+
+
+```{python}
+aub = switch_rows(aub, 1, 2)
 aub
 ```
 
 
 ```{python}
-aub[1,:] *= (-1/14)
+aub[1,:] *= 1/5
 aub
 ```
 
 ```{python}
-aub[0,:] += (-8/5 * aub[1,:])
+aub[2,:] += (-3 * aub[1,:])
 aub
 ```
-Vi har altså de følgende ligninger:
+
+```{python}
+aub[2,:] *= -1/6
+aub
+```
+
+```{python}
+aub[1,:] += - 15 * aub[2,:]
+aub
+```
+
+```{python}
+aub[0,:] += - 25 * aub[2,:]
+aub
+```
+
+```{python}
+aub[0,:] += - 5 * aub[1,:]
+aub.round(2)
+```
+
+Nu har vi ved hjælp af rækkeoperationer fået udregnet løsningerne til systemet.
+
 
 $$
-x = 28.57 \\
-y = 1.07
+a = 56.67 \\
+b = -7.5 \\
+c = 0.83
 $$
+Yderligere bliver vi bedt om at plotte ovenstående
 
 Laver efterfølgende plottet af de to optimale punkter.
 
 ```{python}
-x = np.array([1.07])
-y = np.array([28.57])
+x1 = np.linspace(2, 10, 100)
+y1 = 56.67 - 7.5 * x1 + 0.83 + x1 **2
 fig, ax = plt.subplots()
-ax.plot(x, y, marker = 'o')
+ax.plot(x1, y1, color = "blue")
+ax.plot(x, y, linestyle = '', marker = 'o', color = 'red')
 plt.show()
 ```
 
-### c) (c) Hvis man vil have et polynomium p(x) der går igennem alle 4 datapunkter, hvad er den mindst mulige grad for p? Bestem sådan et polynomium,
+### c) Hvis man vil have et polynomium p(x) der går igennem alle 4 datapunkter, hvad er den mindst mulige grad for p? Bestem sådan et polynomium, denne gang må I bruge np.linalg.solve(), og plot resultatet.
 
+For at udvælge den mindste mulige grad vælger jeg at tage 3. Dermed skal vi
+have et polynomium på formen:
 
-```{python}
-x = np.array([2.0, 5.0, 8.0, 10.0])
-y = np.array([35.0, 40., 50., 65.])
+$$
+p(x) = a + bx + cx^2 + dx^3
+$$
 
-x = np.array([5.0, 8.0, 10.0])
-y = np.array([40., 50., 65.])
-
-np.linalg.solve()
-
-A = np.array([[2.0, 5.0, 8.0, 10.0], [35.0, 40., 50., 65.]])
-B = np.array([0, 0, 0,0])
-X2 = np.linalg.solve(A[0],A[1])
-
-print(X2)
-```
+Nu skal jeg således definere mit koefficientmatrix, løsning og løse ligninssystemet,
+som vi må gøre med `np.linalg.solve`.
 
 ```{python}
-def anchored_triplets(A,B):
-  left = canonical_triplets(A,B)
-  right = canonical_triplets(B,A)
-  return list((left, right))
-print("e) ourput af anchored_triplets", anchored_triplets(['A', 'F', 'B'], ['D', 'C', 'E']) 
-)
+x2 = np.array([
+  [1, 2, 4, 8],
+  [1, 5, 25, 125],
+  [1, 8, 64, 512],
+  [1, 10, 100, 1000]
+])
+
+y2 = np.array([35, 40, 50, 65])[:, np.newaxis]
+
+np.linalg.solve(x2,y2)
 ```
+
+Dermed bliver mit polynomium:
+
+$$
+p(x) = 28.89 + 4.31x - 0.76x^2 + 0.07x^3
+$$
+
+Lad os som før også plotte dette:
+
 ```{python}
-test = anchored_triplets(['A', 'F', 'B'], ['D', 'C', 'E'])
-type(test)
+y2 = 28.89 + 4.3 * x1 - 0.75 * x1 ** 2 + 0.07 * x1 **3
+fig, ax = plt.subplots()
+#ax.plot(x1, y1, color = "black")
+ax.plot(x, y, linestyle = '', marker = 'o', color = 'red')
+x1 = np.linspace(2, 10, 100)
+ax.plot(x1, y2, color = 'green')
+plt.show()
 ```
 
 
+
+
+## d)
+
+ Opstil et lineært ligningssystem for en funktion
+
+$$
+f(x) = p_1(x), \ for \ 5. \ \le x\le 8.\\
+f(x) = p_2(x), \ for \ 8. \ \le x\le 5.
+$$
+
+hvor p1, p2 er andengradspolynomier således at
+
+i) p1 går igennem datapunkterne ved tid 5,0 og 8,0,
+
+ii) p2 går igennem datapunkterne ved tid 8,0 og 10,0, og
+
+iii) i tid 8,0 har p1 og p2 den samme hældning.
+
+Her til en start kan vi se at $p_1(x)$ og $p_2(x)$ skal begge gå igennem
+(8,55).
+
+Ud fra iii) har vi den sammen hældming som medføre
+
+$$
+p'_1(8) = b_1 +16c_1 \\
+=p'_2(8)=b_2+16c_2 \Longleftrightarrow \\
+b_1 + 16c_1 -b_2-16b_2=0
+
+$$
+
+Dermed bliver min udvidede koefficientmatrix:
+
+```{python}
+a = np.array([
+  [1, 5, 25, 0, 0, 0, 40],
+  [1, 8, 64, 0, 0, 0, 50],
+  [0, 0, 0, 1, 8, 64, 50],
+  [0, 0, 0, 1, 10, 100, 65],
+  [0, 1, 16, 0, -1, -16, 0]
+  ])
+a
+```
+
+## e)
+Vis a systemet har mere end en løsning.
+
+Her udføre vi række operationer så vi får løsning:
+
+```{python}
+a_solve = np.array([
+  [1, 0, 0, 0, 0, 80/3, 710/9],
+  [0, 1, 0, 0, 0, -26/3, -265/18],
+  [0, 0, 1, 0, 0, 2/3, 25/18],
+  [0, 0, 0, 1, 0, -80, -10],
+  [0, 0, 0, 0, 1, 18, 15/2]
+  ])
+a_solve.round(2)
+```
+
+Herfra kan vi se at der ikke er et pivotelement i søjle 7 og fra 6.4 medføre
+det at der er uendelig mange løsninger.
+
+## f) 

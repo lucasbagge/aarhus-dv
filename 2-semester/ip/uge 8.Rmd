@@ -371,24 +371,15 @@ def generate_triplets(T):
     
     left_labels, left_triplets = generate_triplets(left)
     right_labels, right_triplets = generate_triplets(right)
-   
-    left_labels = [item for sublist in left for item in sublist]
-    right_labels = [item for sublist in right for item in sublist]
     
     labels = left_labels + right_labels
-    triplets = [i for i in left_triplets] + [i for i in right_triplets]
+    triplets = left_triplets + right_triplets
     
     anchored_triplet = anchored_triplets(left_labels, right_labels)
-  
   return labels, triplets + anchored_triplet
 
 print("b) output: " ,generate_triplets(((('A','F'),'B'),('D',('C','E')))) )
 ```
-
-```{python}
-
-```
-
 
 ### c) Make a function triplet_distance(T1, T2) that computes the triplet distance between the trees T1 and T2.
 
@@ -399,112 +390,44 @@ should return 10.
 
 ```{python}
 def triplet_distance(T1, T2):
-  return n * (n - 1) * (n - 2) // 6 - commontriplets(T1, T2)
+  gen_T1 = generate_triplets(T1)
+  gen_T2 = generate_triplets(T2)
+  
+  n = len(gen_T1[0])
+  x = gen_T1[1]
+  y = gen_T2[1]
+  
+  intersec = len(set(x) & set(y))
+  
+  return (n * (n - 1) * (n - 2)) // 6 - intersec
+
+print("c) distance between trees: ",triplet_distance(((('A','F'),'B'),('D',('C','E'))), (((('D','A'),'B'),'F'),('C','E'))) )
 ```
 
 ### d) What is the order of the tree sizes you can handle with generate_tree and triplet_distance in reasonable time - say about 10 seconds? Tens, hundreds, thousands, millions... of leaves? Use the function generate_tree to generate random trees of increasing sizes and measure the time for generate_tree and triplet_distance separately.
 
+```{python}
+generate_tree(L)
+```
 
-
-# noter
 
 ```{python}
-import random
-def generate_tree(L):
-    # base case
-    if len(L) == 1:
-        return L[0]
-    split = random.randint(1, len(L)-1)
-    left = L[:split]
-    right = L[split:]
-    # recursion
-    return (generate_tree(left), generate_tree(right))
- 
-def pairs(n):
-  par = [(x,y) for x in n for y in n if x < y]
-  return par
+from time import time
+from matplotlib import pyplot as plt
+ns = range(10_0, 1_000_0, 10_0)
 
-print("c) output af pairs: ", pairs(['A', 'F', 'B']))
-
-L = ['A', 'B','C']
-L = ['A']
-L = ['A', 'F', 'B', 'D', 'C', 'E']
-test = generate_tree(L)  
-test
-
-test
-test_flat = flatten(test)
-test_flat
-
-len(test2)
-
-flatten(test)[:]
-[test_flat[i:i + 3] for i in range(len(test_flat) - 1)]
-[test_flat for test_flat in enumerate(test_flat)]
-[(x, y, x*y) for (x, y) in enumerate(test_flat)]
-
-
-# Example usage:
-from itertools import chain
-nested_list = [[1,2], [3,4]]
-nested_list = test
-my_unnested_list = list(chain(*nested_list))
-print(my_unnested_list)
---> [1, 2, 3, 4]
-
-## flatten list
-
-def flatten(xs):
-    result = []
-    if isinstance(xs, (list, tuple)):
-        for x in xs:
-            result.extend(flatten(x))
-    else:
-        result.append(xs)
-    return sorted(result)
-print (flatten((('A', 'F'), (('B', ('D', 'C')), 'E'))))
-
-def generate_triplets(A, B):
-  if isinstance(A, str):
-    print("Leaf")
-  else:
-   
-
-test2 = [(x,(y, z)) for x in test_flat for y in test_flat for z in test_flat if x != y and y < z and x == z]
-test2
-
-
-
-#Make a recursive function generate_triplets(T) that returns a pair (labels, triplets) where labels is a list of all leaf labels of T,
-# and triplets is a list of all canonical triplets anchored at some node of T.
-#Hint. Use isinstance(T, str) to check if T is a leaf.
-#Example: For the tree (a) in part I of this exercise generate_triplets(((('A','F'),'B'),('D',('C','E'))))
-# should return the following pair consisting of a list with the 6 leaf labels, and a list with the 20 canonical triplets anchored in the tree.
-
-L1 = ((('A','F'),'B'),('D',('C','E')))
-type(L1)
-len(L1)
-L1
-test_flat
-[test_flat[i:i + 2] for i in  in range(len(test_flat)-2)]
-
-[(test_flat[i:i + 1], test_flat[j:j + 1]) for i in range(len(test_flat) - 2) for j in range(len(test_flat) - 2)]
-
-canonical_triplets(L1[0], L1[1])
-
-flatten(L1)
-
-
-def canonical_triplets(A, B):
-  can = [(x, (y,z)) for x in A for y in B for z in B if y < z]
-  return can
-
-print("d) output af canonical_triplets: ", canonical_triplets(['A','D'], ['B','C']))
-
-def anchored_triplets(A,B):
-  left = canonical_triplets(A,B)
-  right = canonical_triplets(B,A)
-  return (left, right)
-print("e) ourput af anchored_triplets",anchored_triplets(['A','B'], ['B', 'C']))
+time_string = []
+time_list = []
+s = []
+for n in ns:
+  start = time()
+  for _ in range(n):
+    s += generate_tree("abc")
+  end = time()
+  time_list.append(end-start)
+print("number of tree created: ", len(s))
+plt.plot(ns, time_list)
+plt.show()
 ```
+
 
