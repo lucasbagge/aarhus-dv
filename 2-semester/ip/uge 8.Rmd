@@ -331,6 +331,8 @@ relabel(('a', ('b', 'c')), {'a': 'x', 'c': 'y'})
 ### a) Make a recursive function generate_tree(L), that given a list of labels L, returns a random binary tree where the list of leaf labels from left to right in the tree equals L.
 
 ```{python}
+from random import randint
+
 def generate_tree(L):
     # base case
     if len(L) == 1: 
@@ -350,6 +352,16 @@ Example: For the tree (a) in part I of this exercise generate_triplets(((('A','F
 
 
 ```{python}
+def canonical_triplets(A, B):
+  can = [(x, (y,z)) for x in A for y in B for z in B if y < z]
+  return can
+
+def anchored_triplets(A,B):
+  left = canonical_triplets(A,B)
+  right = left
+  right += canonical_triplets(B,A)
+  return list(( right))
+
 def generate_triplets(T):
   if isinstance(T, str):
     return [T], []
