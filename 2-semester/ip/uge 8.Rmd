@@ -352,22 +352,29 @@ Example: For the tree (a) in part I of this exercise generate_triplets(((('A','F
 ```{python}
 def generate_triplets(T):
   if isinstance(T, str):
-    return T[0]
+    return [T], []
   else:
+    left = T[0]
+    right = T[1]
     
-    first = T[:] 
-  return [(x,y) for x in n for y in n if x < y]
+    left_labels, left_triplets = generate_triplets(left)
+    right_labels, right_triplets = generate_triplets(right)
+   
+    left_labels = [item for sublist in left for item in sublist]
+    right_labels = [item for sublist in right for item in sublist]
+    
+    labels = left_labels + right_labels
+    triplets = [i for i in left_triplets] + [i for i in right_triplets]
+    
+    anchored_triplet = anchored_triplets(left_labels, right_labels)
+  
+  return labels, triplets + anchored_triplet
+
+print("b) output: " ,generate_triplets(((('A','F'),'B'),('D',('C','E')))) )
 ```
 
 ```{python}
-def relabel(tree, new_names):
-  if isinstance(tree, str):
-    if tree in new_names:
-      return new_names[tree]
-    else:
-      return tree
-  return (relabel(tree[0], new_names), relabel(tree[1], new_names))
-      
+
 ```
 
 
@@ -379,12 +386,8 @@ triplet_distance(((('A','F'),'B'),('D',('C','E'))), (((('D','A'),'B'),'F'),('C',
 should return 10.
 
 ```{python}
-
 def triplet_distance(T1, T2):
-  
-  
-
-triplet_distance(((('A','F'),'B'),('D',('C','E'))), (((('D','A'),'B'),'F'),('C','E'))
+  return n * (n - 1) * (n - 2) // 6 - commontriplets(T1, T2)
 ```
 
 ### d) What is the order of the tree sizes you can handle with generate_tree and triplet_distance in reasonable time - say about 10 seconds? Tens, hundreds, thousands, millions... of leaves? Use the function generate_tree to generate random trees of increasing sizes and measure the time for generate_tree and triplet_distance separately.
