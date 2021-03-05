@@ -1,6 +1,13 @@
 ---
-title: "aflevering 3"
-output: pdf_document
+title: "Aflevering 3"
+author: "Lucas Bagge"
+date: "2021-03-05"
+output:
+  pdf_document: default
+  word_document: default
+  html_document: default
+documentclass: article
+classoption: a4paper
 ---
 
 ```{r setup, include=FALSE}
@@ -15,6 +22,13 @@ import matplotlib.pyplot as plt
 
 ### a) Plot grafen svarende til de overstående datapunkter.
 
+Ud fra opgave beskrivelse får vi angiver nogle data punkter for en
+drone vi er ved at bygge.
+
+Data består af tid og temperatur for droen. 
+
+Her skal vi starte med at visualizer det.
+
 ```{python}
 x = np.array([2.0, 5.0, 8.0, 10.0])
 y = np.array([35.0, 40., 50., 65.])
@@ -22,6 +36,8 @@ fig, ax = plt.subplots()
 ax.plot(x, y, 'r')
 plt.show()
 ```
+
+I ovenstående plot ser vi vores datapunkter. 
 
 ### b)  Opstil et lineært ligningssystem for at p går igennem de sidste tre datapunkter. Løs ligningssystemet ved hjælp af elementære rækkeoperationer. Plot resultatet
 
@@ -50,6 +66,9 @@ aub
 aub[2, :] += (-1) * aub[0, :]
 aub
 ```
+
+For bytte rundt om rækkerne så laver jeg en funktionen `switch_rows` til 
+det formål.
 
 ```{python}
 def switch_rows(A,i,j):
@@ -121,6 +140,9 @@ ax.plot(x, y, linestyle = '', marker = 'o', color = 'red')
 plt.show()
 ```
 
+Jeg har løst lignignsystemet og lave ovenstående plot. Dog mistænker jeg der er 
+en fejl et eller andet sted, da polynomiet ikke ligger oven på punkterne.
+
 ### c) Hvis man vil have et polynomium p(x) der går igennem alle 4 datapunkter, hvad er den mindst mulige grad for p? Bestem sådan et polynomium, denne gang må I bruge np.linalg.solve(), og plot resultatet.
 
 For at udvælge den mindste mulige grad vælger jeg at tage 3. Dermed skal vi
@@ -157,24 +179,22 @@ Lad os som før også plotte dette:
 ```{python}
 y2 = 28.89 + 4.3 * x1 - 0.75 * x1 ** 2 + 0.07 * x1 **3
 fig, ax = plt.subplots()
-#ax.plot(x1, y1, color = "black")
+ax.plot(x1, y1, color = "black")
 ax.plot(x, y, linestyle = '', marker = 'o', color = 'red')
 x1 = np.linspace(2, 10, 100)
 ax.plot(x1, y2, color = 'green')
 plt.show()
 ```
+Her ser vi et meget bedre resultat end det forrig.
 
 
-
-
-## d)
-
- Opstil et lineært ligningssystem for en funktion
+## d) Opstil et lineært ligningssystem for en funktion
 
 $$
 f(x) = p_1(x), \ for \ 5. \ \le x\le 8.\\
 f(x) = p_2(x), \ for \ 8. \ \le x\le 5.
 $$
+
 
 hvor p1, p2 er andengradspolynomier således at
 
@@ -193,7 +213,6 @@ $$
 p'_1(8) = b_1 +16c_1 \\
 =p'_2(8)=b_2+16c_2 \Longleftrightarrow \\
 b_1 + 16c_1 -b_2-16b_2=0
-
 $$
 
 Dermed bliver min udvidede koefficientmatrix:
@@ -209,10 +228,9 @@ a = np.array([
 a
 ```
 
-## e)
-Vis a systemet har mere end en løsning.
+## e) Vis a systemet har mere end en løsning.
 
-Her udføre vi række operationer så vi får løsning:
+Her udfører vi række operationer så vi får løsningen:
 
 ```{python}
 a_solve = np.array([
@@ -228,4 +246,58 @@ a_solve.round(2)
 Herfra kan vi se at der ikke er et pivotelement i søjle 7 og fra 6.4 medføre
 det at der er uendelig mange løsninger.
 
-## f) 
+## f) Ved at sætte én betingelse på den afedede af p1 i 5,0, dan et system med
+en entydig løsning og plot den resulterende funktion f. Gør rede for jeres
+valg af betingelse på p1.
+
+$$
+p_1(x)=a+bx+cx^2
+$$
+
+$$
+p_1'(x)=b+2\cdot x
+$$
+$$
+p_1'(0)=b
+$$
+
+
+Så får jeg en ny system
+
+```{python}
+a_solve = np.array([
+  [1, 0, 0, 0, 0, 80/3, 710/9],
+  [0, 1, 0, 0, 0, -26/3, -265/18],
+  [0, 0, 1, 0, 0, 2/3, 25/18],
+  [0, 0, 0, 1, 0, -80, -10],
+  [0, 0, 0, 0, 1, 18, 15/2]
+  ])
+a_solve.round(2)
+```
+
+Her er jeg desværre gået i stå. Jeg prøvede at følge dit råd Simon, men
+fangede den ikke helt. Til matlab nået jeg ikke at blive hørt så skal 
+lige have nogle fif til genaflevering.
+
+## g) Hvilke af modellerne (b), (c) eller (f) vil I helst bruge for at estimere hvornår temperaturen passerer 55 C?
+
+Her i den sidste opgave skal vi samle vores modeller og udfra
+det vurdere hvilken model vi vil vælge. 
+
+```{python}
+# plot b i grøn, c i sort
+n = 2
+fig, ax = plt.subplots()
+ax.plot()
+
+x1 = np.linspace(2, 10, 100)
+ax.plot(x, y, linestyle = '', marker = 'o', color = 'red')
+ax.plot(x1, y1, color = "black")
+ax.plot(x1, y2, color = 'green')
+plt.axhline(y = 55, color = "blue", linestyle = "--")
+plt.show()
+```
+
+Her ser jeg at der er forskel i mine modeller for hvornår vi skærer i hvad.
+
+
