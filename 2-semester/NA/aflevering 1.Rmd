@@ -21,26 +21,39 @@ from matplotlib import pyplot as plt
 ```
 
 
-## a)
+## a) Vælg nogle rimelige værdier for indgangerne i a, b, c og d, og brug derefter
 
-Forneden har jeg valgt nogle tilfældige værdier og forsøgt at efterligne ovenstående plot.
+I den første del af opgave skal vi replikerer den angivet plot. Her opskriver
+jeg nogle x og y koordinater og ganger indgangene vektorerne; a, b, c og d.
 
 ```{python}
+a = 20.0
+b = 0.5
+c = 2.
+d = 4.5
 x = np.array([0, 1, 1.5, 1.56, 1.52])
 y = np.array([0, 3, 3.2, 2.2, 1.8])
 fig, ax = plt.subplots()
-ax.plot(x, y, marker = 'o')
+ax.plot(a*x + b*y, c*x + d*y, marker = 'o')
 plt.show()
 ```
 
-### b) Bestem vektoren altså bestem norm
+### b) Bestem vektoren $\bar OP$ ud fra a,b, c og d.
+
+Her benytter jeg af en angivet formel fra notesæt 2:
+
+$$
+|\bar OP|=r=\sqrt(x^2 + ý^2)
+$$
+
+```{python}
+np.sqrt(a**2+b**2+c**2+d**2)
+```
+
 
 Vi kan bruge numpy `np.linalg.norm` til dette formål
 
 ```{python}
-x_y = np.array([x,y])
-
-OP = np.linalg.norm(x_y)
 print("Længden er:", '%.3g' % OP )
 ```
 
