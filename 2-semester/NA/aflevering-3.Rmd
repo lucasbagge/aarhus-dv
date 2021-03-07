@@ -133,7 +133,7 @@ Laver efterfølgende plottet af de to optimale punkter.
 
 ```{python}
 x1 = np.linspace(2, 10, 100)
-y1 = 56.67 - 7.5 * x1 + 0.83 + x1 **2
+y1 = 56.67 - 7.5 * x1 + 0.83 * x1 **2
 fig, ax = plt.subplots()
 ax.plot(x1, y1, color = "blue")
 ax.plot(x, y, linestyle = '', marker = 'o', color = 'red')
@@ -258,8 +258,20 @@ $$
 p_1'(x)=b+2\cdot x
 $$
 $$
-p_1'(0)=b
+p_1'(2)=0
 $$
+Her ved får vi følgende løsning:
+
+```{python}
+a_solve = np.array([
+  [1, 0, 0, 0, 0, 80/3, 710/9],
+  [0, 1, 0, 0, 0, -26/3, -265/18],
+  [0, 0, 1, 0, 0, 2/3, 25/18],
+  [0, 0, 0, 1, 0, -80, -10],
+  [0, 0, 0, 0, 1, 18, 15/2]
+  ])
+a_solve.round(2)
+```
 
 
 Så får jeg en ny system
@@ -274,6 +286,23 @@ a_solve = np.array([
   ])
 a_solve.round(2)
 ```
+
+```{python}
+a = np.array([
+  [1, 5, 25, 0, 0, 0, 40],
+  [1, 8, 64, 0, 0, 0, 50],
+  [0, 0, 0, 1, 8, 64, 50],
+  [0, 0, 0, 1, 10, 100, 65],
+  [0, 0, 1, 10, 0, 0, 0]
+  ])
+
+b = np.array([
+  40, 50, 50, 65, 0
+])
+
+np.linalg.solve(a, b)
+```
+
 
 Her er jeg desværre gået i stå. Jeg prøvede at følge dit råd Simon, men
 fangede den ikke helt. Til matlab nået jeg ikke at blive hørt så skal 
@@ -298,6 +327,9 @@ plt.axhline(y = 55, color = "blue", linestyle = "--")
 plt.show()
 ```
 
-Her ser jeg at der er forskel i mine modeller for hvornår vi skærer i hvad.
+Her vil jeg vælge den model jeg har lavet i opagev b, da det fitter bedre til
+data. Der kan dog være et problem at vi overfitter til vores data. At overfitte
+er et begreb vi kommer ind på i forhold til kurset Machine Learning and
+Statistical Learning. 
 
 

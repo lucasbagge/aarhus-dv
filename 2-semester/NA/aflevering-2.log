@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.21 (TeX Live 2020) (preloaded format=pdflatex 2021.2.24)  1 MAR 2021 22:22
+This is pdfTeX, Version 3.14159265-2.6-1.40.21 (TeX Live 2020) (preloaded format=pdflatex 2021.2.24)  7 MAR 2021 21:33
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -517,7 +517,7 @@ File: aflevering-2_files/figure-latex/unnamed-chunk-7-1.pdf Graphic file (type
 pdf)
 <use aflevering-2_files/figure-latex/unnamed-chunk-7-1.pdf>
 Package pdftex.def Info: aflevering-2_files/figure-latex/unnamed-chunk-7-1.pdf 
- used on input line 244.
+ used on input line 247.
 (pdftex.def)             Requested size: 469.75386pt x 325.2142pt.
 [4 <./aflevering-2_files/figure-latex/unnamed-chunk-6-1.pdf>] [5 <./aflevering-
 2_files/figure-latex/unnamed-chunk-7-1.pdf>] (./aflevering-2.aux)
@@ -545,9 +545,9 @@ ucasbagge/Library/TinyTeX/texmf-dist/fonts/type1/public/lm/lmr7.pfb></Users/luc
 asbagge/Library/TinyTeX/texmf-dist/fonts/type1/public/lm/lmsy10.pfb></Users/luc
 asbagge/Library/TinyTeX/texmf-dist/fonts/type1/public/lm/lmtk10.pfb></Users/luc
 asbagge/Library/TinyTeX/texmf-dist/fonts/type1/public/lm/lmtt10.pfb>
-Output written on aflevering-2.pdf (5 pages, 171361 bytes).
+Output written on aflevering-2.pdf (5 pages, 171990 bytes).
 PDF statistics:
- 163 PDF objects out of 1000 (max. 8388607)
+ 165 PDF objects out of 1000 (max. 8388607)
  107 compressed objects within 2 object streams
  16 named destinations out of 1000 (max. 500000)
  61 words of extra memory for PDF output out of 10000 (max. 10000000)

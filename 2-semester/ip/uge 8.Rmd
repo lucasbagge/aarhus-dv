@@ -430,4 +430,39 @@ plt.plot(ns, time_list)
 plt.show()
 ```
 
+```{python}
+import time
+starttime = time.time()
+while True:
+    print "tick"
+    time.sleep(60.0 - ((time.time() - starttime) % 60.0))
+```
+
+```{python}
+import time
+L = ['A', 'B', 'C', 'D', 'E', 'F']
+L
+
+L_g = generate_tree(L)
+L_g
+type(L_g)
+
+
+
+save = []
+for job in L:
+  job = ["j"]
+  L.extend(job)
+  save = generate_tree(job)
+  #time.sleep(1)
+```
+
+```{python}
+[x for x in L]
+```
+
+```{python}
+for i in range(10):
+  L.extend("i")
+```
 

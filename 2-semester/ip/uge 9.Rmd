@@ -1,0 +1,253 @@
+---
+title: "Untitled"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(reticulate)
+```
+
+# Recursion and iteration
+
+- Det er eksempler på recursioner og ting vi har gennemgået.
+
+- Se på 52 card deck. Ser på algoritmer for at sorter dem
+
+- Det kaldes selection sort.
+- Problem vi bruger min og løber hele listen igennem. 
+- min og remove bruger meget tid. Så den tager |L|^2 af listen og ikke
+  effektiv. 
+
+```{python}
+def selection_sort(L):
+  unsorted = L[:]
+  result = []
+  
+  while unsorted:
+    e = min(unsorted) 
+    unsortd.remove(e)
+    result.append(e)
+    
+  return result
+print("test: ", )
+```
+
+- Anden måde er **merge sort**.
+- Splitter op i to bunker **left** og **rigth**. Bruger recursiv til at sortere bunker.
+- Herefter merge vi left og right. 
+- Det er sværest at flette to lister
+
+```{python}
+def merge_sort(L):
+  n = len(L)
+  if n <= L:
+    return L[:]
+  mid = n//2
+  left,right = L[:mid], L[mid:]
+  return merge(merge_sort(left), merge_sort(right))
+```
+
+```{python}
+def merge(A,B):
+  n = len(A) + len(B)
+  C = n * [None]
+  a,b = 0,0
+  for c in range(n):
+    if a < len(A) and (b==len(B) or A[a] < B[b]):
+      C[c] = A[a]
+      a = a + 1
+    else:
+      C[c] = B[b]
+      b = b + 1
+  return C
+```
+
+
+- Hvornår trækker vi fra A. 
+
+- man kan også have merge iterative
+
+```{python}
+def merge_sort_iterative(L):
+  Q = [[x] for x in L]
+  while len(Q) > 1:
+    Q.insert(0, merge(Q.pop(), Q.pop()))
+  return Q[0]
+
+merge_sort_iterative([7,1,9,3,-2,5])
+```
+
+```{python}
+from collections import deque
+```
+
+
+```{python}
+def merge_sort_deque(L):
+  Q = deque([[x] for x in L])
+  while len(Q) > 1:
+    Q.appendleft(merge(Q.pop(), Q.pop()))
+  return Q[0]
+```
+
+
+- VI har også qicksort
+
+```{python}
+import random
+```
+
+```{python}
+def quicksort(L):
+  if len(L) <= 1:
+    return L[:]
+  
+  idx = random.randint(0, len(L) - 1)
+  pivot = L[idx]
+  orther = L[:idx] + L[idx + 1:]
+  
+  small = [e for e in other if e < pivot]
+  large = [e for e in other if e >= pivot]
+  
+  return quicksort(small) + [pivot] + quicksort(large)
+```
+
+- man har fundert ud af i java med quick sort med to elementer, så får man
+  noget der er hurtigere i praktisk.
+  
+- Der er også metoden **greatest common divisor (GCD)**, hvor X pil op y betegner
+  y kan deles med x.
+- gcd(m,n) er max{x | x pil op m og x pil op n}
+
+```{python}
+def gcd(m,n):
+  if m == n:
+    return m
+  elif m > n:
+    return gcd(m - n,n)
+  else:
+    return gcd(m,n -m)
+```
+
+```{python}
+def gcd(m,n):
+  if n == 0:
+    return m
+  else:
+    return gcd(n,m % n)
+```
+
+```{python}
+def gcd(m,n):
+  return m if n == n else gcd(n, m % n)
+```
+
+```{python}
+def gcd(m,n):
+  while m != n:
+    if n >m:
+      n=n-m
+    else:
+      m = m-n
+  return m
+```
+
+```{python}
+def gcd(m,n):
+  while n !=0:
+    m,n = n,m %n
+  return m
+
+# effetkvi løsning
+```
+
+- **permutation** man laver en liste
+
+```{python}
+def permutations(L):
+  if len(L) == 0:
+    return [L[:]]
+  else:
+    P = permutations(L[1:])
+    return [p[:i] + L[:1] + p[i:] for p in P for i in range(len(L))]
+```
+
+```{python}
+
+```
+
+
+
+```{python}
+permutations(('a', 'b', 'c'))
+```
+
+- **maze solver** bruges til at finde veje i en labriant. 
+- Afgør om vi kan finde vejen fra A til B. 
+
+```{python}
+# recursion
+
+def explore(i,j):
+  global solution, visited
+  if (0 <= i < n and 0 <= < m and maze[i][j] != "#" and not visited[i][j]):
+    
+    visited[i][j] = True
+    if maze[i][j] == "B":
+      solution True
+      
+    explore(i-1,j)
+    explore(i+1,j)
+    explore(i,j-1)
+    explore(i,j+1)
+```
+
+
+# Functions as objects lambda
+
+- aliasing functions, hvor man definere nogle hjælpe funktioner.
+- Funktioner kan også bruges som en værdi. 
+- vi ser på at noget kalder navne hvor man har defineret en funktion i en 
+  funktion. Det kaldes **namespaces**. 
+  
+- Der er en funktion map, som arbejder med map.
+- sorted har et nøgle ord hvor man kan angive hvor man sorter efter. 
+- vi har også filter som en mindre data.
+- reduce hedder foldI på andre sprog. man anvender en fuktione gentagende gang
+  fra højre til vendsre, vi kan også kavet det fra højre tl venstre.
+- lambda kaldes også anonymouse funktioner. 
+
+```{python}
+# simple funktioner
+f = lambda x, y : x + y
+f(2,3)
+```
+
+```{python}
+list(filter(lambda x: x % 2, range(10) ))
+```
+
+- Funktionen for oven vi løber tallene igennem og finder dem som er ulige, 
+  så vi bruger filter og piller alle lige al ud. 
+- Lambda er god når vi skal bruge simple funktioner.
+
+- vi har også min og max funktioner. 
+- lambda er opfundere af alonzo church i 1930.
+- Har være i python siden 1994. 
+
+- går igennem et polynomial eksempel. 
+- * og ** kan bruges til at sample funktions kald til at sende videre til andre
+  funktioner. 
+
+## Namespace
+
+- er rummet for de funktioner vi kalder og variabler. 
+
+## partial
+
+- man binder argumenter til en fast værdi. 
+- Det kan vi gøre flere gange.
+- Her ser vi partial tager en funktion som sit første argument. 
+- 
+
