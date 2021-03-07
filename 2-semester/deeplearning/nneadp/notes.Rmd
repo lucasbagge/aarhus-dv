@@ -10,7 +10,55 @@ knitr::opts_chunk$set(echo = TRUE)
 
 # Week 1
 
-# Week 2
+## What is neaurel network
+
+- Ser på housing prediction. 
+- Linear regression kan ses som et simpel nne. 
+- **neuron** er binde led mellem input og output, som indeholder viden om
+    forholdet mellem de to. 
+- Relu: recitified linear unit
+- Hvis vi tilføjer flere features, såsom størrelse, bedrooms også videre,
+så vil der være flere input. Hvor input kan være forbundet til et neuron. 
+- Hver hidden layer indholder en del af x. 
+
+## SUpervised learning with nne.
+
+- Her har vi input, output en applikation. 
+
+## Why is deep learning taking off
+
+- Grundet digitalisere er der kommer meget mere data, som gør nne gør det 
+bedre. 
+- Desuden er de stærkere computer kræfter en stor del af det. 
+- Der er sket et skift fra sigmoud til relu funktioner som en aktivition fkt. 
+- Han forklarer at med en nne model starter det med en ide, kode og eksperimentere.
+da tingene er hurtigere i dag så vil vi hurtigere kunne bevæge os i en cirkel og
+forbedre vores ideer. 
+
+## http://ww1.prweb.com/prfiles/2019/06/10/16367838/MRFC-goldnotext.png
+
+- se senere
+
+
+
+# Week 2 logistic regression
+
+## Binary Classification
+
+- Vi kommer til at se på backprogation and forward progation. 
+- Logitstic regression. 
+- Et eksempel er med katte og hvordan billedes måles i pixel. 
+- enkelt træning (x,y). x er en x dimensional matrix og y er 0 eller 1. 
+- m træning example. ${x^1,y^1}$
+- der er m train og m test. 
+- VI vil aggerere til X hvor hver lille x er en traning example. 
+- Her kommer vi til at burge shape meget i python. 
+- Det er også bedre at have X og Y i kolonner. 
+- Yshape(1,m).
+- Se siden for en notation guide.
+
+## Logistic regression
+
 
 # Week 3
 
