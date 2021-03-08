@@ -260,58 +260,40 @@ $$
 $$
 p_1'(2)=0
 $$
-Her ved får vi følgende løsning:
-
-```{python}
-a_solve = np.array([
-  [1, 0, 0, 0, 0, 80/3, 710/9],
-  [0, 1, 0, 0, 0, -26/3, -265/18],
-  [0, 0, 1, 0, 0, 2/3, 25/18],
-  [0, 0, 0, 1, 0, -80, -10],
-  [0, 0, 0, 0, 1, 18, 15/2]
-  ])
-a_solve.round(2)
-```
+Her ved får vi følgende system
 
 
-Så får jeg en ny system
-
-```{python}
-a_solve = np.array([
-  [1, 0, 0, 0, 0, 80/3, 710/9],
-  [0, 1, 0, 0, 0, -26/3, -265/18],
-  [0, 0, 1, 0, 0, 2/3, 25/18],
-  [0, 0, 0, 1, 0, -80, -10],
-  [0, 0, 0, 0, 1, 18, 15/2]
-  ])
-a_solve.round(2)
-```
+Så får jeg en nyt system som jeg også løser:
 
 ```{python}
 a = np.array([
-  [1, 5, 25, 0, 0, 0, 40],
-  [1, 8, 64, 0, 0, 0, 50],
-  [0, 0, 0, 1, 8, 64, 50],
-  [0, 0, 0, 1, 10, 100, 65],
-  [0, 0, 1, 10, 0, 0, 0]
+  [1, 5, 25, 0, 0, 0],
+  [1, 8, 64, 0, 0, 0],
+  [0, 0, 0, 1, 8, 64],
+  [0, 0, 0, 1, 10, 100],
+  [0, 1, 16, 0, -1, -16],
+  [0, 1, 10, 0, 0, 0]
   ])
-
-b = np.array([
-  40, 50, 50, 65, 0
-])
-
-np.linalg.solve(a, b)
+b = np.array([40,50,50,65,0,2])[:, np.newaxis]
 ```
 
+Ved at løse systemet får vi den entydig løsning:
 
-Her er jeg desværre gået i stå. Jeg prøvede at følge dit råd Simon, men
-fangede den ikke helt. Til matlab nået jeg ikke at blive hørt så skal 
-lige have nogle fif til genaflevering.
+```{python}
+np.linalg.solve(a,b)
+```
+
+Her for oven har vi valgt betingelsen p'(2)=0. Det har jeg gjort ved en
+snak med Simon. 
 
 ## g) Hvilke af modellerne (b), (c) eller (f) vil I helst bruge for at estimere hvornår temperaturen passerer 55 C?
 
 Her i den sidste opgave skal vi samle vores modeller og udfra
 det vurdere hvilken model vi vil vælge. 
+
+$$
+p(x) = 28.89 + 4.31x - 0.76x^2 + 0.07x^3
+$$
 
 ```{python}
 # plot b i grøn, c i sort

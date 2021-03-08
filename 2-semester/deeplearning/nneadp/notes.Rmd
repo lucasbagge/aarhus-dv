@@ -59,6 +59,45 @@ forbedre vores ideer.
 
 ## Logistic regression
 
+- HAr binær udkom og vi kan bruge det til klassifikation. 
+
+## Logistic Regression Cost Function
+
+- cost funktionen er sigmoid funktionen. 
+- vi har supercript (i) som er opløftet.
+- loss error funktion: vi definer en loss funktion. I logistisk er det non konvex.
+  Denne funktion bruges til at måle output.
+- Cost funktionen måler hvordan vi klare os på hele trænings data.
+
+$$
+I(w,b) = \frac{1}{m} \sum^m_{i=i}L(\hat y^{(i), u^{(i)}})
+$$
+- loss funktionen bruges på en træning, mens cost bruges på alle. 
+- Den kan ses som et neural network. 
+
+## Gradient Descent
+
+- En algoritme bruges til at træne parameter i logistisk regression.
+- Vi skal finde w, b som min $J(w,b$. 
+- Vi differentiere indtli vi når min. 
+
+## Derivatiees
+
+- Gennemgår noget du allerede ved.
+
+## Computation graph
+
+- Vi ser på en computation graph.
+- Ser på et mere simpel eksempel end logistisk regression. 
+- Vi har J(a,b,c). 
+- Den er god når vi har en speciel output variable som vi vil optimerer.
+- Det er i det logistiske tilfælde vores cost funktion. 
+- Vi opsamler beregnignerne.
+
+## Derivatives with a Computation Graph
+
+- 
+
 
 # Week 3
 

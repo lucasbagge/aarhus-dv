@@ -1,0 +1,185 @@
+---
+title: "Untitled"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(reticulate)
+```
+
+# Opgave 5.1. Lad a være en ndarray med to akser. Forklar hvad de følgende operationer gøre ved a:
+
+```{python}
+import numpy as np
+```
+
+
+## (a) a[0, [1,3,4,6]] = 1
+
+
+```{python}
+a = np.array([
+  [1,2,3,4,5,6],
+  [4,3,6,2,6,8],
+  [1,2,3,4,5,5]
+])
+a
+```
+
+
+
+## (b) a[[1,2], [2,3]] = np.array([0,1])
+
+```{python}
+a[[1,2], [2,3]] = np.array([0,1])
+a
+```
+
+den giver de pladser i a nogle nye værdier.
+
+## (c) a[:, [3,1]] = a[:, [1,3]]
+
+```{python}
+a[:, [3,1]] = a[:, [1,3]]
+```
+
+```{python}
+a
+```
+
+Bytter rundt på værdierne.
+
+## (d) a[2:5, 0] = np.array([0, 1, 2])
+
+```{python}
+a.ndim  
+
+np.array([0, 1, 2])
+```
+
+
+## (e) a[2, 3:8:2] += 6
+
+pluser med 6
+
+```{python}
+a[2, 3:8:2] += 6
+a
+```
+
+# Opgave 5.2. Tre klodser af brede 5 cm er forbundne med fjeder som i diagrammet.
+
+Fjederen 𝐴 har naturlig længde 10 cm og fjederkonstant 20 N/m, 𝐵 har naturlig længde 20 cm og fjederkonstant 10 N/m, 𝐶 har naturlig længde 20 cm
+og fjederkonstant 5 N/m og 𝐷 har naturlig længde 10 cm og fjederkonstant
+30 N/m. Hookes lov siger at kræften fjederen yder er fjederkonstanten ganget
+med afvigelsen fra den naturlige længde. Systemet er i stilstand, så kræfterne
+opvejer hinanden i hver klods. Der er 90 cm mellem de to endevægge.
+Opstil et lineært ligningssystem for 𝑥-koordinaterne af centrum af hver
+klods, og løs systemet.
+
+A      | B      | C      | D
+10 cm  | 20 cm  | 20 cm  | 10 cm
+20 N/m | 10 N/m | 5  N/m | 30 N/m
+
+
+# Opgave 5.3. Brug metoden fra det sidste afsnit af Notesæt 7 til at beregne den
+inverse til matricen
+
+```{python}
+a = np.array([
+  [1, 2, 2],
+  [2, 1, -1],
+  [-1, 2, 1]
+])
+a
+```
+
+via rækkeoperationer. Hvor mange ops har du brugt? Forsøg at reducere
+antallet af ops.
+
+```{python}
+def switch_rows(A,i,j):
+    "Switch rows i and j in matrix A."
+    n = A.shape[0]
+    E = np.eye(n)
+    E[i,i] = 0
+    E[j,j] = 0
+    E[i,j] = 1
+    E[j,i] = 1
+    return E @ A
+```
+
+
+```{python}
+ab = np.array([
+  [1, 2, 2, 1, 0, 0],
+  [2, 1, -1, 0, 1, 0],
+  [-1, 2, 1, 0, 0, 1]
+])
+ab[2, :] += ab[0, :]
+ab[1, :] += -2*ab[0, :]
+ab = switch_rows(ab, 1, 2)
+ab[1, :] +=  ab[2, :]
+ab[0, :] += -2*ab[1, :]
+ab[2, :] += 3 * ab[1, :]
+ab[2, :] *= 1/11
+ab[1, :] += (-2) * ab[2, :]
+ab[0, :] += 6 * ab[2, :]
+ab[2, :] *= -1
+ab.round(2)
+```
+
+Som er løsningen ud fra den metode der er blevet vist.
+
+Jeg bruger 10 flops.
+
+# Opgave 5.4. 
+
+## (a) Lad 𝐴 = 𝑢𝑣𝑇 med 𝑢 = (1, −1, 2) og 𝑣 = (1, 2, −1, −2). Hvor
+mange pivotelementer er der i echelonformen for 𝐴?
+
+```{python}
+u = np.array([[1, -1, 2]])
+u
+v = np.array([
+  [1, 2, -1, -2]
+])
+A = u * v.T
+A
+```
+
+## (b)  Hvis 𝐵 = 𝑢𝑣𝑇 med 𝑢 ∈ ℝ𝑚 og 𝑣 ∈ ℝ𝑛
+vilkårlige, hvor mange pivotelementer kan der være i echelonformen for 𝐵?
+
+## (c) For𝐶 = 𝑢𝑣𝑇 +𝑤𝑥𝑇
+, 𝑢, 𝑤 ∈ ℝ3
+, 𝑣, 𝑥 ∈ ℝ4
+, afgør hvor mange pivotelementer
+echelonformen af 𝐶 kan have. Giv betingelser på 𝑢, 𝑣, 𝑤, 𝑥, der sikre at
+der er præcis 2 pivotelementer.
+
+# Opgave 5.5. Betragt
+
+Bestem afstanden af punktet (0, 1) fra hver af disse linjer.
+
+# Opgave 5.6. Lad v0, v1, v2, v3, v4 være funktionerne 1, sin(𝑥), cos(𝑥), sin(2𝑥)
+og cos(2𝑥) evalueret på 100 punkter jævnt fordelt over intervallet [0, 2𝜋], så
+disse kan betragtes som vektorer i ℝ100.
+
+## (a) Bekræft at v0, v1, v2, v3, v4 er næsten ortogonal, ved at beregne cos 𝜃 for
+vinklerne 𝜃 mellem de forskellige vektorer. Plot funktionerne.
+
+## (b) Lad u være vektoren i ℝ100, som dannes ved at evaluere funktionen 𝑥
+2 på de samme 100 punkter. Bestem projektionen af u langs samlingen v0, v1,
+v2, v3, v4 og plot resultatet. Hvad er den maksimale afvigelse mellem u
+og dens projektion?
+
+## (c) Tilføj to ekstra vektorer v5, v6 svarende til funktionerne sin(3𝑥) og
+cos(3𝑥). Find og plot den nye tilnærmelse til 𝑥
+2 via projektion af u langs
+samlingen v0,...,v6.
+
+## (d) Prøv at lave tilsvarende approksimationer til funktionen
+
+## (e) Kan du forklar hvorfor v0,...,v6 er næsten ortogonale?

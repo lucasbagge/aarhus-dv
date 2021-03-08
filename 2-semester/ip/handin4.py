@@ -87,18 +87,23 @@ def triplet_distance(T1, T2):
 print("c) distance between trees: ",triplet_distance(((('A','F'),'B'),('D',('C','E'))), (((('D','A'),'B'),'F'),('C','E'))) )
 
 # d) 
-ns = range(10_0, 1_000_0, 10_0)
-time_string = []
-time_list = []
-s = []
 
-for n in ns:
-  start = time()
-  for _ in range(n):
-    s += generate_tree("abc")
-  end = time()
-  time_list.append(end-start)
-print("number of tree created: ", len(s))
-plt.plot(ns, time_list)
-plt.show()
+def generate_labels(n):
+  letters = [chr(x) for x in range(ord('A'), ord('A') + n)]
+  return letters
+
+import time
+
+slut_tid=0
+i = 5
+while slut_tid <= 0.1:
+    start_tid = time.time()
+    generate_tree(generate_labels(i))
+    slut_tid = time.time() - start_tid
+    i += 5
+print("Antal træer: ", i, "og det tog", round(slut_tid, 4), "sek." )
+
+# Beregn længdens
+triplet_distance(test[0], test[1])
+
 ...

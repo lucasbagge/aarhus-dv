@@ -410,32 +410,22 @@ print("c) distance between trees: ",triplet_distance(((('A','F'),'B'),('D',('C',
 generate_tree(L)
 ```
 
-
 ```{python}
-from time import time
-from matplotlib import pyplot as plt
-ns = range(10_0, 1_000_0, 10_0)
-
-time_string = []
-time_list = []
-s = []
-for n in ns:
-  start = time()
-  for _ in range(n):
-    s += generate_tree("abc")
-  end = time()
-  time_list.append(end-start)
-print("number of tree created: ", len(s))
-plt.plot(ns, time_list)
-plt.show()
+def generate_labels(n):
+  letters = [chr(x) for x in range(ord('A'), ord('A') + n)]
+  return letters
 ```
+
 
 ```{python}
 import time
-starttime = time.time()
-while True:
-    print "tick"
-    time.sleep(60.0 - ((time.time() - starttime) % 60.0))
+slut_tid=0
+i = 50
+while slut_tid <= 5:
+    start_tid = time.time()
+    generate_tree(generate_labels(i))
+    slut_tid = time.time() - start_tid
+    i += 50
 ```
 
 ```{python}
