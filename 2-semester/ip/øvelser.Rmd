@@ -8,6 +8,55 @@ knitr::opts_chunk$set(echo = TRUE)
 library(reticulate)
 ```
 
+```{python}
+import numpy as np
+
+N = int(input("Antal dronninger der skal løses: \n"))
+N = 4
+grid = np.zeros([N,N],dtype=int)
+grid=grid.tolist()
+print("Går fra grid til list: " ,grid)
+
+def possible(grid,y,x): #is it possible to place a queen into y,x?
+
+    l=len(grid) #how big is our grid?
+    #print("Længden på vores problemet ", l)
+    
+    for i in range(l): #check for queens on row y
+        if grid[y][i]==1: #if exist return false
+            return False
+    for i in range(l):  #check for queens on column x
+        if grid[i][x]==1: #if exists return 0
+            return False
+        
+    for i in range(l): #loop through all rows
+        for j in range(l): #and columns
+            if grid[i][j]==1: #if there is a queen
+                if abs(i - y) == abs(j - x): #and if there is another on a diagonal
+                    return False #return false
+    return True #if every check clears, we can return true
+
+def solve(grid):
+    
+    l=len(grid) #length of our grid  
+    
+    for y in range(l): #for every row
+        for x in range(l): #for every column
+            if grid[y][x]==0: # we can place if there is no queen in given position
+                if possible(grid,y,x): #if empty, check if we can place a queen
+                    grid[y][x]=1 #if we can, then place it
+                    solve(grid) #pass grid for recursive solution
+                    #if we end up here, means we searched through all children branches
+                    if sum(sum(a) for a in grid)==l: #if there are 8 queens
+                        return grid #we are successful so return
+                    grid[y][x]=0 #remove the previous placed queen
+
+
+    return grid #means we searched the space, we can return our result
+```
+
+
+
 # Lecture 9 [Recursion and iteration]
 
 ## Exercise 9.1 (bitonic minimum)
@@ -98,3 +147,54 @@ L3[0][0] = 7
 print(f'{L1=} {L2=} {L3=}')
 should print
 L1=[[1], [1], [[...]]] L2=[[1], [2], [3]] L3=[[7], [7], [[...]]]
+
+
+# Afleveringer
+
+## Aflevering 5 
+
+```{python}
+print ("Enter the number of queens")
+N = int(input())
+
+#chessboard
+#NxN matrix with all elements 0
+board = [[0]*N for _ in range(N)]
+
+def is_attack(i, j):
+    #checking if there is a queen in row or column
+    for k in range(0,N):
+        if board[i][k]==1 or board[k][j]==1:
+            return True
+    #checking diagonals
+    for k in range(0,N):
+        for l in range(0,N):
+            if (k+l==i+j) or (k-l==i-j):
+                if board[k][l]==1:
+                    return True
+    return False
+
+def N_queen(n):
+    #if n is 0, solution found
+    if n==0:
+        return True
+    for i in range(0,N):
+        for j in range(0,N):
+            '''checking if we can place a queen here or not
+            queen will not be placed if the place is being attacked
+            or already occupied'''
+            if (not(is_attack(i,j))) and (board[i][j]!=1):
+                board[i][j] = 1
+                #recursion
+                #wether we can put the next queen with this arrangment or not
+                if N_queen(n-1)==True:
+                    return True
+                board[i][j] = 0
+
+    return False
+
+N_queen(N)
+for i in board:
+    print (i)
+```
+

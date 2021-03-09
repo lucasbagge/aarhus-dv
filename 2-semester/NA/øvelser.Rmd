@@ -58,8 +58,12 @@ a.ndim
 np.array([0, 1, 2])
 ```
 
+i række 2, 3 og 4 sætter den væriden 0, 1 og 2. 
 
 ## (e) a[2, 3:8:2] += 6
+
+
+
 
 pluser med 6
 
@@ -81,6 +85,32 @@ klods, og løs systemet.
 A      | B      | C      | D
 10 cm  | 20 cm  | 20 cm  | 10 cm
 20 N/m | 10 N/m | 5  N/m | 30 N/m
+
+Ser systemet og så skal det give lidt mening.
+
+Ser på længden af fjerderne.
+
+200 -2x = F
+20(10-x) = F
+
+kraften skal være ens for alle derfor ha vi 1 i en kolonne.
+
+vi har 20 cm til at strte med
+
+200-10y=F
+10(20-y)=F
+
+centrum af første fjerder
+
+dem der er 1 og 0 er vorea kraft m. 
+
+
+
+```{python}
+aub = np.array([
+  [20,0,0,0,1]
+])
+```
 
 
 # Opgave 5.3. Brug metoden fra det sidste afsnit af Notesæt 7 til at beregne den
@@ -134,6 +164,15 @@ Som er løsningen ud fra den metode der er blevet vist.
 
 Jeg bruger 10 flops.
 
+det mindste er vi enten skaler en række eller trækker til og fra i en række.
+
+flobs angiver hver enkelt skift i indgangene. Når vi gange noget på så koster
+det også endnu flere flobs på.
+
+Huns får i alt 78 flobs. 
+
+Hvis vi lægger 0 til så er det også en flob. Alt der har et +-* har en flob
+
 # Opgave 5.4. 
 
 ## (a) Lad 𝐴 = 𝑢𝑣𝑇 med 𝑢 = (1, −1, 2) og 𝑣 = (1, 2, −1, −2). Hvor
@@ -149,8 +188,17 @@ A = u * v.T
 A
 ```
 
+ydre produkt så de bliver 3 x 4 matrice. Der skal kun være en enkelt.
+
+
+
 ## (b)  Hvis 𝐵 = 𝑢𝑣𝑇 med 𝑢 ∈ ℝ𝑚 og 𝑣 ∈ ℝ𝑛
 vilkårlige, hvor mange pivotelementer kan der være i echelonformen for 𝐵?
+
+vi vil have et maksimum. 
+Der kan være maks være min(n,m). 
+Vi har et ydre produkt og det er at gange en skalar på en vektor. Hver række er en skalering af hver tal. Vi vil altid kunne gange rækker på og trække dem fra. Ydre produkt vi skaler samme produkt. 
+Vi får der vil altid være en pivot tal.
 
 ## (c) For𝐶 = 𝑢𝑣𝑇 +𝑤𝑥𝑇
 , 𝑢, 𝑤 ∈ ℝ3
@@ -159,9 +207,20 @@ vilkårlige, hvor mange pivotelementer kan der være i echelonformen for 𝐵?
 echelonformen af 𝐶 kan have. Giv betingelser på 𝑢, 𝑣, 𝑤, 𝑥, der sikre at
 der er præcis 2 pivotelementer.
 
+
+Alt skal så fjernes. Hun ganger med en brøk
+
+hvis v1 er en skalar af x1. 
+
+
+
 # Opgave 5.5. Betragt
 
 Bestem afstanden af punktet (0, 1) fra hver af disse linjer.
+
+For hver ende punkter har vi koordinater. Vi vil bestemme afstanden. Det kan vi
+gøre for projektion og afstanden mellem vektor og projektionen. 
+Finder først vektor (-2,2) til (-1,1) og så ud til punktet. 
 
 # Opgave 5.6. Lad v0, v1, v2, v3, v4 være funktionerne 1, sin(𝑥), cos(𝑥), sin(2𝑥)
 og cos(2𝑥) evalueret på 100 punkter jævnt fordelt over intervallet [0, 2𝜋], så
