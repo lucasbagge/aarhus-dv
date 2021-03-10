@@ -8,8 +8,13 @@ This handin is done by (study ids and names of up to three students):
 Reflection upon solution:
 
     <
+    I denne opgave har jeg lavet to funktioner; possible og solve.
+    Possible checker for hver række og kolonne om der er en løsning.
+    solve løser problemet ved at kigge i hver række, kolonne og diagonal om
+    der er en dronning i forvejen.
+    Med en opfordring fra sidste aflevering har jeg tilføjet noter undervejs 
+    i koden, så det gør det letter at se hvad der sker undervejs. 
     En ulempe er at løsningen er langsom.
-
     >
 """
 
@@ -46,8 +51,6 @@ def solve(chessboard):
                     if sum(sum(a) for a in chessboard) == l: # Check om vi har nået alle mulige løsninger.
                         return chessboard 
                     chessboard[row][col] = 0 # Fjerner de tidliger dronninger
-
-
     return chessboard #means we searched the space, we can return our result
 
 
