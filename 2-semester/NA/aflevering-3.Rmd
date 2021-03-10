@@ -25,7 +25,7 @@ import matplotlib.pyplot as plt
 Ud fra opgave beskrivelse får vi angiver nogle data punkter for en
 drone vi er ved at bygge.
 
-Data består af tid og temperatur for droen. 
+Data består af tid og temperatur for droen.
 
 Her skal vi starte med at visualizer det.
 
@@ -37,7 +37,7 @@ ax.plot(x, y, 'r')
 plt.show()
 ```
 
-I ovenstående plot ser vi vores datapunkter. 
+I ovenstående plot ser vi vores datapunkter.
 
 ### b)  Opstil et lineært ligningssystem for at p går igennem de sidste tre datapunkter. Løs ligningssystemet ved hjælp af elementære rækkeoperationer. Plot resultatet
 
@@ -67,7 +67,7 @@ aub[2, :] += (-1) * aub[0, :]
 aub
 ```
 
-For bytte rundt om rækkerne så laver jeg en funktionen `switch_rows` til 
+For bytte rundt om rækkerne så laver jeg en funktionen `switch_rows` til
 det formål.
 
 ```{python}
@@ -140,7 +140,7 @@ ax.plot(x, y, linestyle = '', marker = 'o', color = 'red')
 plt.show()
 ```
 
-Jeg har løst lignignsystemet og lave ovenstående plot. Dog mistænker jeg der er 
+Jeg har løst lignignsystemet og lave ovenstående plot. Dog mistænker jeg der er
 en fejl et eller andet sted, da polynomiet ikke ligger oven på punkterne.
 
 ### c) Hvis man vil have et polynomium p(x) der går igennem alle 4 datapunkter, hvad er den mindst mulige grad for p? Bestem sådan et polynomium, denne gang må I bruge np.linalg.solve(), og plot resultatet.
@@ -279,17 +279,25 @@ b = np.array([40,50,50,65,0,2])[:, np.newaxis]
 
 Ved at løse systemet får vi den entydig løsning:
 
+to inspace en p1 på x2 og p2 x3 så vi laver dem ud fra ens resultat.
+
+
 ```{python}
-np.linalg.solve(a,b)
+x4 = np.linspace(5, 8, 100)
+x5 = np.linspace(8, 10, 100)
+
+C = np.linalg.solve(a,b)
+p_1 = C[0,0] + C[1,0] * x4 + C[2,0] * x4 ** 2
+p_2 = C[3,0] + C[4,0] * x5 + C[5,0] * x5 ** 2
 ```
 
 Her for oven har vi valgt betingelsen p'(2)=0. Det har jeg gjort ved en
-snak med Simon. 
+snak med Simon.
 
 ## g) Hvilke af modellerne (b), (c) eller (f) vil I helst bruge for at estimere hvornår temperaturen passerer 55 C?
 
 Her i den sidste opgave skal vi samle vores modeller og udfra
-det vurdere hvilken model vi vil vælge. 
+det vurdere hvilken model vi vil vælge.
 
 $$
 p(x) = 28.89 + 4.31x - 0.76x^2 + 0.07x^3
@@ -303,15 +311,13 @@ ax.plot()
 
 x1 = np.linspace(2, 10, 100)
 ax.plot(x, y, linestyle = '', marker = 'o', color = 'red')
+ax.plot(x4, p_1, color = "red", zorder = 100)
+ax.plot(x5, p_2, color = "red", zorder = 100)
 ax.plot(x1, y1, color = "black")
 ax.plot(x1, y2, color = 'green')
 plt.axhline(y = 55, color = "blue", linestyle = "--")
 plt.show()
 ```
 
-Her vil jeg vælge den model jeg har lavet i opagev b, da det fitter bedre til
-data. Der kan dog være et problem at vi overfitter til vores data. At overfitte
-er et begreb vi kommer ind på i forhold til kurset Machine Learning and
-Statistical Learning. 
-
-
+Ud fra ovenstående graf kan vi se at modellerne er skærer hinanden nogenlunde
+i samme værdi. Af den grund vil valget af modellen ikke være afgørende.
