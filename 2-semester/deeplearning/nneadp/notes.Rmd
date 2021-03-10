@@ -139,6 +139,77 @@ print("non vectoried veriosn " + str(1000 * (toc - tic)) + "ms" )
 så enable at bruge fordel af computer kraft når vi ikke bruger vektor. 
 - Når muligt så undlad brug af loops. 
 
+## Flere eksempler om vectorization
+
+- undgå loops.
+
+```{python}
+import numpy as np
+u = np.exp(v)
+# implicit loop.
+#np.log
+# etc.
+```
+
+
+## Vectorizing Logistic Regression
+
+- Vi vil vetoisza logistic re.
+- brug np.dot til at lave nogel beregninger som gør vi helt skal undgå loops.
+
+## Vectorizing Logistic Regression's Gradient Output
+
+- Ser på vectorization for gradient decent.
+- Minder om forrig afsnit.
+
+## Broadcasting in Python
+
+- en teknik for at python løber hurtig.
+- Viser kalori eksempel.
+
+## A note on python/numpy vectors
+
+- numpy er en styrke da man opnår fleksibilitet.
+
+```{python}
+import numpy as np
+a = np.random.randn(5)
+print(a)
+```
+```{python}
+a.shape
+```
+```{python}
+a.T
+```
+- Minder om hinanden. 
+- Derfor skal vi ikke bruge data struktur.
+- Brug i steder
+
+```{python}
+a = np.random.randn(5,1)
+a
+```
+- Læg her mærke til vi får [[]].
+
+```{python}
+a = np.random.randn(3, 3)
+b = np.random.randn(3, 1)
+c = a*b
+a
+b
+c
+```
+
+```{python}
+a = np.random.randn(3, 3)
+b = np.random.randn(3, 1)
+c = a*b
+
+c.shape
+```
+
+
 # Week 3
 
 # Week 4

@@ -1,0 +1,18 @@
+---
+title: "Untitled"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(reticulate)
+```
+
+## Konditionstal
+
+- Er et mål for hvor meget en fejl sendes rundt.
+- Man kan accetptere et tal mellem 1 og 10.
+- matrix normen.
+- Singulærværdier bruges til at have informationer om A og dens pålidlighed
+  til at løs lineær systemer og kan bruges til at approximere A i en
+  komprimeret form. 
