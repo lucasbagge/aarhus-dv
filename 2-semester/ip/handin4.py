@@ -95,15 +95,25 @@ def generate_labels(n):
 import time
 
 slut_tid=0
-i = 5
+i = 65000
 while slut_tid <= 0.1:
     start_tid = time.time()
-    generate_tree(generate_labels(i))
+    generate_tree(generate_labels(5))
     slut_tid = time.time() - start_tid
-    i += 5
-print("Antal træer: ", i, "og det tog", round(slut_tid, 4), "sek." )
+    i += 65000
+print("Antal blade: ", i, "og det tog", round(slut_tid, 4), "sek." )
 
-# Beregn længdens
-triplet_distance(test[0], test[1])
+
+slut_tid=0
+i = 100
+while slut_tid <= 0.1:
+    labs = generate_generate_labels(i)
+    a = generate_tree(labs)
+    b = generate_tree(labs)  
+    slut_tid = time.time() - start_tid
+    i += 100
+print("Afstanden mellem: ", i, "og det tog", round(slut_tid, 4), "sek." )
+
+#triplet_distance(test[0], test[1])
 
 ...
