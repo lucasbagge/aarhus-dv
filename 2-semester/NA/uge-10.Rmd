@@ -16,3 +16,146 @@ library(reticulate)
 - Singulærværdier bruges til at have informationer om A og dens pålidlighed
   til at løs lineær systemer og kan bruges til at approximere A i en
   komprimeret form. 
+  
+## Konditionstal 1: Differentiable funktioner
+
+- Sidst så vi på singulærværdi som vi kommer til at bruger her også.
+- Det handler om kontrol af fejl.
+- Går igennem eksempel med $f(x)=x^2$. 
+- Der er to slags konditionstal; **absolutte tal** og **relative**.
+- cappa hat kommer til at betegne den absolutte værdi.
+
+$$
+\kappa (x)=\frac{|x||f'(x)|}{|f(x)|}
+$$
+- Den relative fejl findes ved aknv i fltte rund
+
+$$
+relvfejl=(rel fejl x)\cdot kappa
+$$
+
+- således i spørgsmål fra undervisning bliver svaret 10.
+- Kan have flere variabler. Skal se på gradient, hvor vi ser på alle de partielle 
+  afledte. 
+- Konditionstallet:
+
+$$
+\kappa(x)=\frac{||x||_2||(\nabla f)_x||_2}{|f(x)|}
+$$
+
+- Ser på et eksempel: $f(x_0,x_1)=x_1-x_0$.
+- Ikke en god metode.
+
+## Matrixnorm
+
+- Er et længde begreb for matrice.
+- N1: $||v||\ge 0 $.
+- N2: $||sv||=|s||v||$
+- N3: $||v+w||\le ||v||+||w||$
+
+- Eksempel: $||v||_2=\sqrt (\langle v,v \rangle)$
+- første egenskaber gælder. 
+- Se video om trekantsuligheden holder. Vi bruger **chauchy szwatch**. 
+
+
+- Der findes andre normer. 
+-- Et norm, kræver færre regne operatiner.
+-- uendelig norm, tager den stærste værdi.
+- Alle normer skal opfylde ovenstående krav. 
+- Vores fokus er på to normer. 
+- Matrix norm, med **operator 2-norm**. 
+
+$$
+||A||_2=max_{||x||_2=1}||Ax||_2
+$$
+- der er to forhold som gælder 
+
+$$
+||AB||_2\le ||A||_2||B||_2
+$$
+
+- En anden er at vi har set to norm før i forhold til singulærværikomponering.
+  $A=U\Sigma V^T$. Her får vi t normen er den største singulær værdi. 
+
+
+
+## Konditionstal 2: Lineære lignignsystemer
+
+- Ser nu på lineær lignignsystmer. 
+- Ax = b og tage invertibel. for A defineres den som
+
+$$
+\kappa(A)=||A||_2||A^{-1}||_2
+$$
+- Kan findes mellem den største og mindste singulærværdi
+
+$$
+\kappa(A)=\frac{\sigma_0}{\sigma_{n-1}}
+$$
+
+- Det er singulærværdier for den invertible matrix. 
+- Hvis vi skal løse A.
+- Se i python
+
+```{r}
+library(reticulate)
+```
+
+
+```{python}
+import numpy as np
+```
+
+```{python}
+a = np.array([
+  [16.0, 15.9],
+  [15.9, 16.0]
+])
+a
+```
+
+```{python}
+# konditionstal
+np.linalg.cond(a)
+```
+
+```{python}
+u,s,vt = np.linalg.svd(a)
+```
+
+- u er de ortogonale matricer.
+- s endimensional
+- vt er ortogonal transponoer
+
+```{python}
+s
+```
+ 
+- Ser kun på singulær værdi.
+
+```{python}
+# beregn konditionstalle
+s[0] / s[1]
+```
+
+```{python}
+v0 = vt[[0], :].T
+v0
+```
+
+```{python}
+v1 = vt[[1], :].T
+v1
+```
+
+```{python}
+x = v0
+a @ x
+```
+
+- værdien er stor. 
+
+```{python}
+
+```
+

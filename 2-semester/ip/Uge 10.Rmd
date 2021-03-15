@@ -1,0 +1,135 @@
+---
+title: "Uge 10"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Object oriented programming
+
+- Et paradigme hvor man fokuser på at kalde objekter og klasser.
+- Andre er funktional og imperative.
+- Vi kan hente informaioner fra objekter.
+- Mange andre programmering er oo (objekt orientering).
+- Design patterns er et populær emne indenfor oo, men som man ikke ser på
+  i dette kursus.
+- tyoe/klasser - int, str, list, dict osv. 
+- Ideen med klasser er vi vil have nogle bestemte metoder. Ser på et eksempel
+om studenter. 
+- Objecter har attributer som egentlig er selve data. Typen gør vikan manipuler
+med data.
+- Går igennem et eksempel med klassen student
+
+
+- metoder = funktioner, men definition i klassen.
+- Metoder adskilelr sig fra funktioner ved første er self, som er objetet.
+så feks bliver self i første funktion reference til set_name. 
+
+- mutator metoder er dem som ændre på objekter mens accesor metoder kalder.
+- acessor er ikke nødvendig i python. 
+- I andre sprog er det this. 
+
+```{python}
+class Student:
+  '''docu'''
+  
+  def set_name(self, name): # mutator
+    self.name = name
+    
+    def get_name(self): # accesor
+      return self.name
+```
+
+- Hvordan skal attributer initialiseres. 
+
+```{python}
+x.set_name("navn")
+```
+
+
+## Class construction and __init__
+
+- Når et objekt laves ved brug af class_name() initialiseres metoden __init__
+- __init__ at man tilføjer attributer til en klasse.
+
+```{python}
+class C:
+  def __init__(self):
+    self.v = 0
+  def f(self):
+    self.v = self.v + 1
+    return self.v
+    
+x = C()
+print(x.f() + x.f())
+```
+
+- Vi har et objekt. Når vi kalder C bliver det en ny instant af C. X vil være nul,
+men når vi går ned i den næsten bliver der retuneret 1 og 1 + 1 næste gang.
+
+## __init__ med argumenter
+
+- Du kan tilføje argumenter til en funktion. 
+
+## Are accessor og mutator metode brugbar
+
+- Ikke nødvendig men god programmering stil.
+- Når vi har mange små funktioner, men en der samler de andre, så er ideen med
+accessor og mutator en god ide. 
+
+
+## defining order on instances of a class (sorting)
+
+- __lt__, bruges til at sammenlig og order objekter. 
+- man tager en attribute fra objekter og sorter efter den.
+- Husk self som første argument.
+
+
+## Converting objects to str
+
+- __str__ gør man transformer en objekt til en string. 
+
+
+## nothing is private in python
+
+- Støtter ikke man gemme information.
+- I python er alt tilgængelig. 
+- attribut med _ f.eks. self._x så skal brugeren ikke tilgå det. 
+
+## Name mangling (partial privacy)
+
+- python forsøg på at skjule information. 
+- self.__secret. 
+
+## class attributes
+
+- I klassen har vi class attributer, som er data tilknyttet class.
+- Han viser igen student eksempel med class sttribute. Det bliver væentlig i
+næste aflevering.  
+
+```{python}
+class MyClass:
+  x = 2
+  def get(self):
+    self.x = self.x + 1
+    return MyClass.x + self.x
+  
+obj = MyClass()
+print(obj,get())
+```
+
+
+- man kan også kalde __dict__, __name__ og __class__
+
+## pep8 style
+
+- Brug CapWords convention.
+- Burg self.
+- For simple klasse lad være med at brug accessor og mutator.
+
+## Some methods many class have
+
+- __eq__(self, other) sammenligne elementer.
+- __str__(self) burg str og print.

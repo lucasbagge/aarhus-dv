@@ -8,58 +8,9 @@ knitr::opts_chunk$set(echo = TRUE)
 library(reticulate)
 ```
 
-```{python}
-import numpy as np
+## Lecture 9 [Recursion and iteration]
 
-N = int(input("Antal dronninger der skal løses: \n"))
-N = 4
-grid = np.zeros([N,N],dtype=int)
-grid=grid.tolist()
-print("Går fra grid til list: " ,grid)
-
-def possible(grid,y,x): #is it possible to place a queen into y,x?
-
-    l=len(grid) #how big is our grid?
-    #print("Længden på vores problemet ", l)
-    
-    for i in range(l): #check for queens on row y
-        if grid[y][i]==1: #if exist return false
-            return False
-    for i in range(l):  #check for queens on column x
-        if grid[i][x]==1: #if exists return 0
-            return False
-        
-    for i in range(l): #loop through all rows
-        for j in range(l): #and columns
-            if grid[i][j]==1: #if there is a queen
-                if abs(i - y) == abs(j - x): #and if there is another on a diagonal
-                    return False #return false
-    return True #if every check clears, we can return true
-
-def solve(grid):
-    
-    l=len(grid) #length of our grid  
-    
-    for y in range(l): #for every row
-        for x in range(l): #for every column
-            if grid[y][x]==0: # we can place if there is no queen in given position
-                if possible(grid,y,x): #if empty, check if we can place a queen
-                    grid[y][x]=1 #if we can, then place it
-                    solve(grid) #pass grid for recursive solution
-                    #if we end up here, means we searched through all children branches
-                    if sum(sum(a) for a in grid)==l: #if there are 8 queens
-                        return grid #we are successful so return
-                    grid[y][x]=0 #remove the previous placed queen
-
-
-    return grid #means we searched the space, we can return our result
-```
-
-
-
-# Lecture 9 [Recursion and iteration]
-
-## Exercise 9.1 (bitonic minimum)
+### Exercise 9.1 (bitonic minimum)
 
 We call a list L=[x1, ..., xn] bitonic, if there exists a k, 1<k<n, such that x1 > x2 > ··· > xk-1 > xk < xk+1 < ··· < xn, i.e. xk is the minimum of the list. Write a method bitonic_min that given a list, returns the minimum of the list. Your implementation should use binary search (i.e. you cannot use the Python builtin min function).
 Example: bitonic_min([10,7,4,2,3,5,9,11]) should return 2.
@@ -74,7 +25,7 @@ def bitonic_min(x):
 print("Output af opgave 9.1 :", bitonic_min([10,7,4,2,3,5,9,11]) )
 ```
 
-## Exercise 9.2 (print tree)
+### Exercise 9.2 (print tree)
 
 Assume we represent a tree by a recursive tuple, consisting of the name of the root followed by one recursive tuple for each of the children. Note that all nodes have a label (not only the leaves), and that a node with k children is represented by a tuple of length k+1. Write a program that prints the tree with one label per line and with appropriate indentation, like below.
 Example: ('root', ('node 1',), ('node 2', ('node 2.1',), ('node 2.2',)), ('node 3',)) should be printed as
@@ -100,7 +51,7 @@ def root_print(L, indentation = 2):
     for child
 ```
 
-## Exercise 9.3 (maze path)
+### Exercise 9.3 (maze path)
 In this exercise you should code a recursive maze solver, that does a recursive search for the path from "A" to "B" in a rectangular maze. The program should read from input a maze represented by first a single line containing two numbers, the number of rows n and columns m of the maze, followed by n rows each containing a string of length m representing the maze, where "#" is a blocked cell, "A" denotes the start cell, "B" the end cell, and "." a free cell ("A" and "B" are also free cells). Given a free cell one can move to an adjacent free cell horizontally and vertically but not diagonally. An example input:
 
 
@@ -110,7 +61,7 @@ Note: In the lecture the solution only identified if there was a path from A to 
 Hint: One solution is to modify the solution from the lecture, and only make recursive calls when a solution has not been found yet, and to update the maze before returning from a recursive call. Use print('\n'.join(maze)) to print the maze.
 
 
-## Exercise 9.4* (deepcopy)
+### Exercise 9.4* (deepcopy)
 In this exercise you should implement your own version of the deepcopy operation from the module copy for lists. Recall that when copying a list L using L.copy(), only a copy of the list will be created. The new list will point to the same elements as L, which might cause unexpected behaviour when these are mutable structures, like recursive lists. The operation copy.deepcopy also makes a recursive copy of such recursive lists.
 
 The difference is illustrated by the following code:
@@ -149,52 +100,240 @@ should print
 L1=[[1], [1], [[...]]] L2=[[1], [2], [3]] L3=[[7], [7], [[...]]]
 
 
-# Afleveringer
+## Lecture 10 (Functions as objects)
 
-## Aflevering 5 
+### Exercise 10.1 (foldr)
+
+In this exercise the goal is to make an implementation of foldr. Python's reduce function is often called foldl in other programming languages, and given a function f and a list [x1, ..., xn] computes f(···f(f(x1,x2),x3)···,xn). The function foldr should instead compute f(x1,(···f(xn-2,f(xn-1,xn))···)). This function does not appear in the Python standard library but is standard in other programming languages, in particular functional programming languages like Haskell and ML. The difference between folding left and right is illustrated by applying the power function to the list [2, 2, 2, 2], where ((2**2)**2)**2 = 256 whereas 2**(2**(2**2)) = 65536.
 
 ```{python}
-print ("Enter the number of queens")
-N = int(input())
+import functools
+foldl = functools.reduce
 
-#chessboard
-#NxN matrix with all elements 0
-board = [[0]*N for _ in range(N)]
+def foldr(f, L):
+  return functools.reduce()
 
-def is_attack(i, j):
-    #checking if there is a queen in row or column
-    for k in range(0,N):
-        if board[i][k]==1 or board[k][j]==1:
-            return True
-    #checking diagonals
-    for k in range(0,N):
-        for l in range(0,N):
-            if (k+l==i+j) or (k-l==i-j):
-                if board[k][l]==1:
-                    return True
-    return False
 
-def N_queen(n):
-    #if n is 0, solution found
-    if n==0:
-        return True
-    for i in range(0,N):
-        for j in range(0,N):
-            '''checking if we can place a queen here or not
-            queen will not be placed if the place is being attacked
-            or already occupied'''
-            if (not(is_attack(i,j))) and (board[i][j]!=1):
-                board[i][j] = 1
-                #recursion
-                #wether we can put the next queen with this arrangment or not
-                if N_queen(n-1)==True:
-                    return True
-                board[i][j] = 0
-
-    return False
-
-N_queen(N)
-for i in board:
-    print (i)
+print(foldl(lambda x,y: x**y, [2,2,2,2]))   # prints 256
+print(foldr(lambda x,y: x**y, [2,2,2,2]))   # should print 65536
+print(foldr(lambda x,y: x**y, [2,2,2,2,2])) # value with 19729 digits
 ```
 
+
+
+Note. You can implement foldr both with a loop and recursively.
+
+### Exercise 10.2 (my_map)
+
+In this exercise the goal is make your own implementation of Python's builtin map function.
+
+#### a) Make a function my_map that takes two arguments, a function f and a list [x1,...,xn], and returns the list [f(x1),...,f(xn)].
+Example: my_map(lambda x: x ** 3, [3, 2, 4])) should return [27, 8, 64].
+
+```{python}
+import inspect
+lines = inspect.getsource(map)
+print(lines)
+```
+
+```{python}
+def my_map(lst):
+  for i in lst:
+    lst += lst
+  return lst
+my_map()([1,2])
+```
+
+
+
+#### b) Make a function my_map_k that as arguments takes a function f and k lists L1,...,Lk, for an arbitrary k ≥ 1, and returns the list [f(L1[0],...,Lk[0]),...,f(L1[n-1],...,Lk[n-1])], where n is the length of the shortest Li list.
+
+Hint. Use Python's * notation to handle an arbitrary number of lists as arguments.
+Example: my_map_k(lambda x, y, z: x*y*z, [3, 2, 5], [2, 7, 9], [1, 2]) should return [6, 28].
+Note. Your solution should not use the builtin map function.
+
+
+### Exercise 10.3 (string sorting)
+
+
+Write a function str_sort that sorts a list of strings, such that the strings are sorted with respect to the number of distinct letters ('a' - 'z') there are in the strings. Strings with an equal number of distinct letters after converting to lower case should apper in alphabetical order.
+
+Example: str_sort(['AHA', 'Oasis', 'ABBA', 'Beatles', 'AC/DC', 'B. B. King', 'Bangles', 'Alan Parsons']) should return ['ABBA', 'AHA', 'AC/DC', 'Oasis', 'B. B. King', 'Beatles', 'Alan Parsons', 'Bangles'].
+
+Hint. Use len(set(X)) to find the number of different elements in a list X.
+
+```{python}
+def str_sort(x):
+  
+
+str_sort(['AHA', 'Oasis', 'ABBA', 'Beatles', 'AC/DC', 'B. B. King', 'Bangles', 'Alan Parsons']) 
+```
+
+
+
+## Lecture 11 (Object oriented programming)
+
+### example https://www.geeksforgeeks.org/__init__-in-python/
+
+```{python}
+class Person:
+  def __init__(self, name):
+    self.name = name
+    
+  def say_hi(self):
+    print('Hello, my name is', self.name)
+p = Person('Nik')
+p.say_hi()
+```
+
+__init__ betyder vi begynder på vores objekt. Således vil vi gå tilbage og begynde
+klassen. 
+
+### Exercise 11.1 (PersonReader)
+
+Implement a class PersonReader supporting the following methods:
+
+input() asks the user for the name and year of birth of a person at shell prompt (using the builtin input function).
+__str__ that returns the string "name (year)" (e.g. to be used by the print method when applied to a PersonReader).
+
+```{python}
+
+'''
+implemt a class PersonReaer supporting the following method:
+  - input() asks the user for the name an year
+  - __str__ tghat returtun the sting
+'''
+class PersonReader:
+  
+  def __init__(self, name = "Super", year = 2016):
+    self.name = name
+    self.year = year
+    
+  def input(self):
+    self.name = input("input name: ")
+    self.year = int(input("input year: "))
+    
+  def __str__(self):
+    return ("%s (%d)" %(self.name, self.year))
+  
+test = PersonReader()
+print(test)
+```
+
+```{python}
+test = PersonReader()
+print(person)
+
+```
+
+
+
+### Exercise 11.2 (Stopwatch)
+
+Implement a class Stopwatch that creates a timer that can measure the total between calls to the methods start and stop. The methods that should be supported are:
+
+start() start the stopwatch.
+stop() stop the stopwatch.
+lap() record the current time as a laptime.
+total_time() return the time between last start and subsequent call to stop. If the stopwatch is still running, return time since last call to start and the current time.
+lap_times() return a list of the lap times. If there have been k calls to lap between the calls to start and stop, it should return a list of the k+1 lap times. The sum of the lap_times should equal the time of total_time.
+It can be assumed that start is the first method that will be called.
+
+Hint. Use the method time in module time, i.e. add from time import time to your code. The function time() returns the number of seconds since, typically, January 1, 1970, 00:00:00.
+
+```{python}
+from time import time
+
+class Stopwatch:
+    def __init__(self):
+        self.running = False
+
+    def start(self):
+        if not self.running:
+            self.running = True
+            self.start_time = time()
+            self.laps = []
+    
+    def stop(self):
+        self.end_time = time()
+        self.running = False
+
+    def lap(self):
+        self.laps.append(time())
+
+    def total_time(self):
+        if self.running:
+            end = time()
+        else:
+            end = self.end_time
+        return end - self.start_time
+
+    def lap_times(self):
+        if self.running:
+            end = tim()
+        else:
+            end = self.end_time
+        return [end - start for end, start in 
+                zip(self.laps + [end], [self.start_time] + self.laps)]
+
+ur = Stopwatch()
+
+ur.start()
+ur.lap()
+ur.lap()
+ur.lap()
+ur.lap()
+ur.stop() 
+ur.lap_times()
+```
+
+
+### Exercise 11.3 (2D vector)
+
+In this exercise you should implement a class Vector for storing 2D vectors of the form <x, y>. The class should have the following methods:
+
+A constructor __init__ where it is possible to create a new vector using Vector(x,y).
+length() returning the length of the vector, i.e. sqrt(x2 + y2).
+Hint. from math import sqrt
+add(other_vector) return a new vector that is the result of adding two vectors.
+Redefine "+" so that vector1 + vector2 returns a new vector that is the sum of the two vectors (i.e. define __add__).
+mult(factor), where factor is an int or float, should return a new vector <x*factor, y*factor>.
+dot(vector) should return the dot product with another vector, i.e. x*vector.x + y*vector.y.
+Define the "*" operator so that vector * number returns vector.mul(number) whereas vector1 * vector2 returns the dot product of the two vectors (i.e. define __mul__).
+Define __rmul__ so that it possible to write number * vector. The result should be the same as vector * number.
+Define __str__ to return the string "<x, y>" where x and y are the coordinates of the vector.
+
+## Lecture 12 (Class hierarchies)
+
+### Exercise 12.1 (geometric shapes)
+
+Make a class Shape that represent an abstract geometric shape. Conrete shapes, like circles, axis-aligned rectangles, and triangles should be defined as subclasses of Shape. The class Shape should only define a method fatness that depends on methods area and perimeter that should be defined in subclasses:
+
+fatness() return 4·π·area / perimeter2.
+Subclasses should implement the following methods (but note the method fatness):
+
+__init__ initialize the geometric object. The arguments to __init__ will depend on the geometric shape.
+__str__ return a string describing the object, e.g. Circle(radius=3, center=(4,5))
+area() return the area of a geometric object.
+perimeter() return the length of the perimeter of the geometric object.
+contains(x, y) returns if the point (x, y) is contained within the shape.
+Create classes Circle, Rectangle, and Triangle, each inheriting from class Shape. Implementing class Triangle is optional (the methods area and contains require some amount of math, with solutions easily to find on the internet). For each subclass implement the methods __int__, __str__, area, perimeter, and contains.
+
+It should be possible to create instances of the geometric opjects (calling __init__) as follows:
+
+Circle(radius, center_x, center_y)
+Rectangle(min_x, max_x, min_y, max_y)
+Triangle(x0, y0, x1, y1, x2, y2)
+Example:
+
+> shapes = [Rectangle(0,10,0,1), Circle(4,1,4), Triangle(1,2,1,4,2,3)]
+> [str(s) for s in shapes]
+['Rectangle((0, 0), (10, 1))', 'Circle(radius=4, center=(1, 4))', 'Triangle((1, 2), (1, 4), (2, 3))']
+> [s.area() for s in shapes]
+[10, 50.26548245743669, 1.0]
+> [s.perimeter() for s in shapes]
+[22, 25.132741228718345, 4.82842712474619]
+> [s.fatness() for s in shapes]
+[0.25963575649502424, 1.0, 0.5390120844526473]
+> [s.contains(1,1) for s in shapes]
+[True, True, False]

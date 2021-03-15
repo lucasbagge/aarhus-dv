@@ -1,0 +1,51 @@
+---
+title: "Aflevering 4"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(reticulate)
+```
+
+
+![](na-alf4-a.png)
+
+```{python}
+import numpy as np
+v0 = np.array([1.0, -1.0, 1.0, -1.0])[:, np.newaxis]
+v1 = np.array([1.0,  1.0, 1.0,  1.0])[:, np.newaxis]
+v2 = np.array([2.0,  0.0,-2.0,  0.0])[:, np.newaxis]
+V = np.hstack((v0, v1, v2))
+G1 = V.T @ V
+
+print('G=\n', G1)
+```
+
+Ser den er diagonal så det betyder den er ortogonal. 
+
+
+![](na-alf4-b.png)
+Til at beregne projektioen skal vi bruge formlen:
+
+$$
+pr_v(u)=\frac{\langle u, v \rangle}{||v||_2^2}v
+$$
+```{python}
+v0 = np.array([1.0, -1.0, 1.0, -1.0])
+v1 = np.array([1.0,  1.0, 1.0,  1.0])
+v2 = np.array([2.0,  0.0,-2.0,  0.0])
+x = np.array([3.0, 2.0, 1.0, 0.0])
+((u_1 @ v_1) / np.linalg.norm(v_1) ** 2) * v_1 # det er formlen for projektionen.
+
+print("Projektionen fra x til v0: ", (np.dot(x, v0) / np.linalg.norm(v0)**2 ) * v0 )
+print("Projektionen fra x til v1: ", (np.dot(x, v1) / np.linalg.norm(v1)**2 ) * v1 )
+print("Projektionen fra x til v2: ", (np.dot(x, v2) / np.linalg.norm(v2)**2 ) * v2 )
+```
+
+
+
+![](na-alf4-c.png)
+
+![](na-alf4-d.png)
+

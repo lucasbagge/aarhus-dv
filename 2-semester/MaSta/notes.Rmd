@@ -1,0 +1,20 @@
+---
+title: "notes"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Kapitel 6
+
+
+## Markov and Chebyshev Inequalities
+
+
+# Kapitel 7: More confidence intervals
+
+- Vi har tidligere set på bootstrap metoden til at danne konfidens bånd,
+  her vil vi se mere på statistikke konfidens bånd.
+  
