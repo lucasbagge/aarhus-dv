@@ -26,11 +26,46 @@ Ser den er diagonal så det betyder den er ortogonal.
 
 
 ![](na-alf4-b.png)
-Til at beregne projektioen skal vi bruge formlen:
+Til at beregne ovenstående skal vi bruge definition 8.19 og ligning 8.11.
 
-$$
-pr_v(u)=\frac{\langle u, v \rangle}{||v||_2^2}v
-$$
+```{python}
+x = np.array([3., 2., 1., 0.])[:, np.newaxis]
+
+p_0 = (1/ np.vdot(v0,v0)) * v0 @ v0.T
+p_1 = (1/ np.vdot(v1,v1)) * v1 @ v1.T
+p_2 = (1/ np.vdot(v2,v2)) * v2 @ v2.T
+
+P = p_0 + p_1 + p_2
+```
+
+Fra proposition 8.20 skal det gælde at $P^2=P$ og $P^T=P$, men kigger jeg på:
+```{python}
+print(P**2)
+print(P.T)
+```
+
+Så stemmer den transponerede med proposition 8.20, men ikke $P^2$.
+
+Vi skal ligeledes bestemme x (u?) ud fra proposition 8.17 og ligning 8.8:
+
+```{python}
+u = x[0] * v0 + x[1] * v1 + x[2] * v2
+```
+
+
+```{python}
+u_proj = P @ u
+```
+
+Projektionen af Px langs v0, v1 og v2 er således:
+
+```{python}
+print(u_proj)
+```
+
+
+
+
 ```{python}
 v0 = np.array([1.0, -1.0, 1.0, -1.0])
 v1 = np.array([1.0,  1.0, 1.0,  1.0])
@@ -47,5 +82,23 @@ print("Projektionen fra x til v2: ", (np.dot(x, v2) / np.linalg.norm(v2)**2 ) * 
 
 ![](na-alf4-c.png)
 
+```{python}
+v3 = x - P @ x
+v3
+
+print("v3 og v0 er ortogonale da deres indre produkt er", np.vdot(v_3_c, v0))
+print("v3 og v0 er ortogonale da deres indre produkt er", np.vdot(v_3_c, v1))
+print("v3 og v0 er ortogonale da deres indre produkt er", np.vdot(v_3_c, v2))
+```
+
+
 ![](na-alf4-d.png)
+
+En ortonormal basis 
+
+Spørg om hvordan vi kan vise det
+
+```{python}
+
+```
 

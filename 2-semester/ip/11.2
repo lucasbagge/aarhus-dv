@@ -1,14 +1,15 @@
- from time import time
- class Stopwatch:
-     def __init__(self):
-         # om uret kører til at starter med.
-         self.running = False 
+from time import time
+
+class Stopwatch:
+    def __init__(self):
+        self.running = False
 
     def start(self):
         if not self.running:
             self.running = True
             self.start_time = time()
             self.laps = []
+    
     def stop(self):
         self.end_time = time()
         self.running = False
@@ -22,13 +23,21 @@
         else:
             end = self.end_time
         return end - self.start_time
-    
+
     def lap_times(self):
         if self.running:
-            end = time()
+            end = tim()
         else:
             end = self.end_time
-        return [end - start for end, start in  
-                zip(self.laps + [end], [self.start_time] + self.laps)] 
+        return [end - start for end, start in 
+                zip(self.laps + [end], [self.start_time] + self.laps)]
 
 ur = Stopwatch()
+
+ur.start()
+ur.lap()
+ur.lap()
+ur.lap()
+ur.lap()
+ur.stop() 
+ur.lap_times()

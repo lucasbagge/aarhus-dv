@@ -155,7 +155,62 @@ a @ x
 
 - værdien er stor. 
 
+# Lektion 12
+
+## Fra sidste gang
+
+- Vektor med reelle indgange som vi har set på.
+- 
+
+## Vektorrum
+
+- en mængde V med to operationer.
+- Sum operation, u + v.
+- Det skal opfylde en række regler. 
+- Vi skal kunne multiplkatiere med skalar. 
+- De har også nogle regler som skal være opfyldt.
+- Tager nogle eksempler.
+
+
+### bestemmelse af nulelement og additiv invers
+
+- Lad v være et vektorrum og lad $v\in V$
+1) så kan nulelement beregnes som o=ov
+2) element -v er givet som -v=(-1)v
+
+- nulelementet opfylder at v + 0 = v. 
+
+## Komplekse tal
+
+- opstår fra problem at løse ligning x^2=-1, som ikke kan løses, men det kan komplekse tal løse. 
+- rummet af komplekse tal C bestå af:
+
+$$
+z = x +iy
+$$
+
+- i er et objekt med i^t=-1.
+- x er reelle del
+- i = im er den imaginære del. 
+
+- I python kan vi også skrive komplekse tal.
+
+- Går igennem regneregler.
+
+### andre skalaer
+
+- Vi vil kun se på komplekse tal og ikke andre varianter. 
 ```{python}
 
 ```
 
+
+## Underrum
+
+- V er et vektor rum.
+- et underrum er W subset V med
+1) W er ikke tom
+2) v, w in W medføre w+v element W.
+3) w element W og s en skalar  medføre sw elemetn W
+- alle underrum er vektorrum.
+- 

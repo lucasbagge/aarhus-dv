@@ -508,14 +508,17 @@ A = np.array([
   [1, 0, -4],
   [-2, 1, -1]
 ])
-
+A
 np.linalg.inv(v_0).dot(np.array([1])) 
 
 ```
 
 For den er ortoginal skal den transponeres være identitet
 
-![](proposition%209.10.png) ortonormale vektorer har længden 1.
+![](proposition 9.10.png)
+
+
+ortonormale vektorer har længden 1.
 
 ## d) hvad er forholdet
 
