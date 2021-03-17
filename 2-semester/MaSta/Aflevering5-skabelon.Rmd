@@ -29,6 +29,8 @@ E[xX]=xE[X]\\
 var(X)=E(X^2)-[E(X)]^2
 $$
 
+## Middelværdien
+
 Hvor middelværdier
 
 $$
@@ -66,7 +68,7 @@ $$
 Nu kan vi bruge de forhold som jeg opskrev tidligere
 
 $$
-E[X_i^2] =\sigma^2 +\mu^2 \\E[\bar X^2]?\frac{\sigma^2}{n} + \mu^2
+E[X_i^2] =\sigma^2 +\mu^2 \\E[\bar X^2]=\frac{\sigma^2}{n} + \mu^2
 $$
 Hermed kan vi substituere de værdier ind:
 
@@ -85,9 +87,13 @@ $$
 tilbage 
 
 $$
-\frac{1}{n}(n-1)\sigma^2\\
+\frac{1}{n}(n-1)\sigma^2
+$$
+
+$$
 \frac{(n-1)}{n}\sigma^2
 $$
+
 Sålees kan vi se at vi har en biased estimator. 
 
 Men lad os se om den er konsistent.Her skal vi se på
@@ -100,8 +106,47 @@ hvad sker der med vores bias når n går mod uendelig.
 Hvis n bliver uendelig stor, så betyder det -1 ikke noget. Derfor vil
 estimatoren konvergere mod den populationsværdien.
 
+
 Så på trods af vi ikke havde en unbiased estimator så var den konsistent.
 
+## Variansen
+
+Vi skal også se på variansen.
+
+$$
+var[\hat \sigma_n^2] = var[\frac{1}{n}\sum^n_{i=1}(X_i-\bar X)^2]
+$$
+
+$$
+\frac{1}{n^2}var[\sum^n_{i=1}(X_i-\bar X)^2]
+$$
+
+$$
+\frac{1}{n^2}\sum^n_{i=1}var[(X_i-\bar X)^2]
+$$
+
+$$
+\frac{1}{n^2}(\sum^n_{i=1}E[(X_i-\bar X)^4] -\sum^n_{i=1}E[(X_i-\bar X)^2]^2)
+$$
+
+$$
+\frac{1}{n^2}(\sum^n_{i=1} 3 \sigma^4- \sum^n_{i=1} (\sigma^2)^2)
+$$
+
+$$
+\frac{1}{n^2}(\sum^n_{i=1} 2 \sigma^4)
+$$
+
+$$
+\frac{1}{n^2} n2 \sigma^4
+$$
+
+$$
+\frac{2 \sigma^4}{n}
+$$
+Så den er heller ikke unbiased.
+
+Men idet den vil konvergere mod den sande populations værdi er den konsistent.
 
 ## simulering
 
@@ -109,8 +154,7 @@ Så på trods af vi ikke havde en unbiased estimator så var den konsistent.
 set.seed(1234)
 # sætter parametre til simulation og til plot
 nrep <- 1000
-theta <- 5
-epsi <-  .05
+
 
 # reserverer plads til resultater, 
 # en vektor hver til  stikprøvestørrelser n=250, 500, 1000, 2000, 5000
@@ -124,27 +168,29 @@ res.5000 <- numeric(nrep)
 # kør simulationen
 
 for (i in 1 : nrep){
-  res.250[i] <-  sd(rnorm(n = 250,   mean = 0, sd = 1))
-  res.500[i] <-  sd(rnorm(n = 500,   mean = 0, sd = 1))
-  res.1000[i] <- sd(rnorm(n = 1000, mean = 0, sd = 1))
-  res.2000[i] <- sd(rnorm(n = 2000, mean = 0, sd = 1))
-  res.5000[i] <- sd(rnorm(n = 5000, mean = 0, sd = 1))
+  res.250[i] <-  (250 - 1) / 250 *   var(rnorm(250,  mean = 0, sd = 1))
+  res.500[i] <-  (500 - 1) / 500 *   var(rnorm(500,  mean = 0, sd = 1))
+  res.1000[i] <- (1000 - 1) / 1000 * var(rnorm(1000, mean = 0, sd = 1))
+  res.2000[i] <- (2000 - 1) / 2000 * var(rnorm(2000, mean = 0, sd = 1))
+  res.5000[i] <- (5000 - 1) / 5000 * var(rnorm(5000, mean = 0, sd = 1))
 }
 
 # pæn x-akse til boksplotten
 boxnam <- c("n=250", "n=500", "n=1000", "n=2000", "n=5000")
+theta = 1
+epsi = 0
 boxplot(res.250, res.500, res.1000, res.2000, res.5000, names = boxnam, col="gray")
-abline(h = c(theta + epsi, theta - epsi), col = "red", lty = "dashed")
-abline(h = theta, col = "red3", lty = "solid")
+abline(h = c(1, 1), col = "red", lty = "dashed")
+abline(h = 1, col = "red3", lty = "solid")
 
 
 # beregn, hvor mange værdier ligger er mellem theta +- epsilon
 
-p.250 <- mean((res.250 > theta - epsi) & (res.250 < theta + epsi))
-p.500 <- mean((res.500 > theta - epsi) & (res.500 < theta + epsi))
-p.1000 <- mean((res.1000 > theta - epsi) & (res.1000 < theta + epsi))
-p.2000 <- mean((res.2000 > theta - epsi) & (res.2000 < theta + epsi))
-p.5000 <- mean((res.5000 > theta - epsi) & (res.5000 < theta + epsi))
+p.250 <- var((res.250 > 1) & (res.250 < 1))
+p.500 <-  var((res.500 > 1) & (res.500 < 1))
+p.1000 <- var((res.1000 > 1) & (res.1000 < 1))
+p.2000 <- var((res.2000 > 1) & (res.2000 < 1))
+p.5000 <- var((res.5000 > 1) & (res.5000 < 1))
 
 # nu klistrer vi alle værdier sammen i en vektor, og navngiver dem som boxplottene. 
 # Så får vi navne med, når vektoren printes

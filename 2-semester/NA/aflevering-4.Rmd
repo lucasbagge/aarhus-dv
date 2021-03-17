@@ -9,96 +9,72 @@ library(reticulate)
 ```
 
 
+## a)
+
 ![](na-alf4-a.png)
 
 ```{python}
 import numpy as np
-v0 = np.array([1.0, -1.0, 1.0, -1.0])[:, np.newaxis]
-v1 = np.array([1.0,  1.0, 1.0,  1.0])[:, np.newaxis]
-v2 = np.array([2.0,  0.0,-2.0,  0.0])[:, np.newaxis]
-V = np.hstack((v0, v1, v2))
-G1 = V.T @ V
+v0 = np.array([1.0, -1.0, 1.0, -1.0])
+v1 = np.array([1.0,  1.0, 1.0,  1.0])
+v2 = np.array([2.0,  0.0,-2.0,  0.0])
+V = np.vstack([v0, v1, v2])
+G1 =  V @ V.T
 
 print('G=\n', G1)
 ```
 
-Ser den er diagonal så det betyder den er ortogonal. 
+Når vi har et sæt af vektorer og vi vil vurdere om de er ortogonale, så skal Gram matricen indgange udover diagonalen være nul, som er tilfældet i ovenstående.
 
+## b)
 
 ![](na-alf4-b.png)
-Til at beregne ovenstående skal vi bruge definition 8.19 og ligning 8.11.
+
+Til en start opskriver jeg x.
 
 ```{python}
-x = np.array([3., 2., 1., 0.])[:, np.newaxis]
-
-p_0 = (1/ np.vdot(v0,v0)) * v0 @ v0.T
-p_1 = (1/ np.vdot(v1,v1)) * v1 @ v1.T
-p_2 = (1/ np.vdot(v2,v2)) * v2 @ v2.T
-
-P = p_0 + p_1 + p_2
+x = np.array([3., 2., 1., 0.])
 ```
 
-Fra proposition 8.20 skal det gælde at $P^2=P$ og $P^T=P$, men kigger jeg på:
-```{python}
-print(P**2)
-print(P.T)
-```
-
-Så stemmer den transponerede med proposition 8.20, men ikke $P^2$.
-
-Vi skal ligeledes bestemme x (u?) ud fra proposition 8.17 og ligning 8.8:
+Herefter bestemmes normel.
 
 ```{python}
-u = x[0] * v0 + x[1] * v1 + x[2] * v2
+v0_norm = np.linalg.norm(v0)
+v1_norm = np.linalg.norm(v1)
+v2_norm = np.linalg.norm(v2)
 ```
 
+Nu kan vi således bestemme projektion af x langs v0.
 
 ```{python}
-u_proj = P @ u
+prov0 = (np.dot(v0, x) / v0_norm**2) * v0
+prov1 = (np.dot(v1, x) / v1_norm**2) * v1
+prov2 = (np.dot(v2, x) / v2_norm**2) * v2
+Px = prov0 + prov1 + prov2
+print("Px =\n", Px)
 ```
 
-Projektionen af Px langs v0, v1 og v2 er således:
-
-```{python}
-print(u_proj)
-```
-
-
-
-
-```{python}
-v0 = np.array([1.0, -1.0, 1.0, -1.0])
-v1 = np.array([1.0,  1.0, 1.0,  1.0])
-v2 = np.array([2.0,  0.0,-2.0,  0.0])
-x = np.array([3.0, 2.0, 1.0, 0.0])
-((u_1 @ v_1) / np.linalg.norm(v_1) ** 2) * v_1 # det er formlen for projektionen.
-
-print("Projektionen fra x til v0: ", (np.dot(x, v0) / np.linalg.norm(v0)**2 ) * v0 )
-print("Projektionen fra x til v1: ", (np.dot(x, v1) / np.linalg.norm(v1)**2 ) * v1 )
-print("Projektionen fra x til v2: ", (np.dot(x, v2) / np.linalg.norm(v2)**2 ) * v2 )
-```
-
-
+## c)
 
 ![](na-alf4-c.png)
 
 ```{python}
-v3 = x - P @ x
-v3
+v3 = np.round(x - Px)
 
-print("v3 og v0 er ortogonale da deres indre produkt er", np.vdot(v_3_c, v0))
-print("v3 og v0 er ortogonale da deres indre produkt er", np.vdot(v_3_c, v1))
-print("v3 og v0 er ortogonale da deres indre produkt er", np.vdot(v_3_c, v2))
+print("v3 og v0 er ortogonale da deres indre produkt er", np.dot(v0,v3))
+print("v3 og v0 er ortogonale da deres indre produkt er", np.dot(v1,v3))
+print("v3 og v0 er ortogonale da deres indre produkt er", np.dot(v2,v3))
 ```
 
+## d)
 
 ![](na-alf4-d.png)
 
-En ortonormal basis 
-
-Spørg om hvordan vi kan vise det
 
 ```{python}
-
+V = np.vstack([v0 / v0_norm, v1 / v1_norm, v2 / v2_norm, v3/np.linalg.norm(v3)])
+print(V, '\n')
+print(np.round(V.T @ V))
 ```
 
+SÅ har vi en ortonormal basis og vi ser vi får samme diagonal som i opgave a.
