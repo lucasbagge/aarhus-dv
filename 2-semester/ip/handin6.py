@@ -1,41 +1,107 @@
-'''
-Create a class Person to represent a person with a name, year of birth, year of death 
-(None if the person is still alive),
- and with references to two other Person objects representing the father and mother of the person. 
- The class should define the following three methods:
+"""
+HANDIN 5 (eight queens puzzle)
 
-A constructor Person(name, mother, father, born, died) where all arguments have default value None.
-__str__ returning the string "name born-died".
-ancestor() returns a tupple (name-string, recursive-father-ancestor, recursive-mother-ancestor)
- (see example below).
-Create a second class AnnotatedPerson that is a subclass of Person, that allows each person to be 
-annotated with a note, 
-that can be given as an argument to the constructor, and will be part of the string returned 
-by __str__, i.e. redefine the methods __init__ and __str__. 
-The method ancestor should be inheritated from Person and not be redefined in AnnotatedPerson. 
-Try to avoid repeating code from the super class, instead call the methods in the super class.
+This handin is done by (study ids and names of up to three students):
 
-Using the two classes you should be able to create the following objects:
+    202004972 <Lucas Bagge>
+
+Reflection upon solution:
+
+    <
+    I denne uges aflvering har vi arbejder med klasser og hiarkier, hvor vi har skulle lave en Person
+    der tager forskellige data attributter og AnnotatedPerson som gør man kan skrive en note til Person klassen.
+    Det svære ved denne opgave har egentlig været at komme ind i tanke gangen med hvorfor man kalder self og hvad
+    __init__ gør.
+    Jeg ender næsten ud med det samme som Gerth får, men der er en forskel i at hans note er lukket med [], mens
+    min ikke er det. Det kunne jeg godt tænke mig at få et råd om.
+    >
+"""
+
+class Person:
+  
+  def __init__(self, name = None, mother = None, father = None, born = None, died = None):
+    self.name = name
+    self.mother = mother
+    self.father = father
+    self.born = born
+    self.died = died
+    
+  def __str__(self):
+    if self.died == None:
+      died = "-"
+    else:
+      died = self.died
+    return "<%s, %s, %s>" % (self.name, self.born, died)
+ 
+  def ancestor(self):
+    if self.mother == None:
+      m_ancestor = "-"
+    else:
+      m_ancestor = self.mother.ancestor()
+    if self.father == None:
+      f_ancestor = "-"
+    else:
+      f_ancestor = self.father.ancestor()
+    return str(self), f_ancestor, m_ancestor
+
+class AnnotatedPerson(Person):
+
+  def __init__(self, name = None, mother = None, father = None, born = None, died = None, note = None):
+    self.note = note
+    Person.__init__(self, name, mother, father, born, died) 
+    
+  def __str__(self):
+    if self.note == None:
+      pass
+    else:
+      note = self.note
+    return "<%s>" % Person.__str__(self) + note
+      
+ 
 
 louise_af_HK = Person("Louise of Hessen-Kassel", None, None, 1817, 1898)
 christian_9 = Person("Christian 9.", None, None, 1818, 1906)
-louise_af_SN = AnnotatedPerson("Louise of Sweden-Norway", None, None, 1851, 1926, "born Princess of
- Sweden and Norway")
+louise_af_SN = AnnotatedPerson("Louise of Sweden-Norway", None, None, 1851, 1926, "born Princess of Sweden and Norway")
 frederik_8 = Person("Frederik 8.", louise_af_HK, christian_9, 1870, 1947)
 christian_10 = Person("Christian 10.", louise_af_SN, frederik_8, 1870, 1947)
 ingrid = AnnotatedPerson("Ingrid of Sweden", None, None, 1910, 2000, "Queen of Denmark 1947-1970")
 frederik_9 = Person("Fredrik 9.", None, christian_10, 1899, 1972)
 margrethe_ii = AnnotatedPerson("Margrethe II", ingrid, frederik_9, 1940, note="Queen of Denmark")
-Calling margrethe_ii.ancestors() should return something like:
 
-('Margrethe II 1940- [Queen of Denmark]', ('Fredrik 9. 1899-1972', ('Christian 10. 1870-1947', 
-('Frederik 8. 1870-1947', ('Christian 9. 1818-1906', '-', '-'),
- ('Louise of Hessen-Kassel 1817-1898', '-', '-')), ('Louise of Sweden-Norway 1851-1926 
- [born Princess af Sweden and Norway]', '-', '-')), '-'), 
- ('Ingrid of Sweden 1910-2000 [Queen of Denmark 1947-1970]', '-', '-'))
+def print_tree(tree):
+    stack = [(tree,0)]
+    while len(stack) > 0:
+        subtree, depth = stack.pop()
+        name, *children = subtree
+        print("  |"*depth, "--", name, sep="")
+        for child in children[::-1]:
+            stack.append((child, depth + 1))
 
-Applying the tree printing program of Exercise 9.2 to this output would print something like the below.
+print_tree(margrethe_ii.ancestor())            
 
+'''
+print_tree(margrethe_ii.ancestor())            
+--<<Margrethe II, 1940, ->>Queen of Denmark
+  |--<Fredrik 9., 1899, 1972>
+  |  |--<Christian 10., 1870, 1947>
+  |  |  |--<Frederik 8., 1870, 1947>
+  |  |  |  |--<Christian 9., 1818, 1906>
+  |  |  |  |  |---
+  |  |  |  |  |---
+  |  |  |  |--<Louise of Hessen-Kassel, 1817, 1898>
+  |  |  |  |  |---
+  |  |  |  |  |---
+  |  |  |--<<Louise of Sweden-Norway, 1851, 1926>>born Princess of Sweden and Norway
+  |  |  |  |---
+  |  |  |  |---
+  |  |---
+  |--<<Ingrid of Sweden, 1910, 2000>>Queen of Denmark 1947-1970
+  |  |---
+  |  |---
+'''
+
+
+'''
 --Margrethe II 1940- [Queen of Denmark]
   |--Fredrik 9. 1899-1972
   |  |--Christian 10. 1870-1947
@@ -53,39 +119,5 @@ Applying the tree printing program of Exercise 9.2 to this output would print so
   |--Ingrid of Sweden 1910-2000 [Queen of Denmark 1947-1970]
   |  |---
   |  |---
+
 '''
-
-class Person:
-  
-  def __init__(self, name = None, mother = None, father = None, born = None, died = None):
-    self.name = name
-    self.mother = mother
-    self.father = father
-    self.born = born
-    self.died = died
-
-  def __str__(self):
-    return "<%s, %s, %s>" % (self.name, self.born, self.died)
-
-def ancestor(self, name = None, FatherAncestor = None, MotherAncestor = None):
-  
-  result = FatherAncestor.get('name', tuple())
-  if result:
-    return result
-  
-  acestors_tuple = MotherAncestor.get('name', tuple())
-  result = tuple(acestors_tuple)
-  for ance in acestors_tuple:
-    # rekursiv step
-    result |= ancestor(ance, FatherAncestor, MotherAncestor)
-
-  FatherAncestor[name], MotherAncestor[name] = result
-
-  return result
-
-  
-    
-  
-
-
-
