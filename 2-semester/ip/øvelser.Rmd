@@ -337,3 +337,405 @@ Example:
 [0.25963575649502424, 1.0, 0.5390120844526473]
 > [s.contains(1,1) for s in shapes]
 [True, True, False]
+
+
+## Exceptions funktion
+
+- kan i stedet for if bruge try og exception.
+
+```{python}
+try:
+  result = numerator / denominator
+except ZeroDevisionError:
+  print('cannot')
+  continue
+```
+
+- hvorfor er det mere efficient eller bedre end if statement.
+- definerer forskellige except som er typer af fejl. f.eks. ValueError.
+- Brug ctrl + c så stopper den, her skal vi skriv
+
+```{python}
+try:
+  x = 0
+  while True:
+    x = x + 1
+except KeyboardInterrupt:
+  pass
+```
+
+- i pdf oversigt over brugen og variaioner. 
+
+## filer i python
+
+- kan åbne filr
+
+```{python}
+f = open('read')
+for line in f:
+  print(">", line[:-1])
+f.clost()
+```
+
+- hvor der er nogle forskellige varianter af metoden. 
+- Du kan også bruge `FileNotFoundError` hvis nogle filer ikke findes. 
+
+```{python}
+try:
+  f = open()
+except 
+```
+
+- `with` er et keyword der tillader at skabe en **context manager** for filer. Den lukker filen og åbner implicit.
+
+- brug modul os.
+
+```{python}
+import os.path
+
+name = input("")
+if os.path.isfile(name)
+```
+
+- Der er også modulet `sys` som har hvordan man håndter filer. 
+
+```{python}
+import sys
+sys.stdin
+sys.stdout
+sys.stderr
+```
+
+
+- pep8 on exceptions.
+- Se på sudoku løsning
+
+
+## testing
+
+- bliv bedre til dokumentation og fejl. 
+- vi starter med en ide om hvordan vi vil løse det. SÅ går vi i gang med at kode og en implementation af det. så kommr der en og kører det. Design fase, udvikling og brugsfase.
+- i udvikling har vi fix bug, test og find bug. 
+- en god kode er den er strukturet, dokumenteret, kommentar og følger kodnings standard såsom pep8. 
+
+```{python}
+# test
+
+def f(depth):
+  if depth > 100:
+    print("fejl")
+    raise SystemtExit
+  f(depth + 1)
+  
+f(0)
+```
+
+- kan også brue assert som  som check om en udtryk er sand hvis ikke vil den rejse en AssertionError.
+- Kan og tilføje en kommentar til assertion. 
+- det gør program langsom.
+- en **dicstring** er en text som forklarer funktionen. 
+- Test et program er vigtig. der er en type kaldet black box testing. 
+- unitest. et module hvor vi laver klasser til at lave funktioner til hvert teest. 
+- Man kan debugge. I shell kan man vælge debug og stack viewer for at finde fejl. Kan bruges når vi kører noget recursivt. 
+
+```{python}
+def f(n):
+  return 1 / n + f(n+1)
+```
+
+```{python}
+f(5)
+```
+
+
+- **mypy** typer tilføjelser til program og se om den gør hvad vif orventer.
+
+```{python}
+print("start")
+print(42 + "abc")
+print("end")
+```
+
+
+- mypy analyser programmet inden det kører
+
+```{python}
+import mypy
+```
+
+
+## Lecture 13 (Exceptions and file input/output)
+
+### Exercise 13.1 (sum of two integers)
+
+Write a program that as input takes a single line with two integers and outputs their sum. A valid input line consist of two integers separated by one or more white spaces. Input can be preceded and followed by white spaces. The program should repeat asking for input until a valid input is given.
+
+Input two integers, separated by space: 2 a
+invalid input
+Input two integers, separated by space: 2 3.0
+invalid input
+Input two integers, separated by space: 2 3
+Sum = 5
+  
+Hint. Use exceptions to handle illegal input.
+
+```{python}
+while True:
+  try:
+    x, y = input("input ").split(" ")
+    print(f'sum = {int(x) + int(y)}')
+  except Exception:
+    print("invaldi")
+    continue
+  break
+```
+
+
+### Exercise 13.2 (transposing)
+
+In this excercise we assume that a file stores a matrix, where the rows are stored in consecutive lines in the file, and where column values are separated by ';' . Your task is to make a program that writes the transposed matrix to another file - see example below.
+
+Input
+
+1;2;3;4
+5;6;7;8
+9;10;11;12
+Output
+
+1;5;9
+2;6;10
+3;7;11
+4;8;12
+The program should ask the user for the name of an input file and the name of an output file, read the matrix in the input file, and write the transposed matrix to the output file.
+
+Your solution should handle the following potential errors.
+
+If input file does not exist, report this to the user and start over.
+If output file already exists, warn the user, and ask the user to confirm to overwrite the existing file.
+If the lines in the input file have a different number of values, i.e. the input is not a valid matrix, report this to the user, and start over without writting any output.
+Hint. Use the string method split to split an input line into a list of values.
+
+```{python}
+
+import os.path
+
+while True:
+  try:
+    matrix = input("name of the input file: ")
+    f = 
+```
+
+
+### Exercise 13.3 (grade statistics)
+
+In this exercise you should write a program that reads two files: one respectively containing the names and address of students, and one containing exam results. The output of the program should be a summary of the exam performances.
+
+The student list is stored in a file, with one student per line, consisting of the three fields, separated by ';' : the unique student id, name and address.
+
+107;Donald Duck;Duck Steet 13, Duckburg
+243;Mickey Mouse;Mouse Street 42, Duckburg
+465;Goofy;Clumsy Road 7, Duckburg
+777;Scrooge McDuck;Money Street 1, Duckburg
+The second file contains the list of exam results, consisting of a line per grade giving, consisting of a triple, with values separated by ';' : student id, course name, and grade.
+
+107;Programming;10
+107;Mathematics;8
+107;Computability;7
+243;Programming;10
+243;Computer forensic;10
+243;Computability;9
+465;Mathematics;6
+The program should print a summary like the below:
+
+<!-- Student id Name            Average #Courses -->
+<!-- =========================================== -->
+<!-- 107        Donald Duck        8.33        3 -->
+<!-- 243        Mickey Mouse       9.67        3 -->
+<!-- 465        Goofy              6.00        1 -->
+<!-- 777        Scrooge McDuck     0.00        0 -->
+
+
+```{python}
+std = open("13.4-file1.txt")
+exm = open("13.4-file2.txt")
+
+studentlist = std.readlines()
+examlist = exm.readlines()
+
+std.close()
+exm.close()
+```
+
+har indlæst filerne og gemmer dem.
+
+Herefter opretter jeg tre dictionaries som indeholder student id, kurser
+
+```{python}
+dictNames = {}
+dictCourses = {}
+dictGrades = {}
+```
+
+Så opretter vi et loop og siger hvad filerne består af. 
+
+ 
+
+```{python}
+for row in studentlist:
+  student_id, name, adress = row.split(";")
+  dictNames[student_id] = name
+```
+
+```{python}
+print(dictNames)
+```
+
+ 
+ så tilføjer man default at defautl værider er nu
+ 
+```{python}
+for student_id in dictNames:
+  dictCourses[student_id] = 0
+  dictGrades[student_id] = 0
+```
+ 
+opret dictCourses hvor keu
+
+```{python}
+for row in examlist:
+  student_id, course_name, grade = row.split(";")
+  dictCourses[student_id] += 1
+  dictGrades[student_id] += int(grade)
+```
+
+```{python}
+print(f'{"Student id"}')
+print(f'{"=" * 44}')
+for key in dictNames:
+  print(f'{key: < 10} {dictNames.get(key)}') 
+```
+
+Det virker ikke for dig.
+
+
+
+### Exercise 13.4 (subset sum)
+
+In this exercise we consider the subset sum problem. Write a function subset_sum(x, L) that as input takes a value x and a list of values L. The function should return a subset L_ of L where sum(L_)==x if such a set L_ exists, otherwise None should be returned.
+Example:
+
+> print(subset_sum(12, [2, 3, 8, 11, -1]))
+[2, 11, -1]
+> print(subset_sum(6, [2, 3, 8, 11, -1]))
+None
+The subset sum is known to be a "computionally hard" problem that essentially only can be solved by considering all 2|L| possible subsets of the input list L.
+
+Hint. Write a recursive function that generates all possible subsets, and raise an exception (ideally user defined) during the recursion when the first solution has been found. Do not generate an explicit list of all subsets, since this will quickly lead to MemoryError exceptions.
+
+
+```{python}
+class SolutionFound(Exception):
+  pass
+
+def subset_sum(x, L):
+  
+  # rekursiv funktion
+  def solution(x, L_):
+    if sum(L_) == x:
+      raise SolutionFound(L_)
+    else:
+      for n in range(len(L_)):
+        solution(x, L_[0:n] + L_[n+1:])
+  try:
+    solution(x, L)
+  except SolutionFound as sol:
+    return sol.args[0] # retuner løsningen. 
+  else:
+    return None
+```
+
+```{python}
+print(subset_sum(12, [2, 3, 8, 11, -1]))
+print(subset_sum(6, [2, 3, 8, 11, -1]))
+```
+
+
+
+## Lecture 14 (Documentation, testing and debugging)
+
+### Exercise 14.1 - handin 7 (convex hull)'
+
+
+Use the function random from the module random to generate random numbers in the range [0,1), i.e. the interval from zero to one, including zero but excluding 1.
+
+```{python}
+
+class NotOne(Exception):
+  def __init__(self, n):
+    self.msg = '1 må ikke være med' + str(a)+'derfor trækkes 0.01 fra.'
+    
+
+def random_points(n):
+  x_coordinate = []
+  y_coordinate = []
+  for i in range(0,n):
+    x = ra.random()
+    y = ra.random()
+    x_coordinate.append(x)
+    y_coordinate.append(y)
+    try:
+      if x_coordinate == 1:
+        raise NotOne(x_coordinate)
+      return [x for x in x_coordinate]
+    except NotOne as e:
+      print(e.msg)
+      return 0
+
+random_points(5)
+```
+
+```{python}
+def random_points(n):
+  x_coordinate = []
+  y_coordinate = []
+  not_one = 1
+  for i in range(0,n):
+    x = ra.random()
+    y = ra.random()
+    x_coordinate.append(x)
+    y_coordinate.append(y)
+  value_return =[(x,y) for x,y in zip(x_coordinate, y_coordinate)]
+  return list(map(lambda ele: ret_chr if ele == ret_chr else repl_chr, test_list))
+#
+#[(x,y) for x,y in zip(x_coordinate, y_coordinate)]
+
+random_points(5)
+```
+
+```{python}
+def random_points(n):
+  x_coordinate = []
+  y_coordinate = []
+  not_one = 1
+  another_value = 0.99
+  for i in range(0,n):
+    x = ra.random()
+    y = ra.random()
+    x_coordinate.append(x)
+    y_coordinate.append(y)
+  return [(x,y) for x,y in zip(x_coordinate, y_coordinate)]
+
+random_points(5)
+```
+
+
+```{python}
+from scipy.spatial import ConvexHull
+import random as ra
+ra.random
+points = ra.random_points(25)
+convex_hull = [points[idx] for idx in ConvexHull(points).vertices]
+plot_hull(points, convex_hull)
+```
+
+

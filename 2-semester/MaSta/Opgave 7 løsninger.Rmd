@@ -101,6 +101,68 @@ qchisq(p = c(0.025, 0.975),
 ## 7.A
 
 ![](7.A.png)
+### a)
+
+vi har følgende
+
+$$
+E(X_i) = \lambda \\var(X_i)=\lambda
+$$
+
+Det giver os at
+
+$$
+\frac{(\bar X - \mu)}{\sqrt(\sigma / n)} = \frac{(X-\lambda)}{\sqrt{\lambda/n}}
+$$
+
+vi har stikpvøe fra possion. Vi ved middelværdi go varians. Fra clt ved vi
+at de er standardnormalt fordel 
+
+### b)
+
+### c)
+
+```{r}
+sample <-  c(4,6,8,9,9,10)
+q <- qnorm(0.95)
+low <- mean(sample) + q^2/6 - qnorm(0.95)/6*(sqrt(mean(sample) + q^2/4*6))
+high <- mean(sample) + q^2/6 + qnorm(0.95)/6*(sqrt(mean(sample) + q^2/4*6))
+
+c(low,high)
+```
+
+udregning for konfidens interval. Fra ugeseddel står formlen.
+
+8 er vores parameter er indenfor.
+
+### d) simulering
+
+```{r}
+n = 100
+result = numeric(n)
+q <- qnorm(0.95)
+for (i in 1:n) {
+  samlpe1 <- rpois(n = 6, 8) # simuler 100 gange
+  low <-  mean(samlpe1) + q^2/6 - q/6*(sqrt(mean(samlpe1) + q^2/24))
+  high <- mean(samlpe1) + q^2/6 + q/6*(sqrt(mean(samlpe1) + q^2/24))
+  result[i] <- floor((low <= 8) * 0.5 + 0.5 * (8 <= high)) # checke rom den ligger indenfor
+}
+
+mean(result)
+```
+
+### e)
+
+ved hver simulation bør vi have 90% dermed er sand
+
+```{r}
+0.9^30
+```
+
+ca 4%
+
+
+
 
 
 ## 7.40
@@ -109,17 +171,159 @@ qchisq(p = c(0.025, 0.975),
 > pivotal statistic: er en funktion af observationer og uboseverede parameter
 så sandsynligheds fordelingen ikke afhænger af den ukendte parameter.
 
+vi har uniform fordeling med nogle grænser. vi skal se på konfidens intetval
+ 
+laver beregning se video igen 
+
+```{r}
+q <- qnorm(0.95)
+low <-  5000 / (1/2+q/sqrt(12*400))
+high <- 5000 / (1/2- q/sqrt(12*400))
+c(low,high)
+```
+
+intervallet for Xmax er en del mere snævert. det kan dog skyldes at for store stikprøver vil X max jo næsten være theta.
+
+
 ## 7.22
 
 ![](7.22.png)
+
+har givet følgende kode
+
+```{r}
+pooled.count <- 0
+unpooled.count <- 0
+m <- 20
+n <- 10
+
+N <- 100000
+for (i in 1:N){
+  x <- rnorm(m, 8, 10)
+  y <- rnorm(n, 3, 15)
+  
+  CI.pooled <- t.test(x,y, var.equal = TRUE)$conf
+  CI.unpooled <- t.test(x,y)$conf
+  
+  if (CI.pooled[1] <= 5 && 5 <= CI.pooled[2])
+    pooled.count <- pooled.count + 1
+  
+  if (CI.unpooled[1] <= 5 && 5 <= CI.unpooled[2])
+    unpooled.count <- unpooled.count + 1
+}
+
+pooled.count/N
+unpooled.count/N
+```
+
+### a)
+
+konfidens for pooled er lavere. 
+
+### b)
+
+kører igen
+
+### d)
+
+jo tætter sample sizee er på hinaden er de lig hinanden.
 
 ## 8.15, professor
 
 ![](8.15.png)
 
+```{r}
+# profesro har observeret
+# 
+value <- 69 / 310
+value
+```
+
+sandsynligheden at observere 69 eller færre:
+
+```{r}
+pbinom(69, 310, 0.26) # tosidet
+```
+
+hvilket er ret usandsynlighet, derfor ladet det til at col pro har ret.
+
+binomial fordeling da det er enten eller. 
+
+dbinom er pdf vi skal brug pbinom. accepter h0.  
+
 ## 8.11, t-test, permutation test, 
 
 ![](8.11.png)
+
+```{r}
+Salaries <- read.csv("MatStat-R/data/Salaries.csv")
+head(Salaries)
+```
+
+### a) 
+
+mean og sd
+
+```{r}
+mean(Salaries$Salary)
+sd  (Salaries$Salary)
+```
+
+```{r}
+year_1985 <- subset(Salaries$Salary, Salaries$Year == '1985')
+year_2015 <- subset(Salaries$Salary, Salaries$Year == '2015')
+
+qqnorm(year_2015)
+qqline(year_2015)
+
+qqnorm(year_2015)
+qqline(year_2015)
+```
+
+første er fint
+ved anden er der en skævvridning. Nogle tjerner mere end forventet.
+
+### b) t means
+
+```{r}
+t.test(year_2015, year_1985)
+```
+
+laver t test. De to fordelinger virker ikke til at komme fra den samme foreling.
+Så der er lav sandsynlighed for de kommer fra samme fordeling.
+Lønninger har ændret sig meget. 
+
+
+### c) permutation test
+
+```{r}
+observed <-  mean(year_1985) - mean(year_2015)
+observed
+
+N <-  10^5 - 1
+N
+
+result <- numeric(N)
+for(i in 1:N) {
+  meantime <- tapply(sample(Salaries$Salary, replace = FALSE),
+                     Salaries$Year, mean)
+  result[i] <- meantime['1985'] - meantime['2015']
+}
+
+p_lille <- (sum(result <= observed) + 1) / (N + 1)
+p_stor <- (sum(result >= observed) + 1) / (N + 1)
+p_værdi <- 2*min(p_lille, p_stor)
+
+print(p_værdi)
+hist(result)
+abline(v = observed)
+```
+
+mere se på en ensidet test. 
+
+per er bedst i dette tilfælde. Da vi har et normal fordeling.
+
+### d)
 
 
 ## 7.14, den har du lavet
@@ -130,9 +334,77 @@ så sandsynligheds fordelingen ikke afhænger af den ukendte parameter.
 
 ![](7.29.png)
 
+### a)
+
+```{r}
+Bangladesh <- read.csv("MatStat-R/data/Bangladesh.csv")
+cholorine <- with(Bangladesh, Chlorine[!is.na(Chlorine)])
+```
+
+```{r}
+summary(cholorine)
+```
+
+```{r}
+hist(cholorine)
+```
+
+skæv fordeling
+
+
+### b)
+
+```{r}
+t.test(cholorine)
+
+```
+
+
+
+### c) bootstrap t test
+
+
+```{r}
+xbar <- mean(cholorine)
+N <- 10^4
+n <- length(cholorine)
+Tstar <- numeric(N)
+for (i in 1:N){
+  x <- sample(cholorine, size = n, replace = TRUE)
+  Tstar[i] <- (mean(x) - xbar) / (sd(x)/sqrt(n))
+}
+
+quantile(Tstar, c(0.025, 0.975))
+xbar - quantile(Tstar, c(0.975, 0.025))  * sd(cholorine) / sqrt(n)
+```
+
+
+koden fra bogen og ændret til clorine.
+
+vi kan se at værdier er skubbet og blevet større i bootstrap.
+
+quantile er 
+
+
+### d)
+
+bootstrap er smart da den laver korrektur på en skæv fordeling. 
+
+
+
 ## 7.43, cereal problem,
 
 ![](7.43.png)
+
+hun måler morgen mads produkter. opgaven er vi skal findes konfidens interval
+
+lige over fik op formlen
+
+![](formel7.43.png)
+
+![](løsning7.43.png)
+
+bredt interval men som man får med lille data. 
 
 ## 8.6, model poisson
 
@@ -165,3 +437,6 @@ library(glue)
 glue("Vi har altså {z_possion(20, 15)} < {qnorm(1-0.05/2)}")
 ```
 Vi acceptere H0, og der er altså i gennemsnitlig 15 fødsler om måneden. 
+
+
+

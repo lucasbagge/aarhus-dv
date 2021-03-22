@@ -70,6 +70,17 @@ print("v3 og v0 er ortogonale da deres indre produkt er", np.dot(v2,v3))
 
 ![](na-alf4-d.png)
 
+En Ortonormal basis er hvor alle vektor er en enhedsvektor med længden 1. En
+andem måde man kan sige det på er de er blevet normaliseret. 
+
+Desuden er de også ortogonale til hinanden, som vi så i c. 
+
+Udover de allerede to egenskaber ved en ortonormal så vil et ortonormal basis
+også være lineær uafhængig. 
+
+Så for at besvarer d, skal vi egentlig bare dele med længden af de respektive
+vektor, da vi allerede har vist ortogonalitet i opgave c. 
+
 
 ```{python}
 V = np.vstack([v0 / v0_norm, v1 / v1_norm, v2 / v2_norm, v3/np.linalg.norm(v3)])

@@ -1023,3 +1023,77 @@ $$
 hvor U og V.T er matricer der udfører rækkeoperationer på (byt om på
 rækker) sigma, som indeholde de samme værider som A, men bare sorteret
 efter størrelse. U og V.T vil kun indeholde indgange der er 0 eller 1.
+
+
+# Opgave 7.1
+
+
+![](7.1.png)
+
+Det ser ud til vi skal bruge en formel for at lave beregningen.
+
+$$
+
+\kappa = \frac{||x||f'(x)}{f(x)}\\
+= \frac{x*cos(x)}{sin(x)}
+$$
+
+```{python}
+import numpy as np
+x = np.linspace(0, 6, 100)
+y = np.sin(x)
+```
+
+# Opgave 7.2
+
+![](7.2.png)
+
+## a) 
+
+$$
+(3+2i) +(-1+i)
+$$
+
+```{python}
+z = 3.0 + 2.0j
+z
+w = (-1.0+1.0j)
+w
+z + w
+```
+
+som er løsningen.
+
+
+## e)
+
+```{python}
+a = np.array([[(1.0-1.0j)*a + j*b-(1.0 + 1.0j)*c],
+              [a - (2.+1.0j)*b + jc],
+              [j*a +(1.0 -j)*b+(1.0-j)*c]])
+
+```
+
+# Opgave 7.3
+
+![](7.3.png)
+
+defition 12.1 vektorrum består af mængde V hvis elementer vi kalder vektor.
+
+definition 12.11: en ikke tim delmængde w delmænde V er et underum hvis sum og 
+skalarmultiplikaiton sender element W til elementer W.
+
+## a) {f \in V | f(0) = 0}
+
+den må være i da 0 er en del af intervallet. 
+
+# Opgave 7.4
+
+![](7.4.png)
+
+
+# Opgave 7.5
+
+![](7.5.png)
+
+

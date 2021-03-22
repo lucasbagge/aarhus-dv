@@ -1,0 +1,23 @@
+---
+title: "Untitled"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+![](alf.5a.png)
+
+
+![](alf.5b.png)
+
+![](alf.5c.png)
+
+![](alf.5d.png)
+
+![](alf.5e.png)
+
+![](alf.5fg.png)
+
+
