@@ -695,35 +695,33 @@ random_points(5)
 ```
 
 ```{python}
-def random_points(n):
-  x_coordinate = []
-  y_coordinate = []
-  not_one = 1
-  for i in range(0,n):
-    x = ra.random()
-    y = ra.random()
-    x_coordinate.append(x)
-    y_coordinate.append(y)
-  value_return =[(x,y) for x,y in zip(x_coordinate, y_coordinate)]
-  return list(map(lambda ele: ret_chr if ele == ret_chr else repl_chr, test_list))
-#
-#[(x,y) for x,y in zip(x_coordinate, y_coordinate)]
+items = [(0, 1), (2, 3)]
 
-random_points(5)
+a = [(0, 1), (2, 3)]
+[4 if x == 0 else x for x in a]
+
+for n, i in enumerate(a):
+ if i == 1:
+    a[n] = 10
+a
 ```
+
 
 ```{python}
 def random_points(n):
   x_coordinate = []
   y_coordinate = []
   not_one = 1
-  another_value = 0.99
   for i in range(0,n):
     x = ra.random()
     y = ra.random()
     x_coordinate.append(x)
     y_coordinate.append(y)
+  x_coordinate = [0.99 if x == 1 else x for x in x_coordinate]
+  y_coordinate = [0.99 if x == 1 else x for x in y_coordinate]
   return [(x,y) for x,y in zip(x_coordinate, y_coordinate)]
+#
+#[(x,y) for x,y in zip(x_coordinate, y_coordinate)]
 
 random_points(5)
 ```
@@ -733,7 +731,7 @@ random_points(5)
 from scipy.spatial import ConvexHull
 import random as ra
 ra.random
-points = ra.random_points(25)
+points = random_points(25)
 convex_hull = [points[idx] for idx in ConvexHull(points).vertices]
 plot_hull(points, convex_hull)
 ```

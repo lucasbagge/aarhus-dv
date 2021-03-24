@@ -946,7 +946,7 @@ korrsonerede med w0, w1 er parallelle med e0, e1 eller e1 e0.
 
 # Opgave 6.6
 
-![](6.6.png) \#\# f)
+![](6.6.png)
 
 Generalt er svd ikke unik, Så der er meget stor frihed, så længde vores
 svd overholder definitionen på en svd. \#\# e) hvis A er invertibel hvad
@@ -1048,7 +1048,7 @@ y = np.sin(x)
 
 ![](7.2.png)
 
-## a) 
+## a)
 
 $$
 (3+2i) +(-1+i)
@@ -1062,10 +1062,60 @@ w
 z + w
 ```
 
+
 som er løsningen.
 
 
+## b)
+
+```{python}
+(3.0+2.0j)*(-1.0+1.0j)
+```
+
+## c)
+
+```{python}
+(3.0+2.0j)/(-1.0+1.0j)
+```
+
+## d)
+
+```{python}
+def switch(A, i, j):
+  A[[i, j], :] = A[[j, i], :]
+ 
+def scale(A,i, s):
+  A[i, :] *= s
+ 
+def increase(A, i, j, s):
+  A[i, :] += A[j, :] * s
+```
+
+```{python}
+import numpy as np
+D = np.array([[1.0 + 1.0j, 2.0-1.0j]])
+
+print("D: \n" + str(D))
+scale(D, 0, 1 / D[0,0])
+print("\n" + str(D))
+increase()
+```
+
+
 ## e)
+
+```{python}
+E = np.array([
+  [1- 1j, 1j,-(1+1j)],
+  [1, -(2+1j),1j],
+  [1j,1-1j,1-1j]
+])
+
+b = np.array([5,2,0])
+x = np.linalg.solve(E,b)
+print(np.round(x,5))
+```
+
 
 ```{python}
 a = np.array([[(1.0-1.0j)*a + j*b-(1.0 + 1.0j)*c],
@@ -1080,20 +1130,108 @@ a = np.array([[(1.0-1.0j)*a + j*b-(1.0 + 1.0j)*c],
 
 defition 12.1 vektorrum består af mængde V hvis elementer vi kalder vektor.
 
-definition 12.11: en ikke tim delmængde w delmænde V er et underum hvis sum og 
+definition 12.11: en ikke tim delmængde w delmænde V er et underum hvis sum og
 skalarmultiplikaiton sender element W til elementer W.
 
 ## a) {f \in V | f(0) = 0}
 
-den må være i da 0 er en del af intervallet. 
+den må være i da 0 er en del af intervallet.
+
+$$
+\begin{align*}
+    g=f_i+f_j,&&\text{  } g(0) =f_i(0)+f_j(0)=0\\
+    g=sf_i, &&g(0)=sf_i(0)=s0=0\\
+    \text{Er underrum}
+\end{align*}
+$$
+
+## b)
+
+$$
+\begin{align*}
+    g=f_i+f_j,&&\text{  } g(1) =f_i(1)+f_j(1)=0\\
+    g=sf_i, &&g(1)=sf_i(1)=s0=0\\
+    \text{Er underrum}
+\end{align*}
+$$
+
+## c)
+
+$$
+\begin{align*}
+    g=f_i+f_j,&&\text{  } g(-1) =f_i(-1)+f_j(-1)=2\\
+    \text{Ikke underrum}
+\end{align*}
+$$
+
+## d)
+
+$$
+\begin{align*}
+    g=f_i+f_j, &&\text{  } g'(0) =f_i'(0)+f_j'(0)=0\\
+    g=sf_i, &&\text{} g'(0)=sf_i'(0)=0 \\
+    \text{Er underrum}
+\end{align*}
+$$
 
 # Opgave 7.4
 
 ![](7.4.png)
+Hvis en delmængde skal være et underrum skal mængden ikke være tom.
 
+Betragt ovenstående løsning til andengradligningen $ax^2+bx+c=0$
+
+Brug wolframe alhp til beregningen af gradienten.
+
+$$
+\begin{align*}
+\nabla f(x)=(1/4-\sqrt 3 /12, \sqrt 3 / 12-1/4, -\sqrt 3 / 6) && \text{gradienten}
+\end{align*} \\
+
+\kappa(x) &=\frac{||(2.0, 2.0, -1.0)||_2||(-1,0,1||_2}{|f(x)|} \\
+ &= \frac{\sqrt{2.0^2+2.0^2+(-1)^2}||(1/4-\sqrt 3 /12, \sqrt 3 / 12-1/4, -\sqrt 3 / 6)||_2}{|\frac{-b+\sqrt{b^2-4ac}}{2a}|}
+
+$$
+
+
+```{python}
+import numpy as np
+import math
+
+# definer gradient
+first = np.array([(1/4) - (math.sqrt(3) / 6), \
+                  (math.sqrt(3)/12 - (1/4)), \
+                  (math.sqrt(3) / 6)])
+                 
+# udregner længden
+value1 = np.linalg.norm(first)
+
+print("Normen af gradienten for første funktion er: ", value1)
+print("Den partiel afledte for a: ", (1/4) - (math.sqrt(3) / 6))
+print("Den partiel afledte for b: ", (math.sqrt(3) / 12) - (1/4))
+print("Den partiel afledte for c: ", -(math.sqrt(3) / 6))
+
+# Den partielle afledte som varier mest
+# siden c har den største absolutte værdi, så er denne den som varier mest.
+
+a = 2.0
+b = 2.0
+c = -1.0
+
+# udregner konditionstal
+((math.sqrt(a**2+b**2+c**2) *value1) * (2*a)) / \
+(-b + math.sqrt(b**2 - 4 * a * c))
+```
+
+c har altså den største påvirkning, hvor den er
+
+$$
+\kappa(x)=2.54
+$$
+
+## b) er den samme som a
 
 # Opgave 7.5
 
 ![](7.5.png)
-
 

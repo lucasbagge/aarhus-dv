@@ -17,3 +17,8 @@ def subset_sum(x, L):
     return sol.args[0] # retuner løsningen. 
   else:
     return None
+
+import numpy as numpy
+
+np.random.default_rng()
+np.random.default_rng()
