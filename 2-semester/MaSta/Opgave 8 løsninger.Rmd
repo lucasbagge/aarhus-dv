@@ -10,7 +10,10 @@ knitr::opts_chunk$set(echo = TRUE)
 
 ## 8.25
 ![](8.25.1.png)
+
 ![](8.25.2.png)
+
+
 
 ## 8.28
 
@@ -55,6 +58,8 @@ knitr::opts_chunk$set(echo = TRUE)
 ## 8.4
 
 ![](8.4.png)
+
+![](8.4.opg.png)
 
 ## 8.34
 

@@ -22,8 +22,6 @@ $$
 (3 cos(t), sin(2t)), \text{for } 0 \le t \le 2\pi
 $$
 
-#### Moduler
-
 Hertil vil jeg hente \`numpy\` og matplotlib modulerne.
 
 ```{python}
@@ -49,11 +47,13 @@ ax.plot(*eight)
 plt.show()
 ```
 
+Som giver mig det ønskede 8 tal.
+
 ![](alf.5b.png)
 
 ### b) 
 
-Allerede først vil jeg angive de to funktioner som er oplyst i opgave teksten:
+Jeg opskriver funktioner der skal til for at lave vores plot med støjen.
 
 ```{python}
 rng = np.random.default_rng()
@@ -80,15 +80,13 @@ ax.plot(*(rotated))
 plt.show()
 ```
 
-- eight og eihgt_R er begge (2, 100) matricer hvordan regnes vinklen mellem dem?
+Her kan vi se at vores ottetals er blevet roteret
 
 ## c)
 
 ![](alf.5c.png)
 Dan den matricen angivet i opgave beskrivelsen:
 
-- går opgaven bare ud på at lave A ud fra normal og plotte den?
-- Jeg har fulgt hvordan Andrew har gjort i en af hans noter. 
 
 ```{python}
 noise = rng.normal(0.0, 0.1, (2, 1000))
@@ -99,13 +97,13 @@ ax.plot(*A, 'o', markersize = 2)
 plt.show()
 ```
 
+Jeg har tilføjet noget støj til ottetallet og herefter plottet det.
 
 ## d)
 
 ![](alf.5d.png)
 
-- Jeg vil gøre følgende, men hvordan sikrer jeg at middelværdien i den nye
-  matrice er 0 ?
+For at gøre ovenstående skal jeg trække mean fra hver enkelt vektor i A.
 
 ```{python}
 B = np.vstack([A[0] - np.mean(A[0]), A[1] - np.mean(A[1])])
@@ -155,12 +153,10 @@ origo = np.zeros((2,1))
 fig, ax = plt.subplots()
 ax.set_aspect('equal')
 ax.scatter (*B, color = "blue")
-ax.plot(*np.hstack([origo, u[:,[0]]*s[0]]))
-ax.text(*u[:, [0]]*s[0]*tscale, 's0*u0', color='blue')
-ax.plot(*np.hstack([origo, u[:,[1]]*s[1]]))
-ax.text(*u[:, [1]]*s[1]*tscale, 's1*u1', color='red')
-plt.ylim([-2.0,2.0])
-plt.xlim([-3.0, 3.0])
+ax.plot(*np.hstack([origo, u[:,[0]]]))
+ax.plot(*np.hstack([origo, u[:,[1]]]))
+plt.ylim([-6.0,6.0])
+plt.xlim([-6.0, 6.0])
 plt.show()
 ```
 
@@ -179,7 +175,17 @@ Denne singulærværdi har venstesingulærvektor som er den første føjle af u. 
 
 ## g) 
 
-```{python}
+Her forsøger jeg at gange u med B:
 
+```{python}
+opg_g = u @ B
 ```
 
+```{python}
+fig, ax = plt.subplots()
+ax.set_aspect('equal')
+ax.plot(*opg_g)
+plt.show()
+```
+
+Her foroven ser vi at vi tilnærmelsesvis har fået den samme figur som i a.
