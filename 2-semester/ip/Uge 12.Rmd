@@ -1,0 +1,235 @@
+---
+title: "Untitled"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(reticulate)
+```
+
+
+## decorators in python
+
+- nu kommer en mere videnskablig anvendelse
+- decorators er anvendt for python. 
+- syntastisk sukker kaldes det. 
+- decorator tager en funktion og bruger den funktion som input og derved får man en ny funktion. 
+- den nederste decorator anvendelse først. 
+
+```{python}
+def f(x):
+  return 3 * x
+```
+
+```{python}
+f(7)
+```
+
+```{python}
+l = lambda x: 4 * x
+l(5)
+```
+
+```{python}
+def g(f, x):
+  return f(x) + 1
+```
+
+```{python}
+g(f, 7)
+```
+
+- funktionen overføres
+
+```{python}
+g(l, 7)
+```
+
+- decorator går netop ud på at tage en funktion og retuner en ny funktion.
+
+```{python}
+def h(f):
+  return lambda x: f(x) + 1
+```
+
+- tag oprindelig funktion og ændre det og læg 1 til
+
+```{python}
+h(l) # ny funktion.
+```
+```{python}
+k = h(l)
+
+k(6)
+```
+
+- lav end ecorator
+
+```{python}
+def plus_one(x):
+  return x + 1
+
+def square(x):
+  return x**2
+
+def cube(x):
+  return x**3
+
+# skal kaldes plus når vi har cube.
+def cube(x):
+  return plus_one(x ** 3)
+
+# ser det som en hjælper funktion til
+```
+
+```{python}
+# andet eksempel med lambda
+square_orginal = square
+square = lambda: x: plus_one(square_orginal(x))
+square(5)
+```
+
+```{python}
+def plus(x):
+  return x + 1
+
+def plus_one_decorator(f):
+  return lambda x: plus_one(f(x))
+
+square = plus_one_decorator(square)
+
+print(square(5))
+```
+
+- Nyt eksempel igen
+
+```{python}
+# @ decorator på en funktion tager funktionen og smider en ny funktion ud. 
+@plus_one_decorator
+def square(x):
+  return x ** 2
+square(5)
+
+```
+
+```{python}
+def plus_one_decorator(f):
+  def plus_one(x):
+    return f(x) + 1
+  return plus_one
+
+@plus_one_decorator
+def square(x):
+  return x ** 2
+square(5)
+```
+
+- ovenstående kalder funktionen og anvender den på lokal funktion. 
+- Det ses som den korrekte metode.
+
+- videre med eksempel
+
+```{python}
+@plus_one_decorator
+@plus_one_decorator
+def square(x):
+  return x**2
+
+square(5)
+```
+
+- når vi kalder decorator igen så lægges der flere til.
+
+- med () kalder man decorator
+
+- wrapper bruges som eksempel på decorator.
+
+```{python}
+def run_twice(f):
+  def wrapper(*args):
+    f(*args)
+    f(*args)
+  return wrapper
+
+@run_twice
+def helle_world():
+  print("hell")
+  
+helle_world()
+```
+
+- args holder argumenter i en tuple. 
+
+- eksempel til at se om argumenter er korrekt.
+
+```{python}
+def integer_sum(*args):
+  assert all([isinstance(x, int) for x in args]), \
+              "all arguments most be int"
+  return sum(args)
+
+integer_sum(1,2,3)
+```
+
+- man kan dele ovenstående op i en decorator. 
+- definitin kan være kompliceret men skal være let at anvende dem. 
+-  man kan decorator der bruges som argumenter i funktion.
+
+```{python}
+# se hvad funktionen hedder. 
+f.__name__
+```
+- Lad os se på indbygget decorator.
+- @property
+
+```{python}
+class Ractangle:
+  def __init__(self, width, height):
+    self.width = width
+    self.height = height
+    
+  @property
+  def area(self):
+    return self.width * self.height
+    
+r = Ractangle(3, 4)
+# med property kan vi fjerne parentes
+print(r.area)
+```
+
+- gør vi får ejerskab på funktionen. 
+
+- klasse decorator kan man også se.
+
+- data classes ser på namedtuple.
+- fra dataclasses har de funktionen dataclass hvor man tilføjer en metode til klassen.
+
+
+
+```{python}
+from dataclasses import dataclass
+
+@dataclass
+
+class
+```
+
+
+- functools findes og til decorator. 
+
+
+
+
+
+
+
+```{python}
+
+```
+
+
+
+
+
+
