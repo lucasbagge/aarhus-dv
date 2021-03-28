@@ -744,27 +744,153 @@ plt.show()
 
 ## c) 
 
+
 ```{python}
-import functools
-def convex_hull_graham(points):
-    TURN_LEFT, TURN_RIGHT, TURN_NONE = (1, -1, 0)
-    def cmp(a, b):
-        return (a > b) - (a < b)
-    def turn(p, q, r):
-        return cmp((q[0] - p[0])*(r[1] - p[1]) - (r[0] - p[0])*(q[1] - p[1]), 0)
-    def _keep_left(hull, r):
-        while len(hull) > 1 and turn(hull[-2], hull[-1], r) != TURN_LEFT:
-            hull.pop()
-        if not len(hull) or hull[-1] != r:
-            hull.append(r)
-        return hull
-    points = sorted(points)
-    l = functools.reduce(_keep_left, points, [])
-    u = functools.reduce(_keep_left, reversed(points), [])
-    return l.extend(u[i] for i in range(1, len(u) - 1)) or l
+# Function to know if we have a CCW turn
+def RightTurn(p1, p2, p3):
+	if (p3[1]-p1[1])*(p2[0]-p1[0]) >= (p2[1]-p1[1])*(p3[0]-p1[0]):
+		return False
+	return True
+	
+# Main algorithm:
+def GrahamScan(P):
+	P.sort()			# Sort the set of points
+	L_upper = [P[0], P[1]]		# Initialize upper part
+	# Compute the upper part of the hull
+	for i in range(2,len(P)):
+		L_upper.append(P[i])
+		while len(L_upper) > 2 and not RightTurn(L_upper[-1],L_upper[-2],L_upper[-3]):
+			del L_upper[-2]
+	L_lower = [P[-1], P[-2]]	# Initialize the lower part
+	# Compute the lower part of the hull
+	for i in range(len(P)-3,-1,-1):
+		L_lower.append(P[i])
+		while len(L_lower) > 2 and not RightTurn(L_lower[-1],L_lower[-2],L_lower[-3]):
+			del L_lower[-2]
+	del L_lower[0]
+	del L_lower[-1]
+	L = L_upper + L_lower		# Build the full hull
+	return np.array(L)
+```
+
+```{python}
+import matplotlib.pyplot as plt
+import numpy as np
+#P = [(np.random.randint(0,300),np.random.randint(0,300)) for i in range(N)]
+#P = random_points(30)
+P = [(3,2), (1,1), (2,3), (2,2), (1.5, 2.25), (2.5, 2.25), (2, 1.25), (1, 1.5)]
+#P = [(3,2), (1,1, 1), (2,3, 1), (2,2, 1)]
+L = GrahamScan(P)
+P = np.array(P)
+# Plot the computed Convex Hull:
+plt.figure()
+plt.plot(L[:,0],L[:,1], 'b-', picker=5)
+plt.plot([L[-1,0],L[0,0]],[L[-1,1],L[0,1]], 'b-', picker=5)
+plt.plot(P[:,0],P[:,1],".r")
+plt.axis('off')
+plt.show()
 ```
 
 
 ## d) 
 
+Use assert statements and the doctest module to test your convex hull implementation on a set of represenative inputs.
+
+```{python}
+def GrahamScan(P):
+	P.sort()			
+	L_upper = [P[0], P[1]]
+	assert (len(L_upper) == 2)
+	for i in range(2,len(P)):
+		L_upper.append(P[i])
+		while len(L_upper) > 2 and not RightTurn(L_upper[-1],L_upper[-2],L_upper[-3]):
+			del L_upper[-2] 
+	L_lower = [P[-1], P[-2]]
+	assert (len(L_lower) == 2)
+	for i in range(len(P)-3,-1,-1):
+		L_lower.append(P[i])
+		while len(L_lower) > 2 and not RightTurn(L_lower[-1],L_lower[-2],L_lower[-3]):
+			del L_lower[-2]
+	del L_lower[0]
+	del L_lower[-1]
+	L = L_upper + L_lower
+	assert (isinstance(L, list))
+	return np.array(L)
+L = GrahamScan(P)
+
+assert L.shape == (len(L), 2)
+assert (L.ndim == 2)
+
+
+import doctest
+doctest.testmod(verbose=True)
+```
+
+```{python}
+	
+# Main algorithm:
+def GrahamScan(P):
+  '''
+  >>> GrahamScan([(0.5,2),(1,1), (2,3)])
+  array([[0.5, 2. ],
+       [1. , 1. ],
+       [2. , 3. ]])
+  '''
+	P.sort()			# Sort the set of points
+	L_upper = [P[0], P[1]]		# Initialize upper part
+	# Compute the upper part of the hull
+	for i in range(2,len(P)):
+		L_upper.append(P[i])
+		while len(L_upper) > 2 and not RightTurn(L_upper[-1],L_upper[-2],L_upper[-3]):
+			del L_upper[-2]
+	L_lower = [P[-1], P[-2]]	# Initialize the lower part
+	# Compute the lower part of the hull
+	for i in range(len(P)-3,-1,-1):
+		L_lower.append(P[i])
+		while len(L_lower) > 2 and not RightTurn(L_lower[-1],L_lower[-2],L_lower[-3]):
+			del L_lower[-2]
+	del L_lower[0]
+	del L_lower[-1]
+	L = L_upper + L_lower		# Build the full hull
+	return np.array(L)
+
+
+
+import doctest
+doctest.testmod(verbose=True)
+```
+
+
+
+```{python}
+def RightTurn(p1, p2, p3):
+	if (p3[1]-p1[1])*(p2[0]-p1[0]) >= (p2[1]-p1[1])*(p3[0]-p1[0]):
+		return False
+	return True 
+
+#P = random_points(40)
+P = [(3,2), (1,1), (2,3), (2,2), (5,6), (8,9)]
+print("Orginal",P)
+P.sort()
+print("Sorted", P)
+L_upper = [P[0], P[1]]
+
+#
+for i in range(2,len(P)):
+  L_upper.append(P[i])
+  while len(L_upper) > 2 and not RightTurn(L_upper[-1],L_upper[-2],L_upper[-3]):
+    del L_upper[-2]
+    print(L_upper)
+L_lower = [P[-1], P[-2]]
+for i in range(len(P)-3,-1,-1):
+	 L_lower.append(P[i])
+	 while len(L_lower) > 2 and not RightTurn(L_lower[-1],L_lower[-2],L_lower[-3]):
+	   del L_lower[-2]
+	
+	del L_lower[0]
+	del L_lower[-1]
+	L = L_upper + L_lower		# Build the full hull
+
+return np.array(L)
+```
 
