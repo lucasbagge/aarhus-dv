@@ -1,6 +1,7 @@
 ---
-title: "Untitled"
-output: html_document
+title: "Aflevering 7"
+subtitle: "Lucas Bagge"
+output: pdf_document
 ---
 
 ```{r setup, include=FALSE}
@@ -12,4 +13,76 @@ knitr::opts_chunk$set(echo = TRUE)
 
 ![](8.42.png)
 
+derive the most powerful test using alpha = 0.05
+
+I opgaven har vi givet X med pdf $f(x;\theta)=\theta x^{\theta-1}$, hvor de respektive hypoteser er:
+
+$$
+H_0:\theta=\frac{1}{2} \text{ og } H_1:\theta=\frac{1}{4}
+$$
+
+### a)
+
+I den første del af opgaven skal vi udlede **the most powerful test**, som er forholdsvis simple
+da vi det er simple hypoteser. Vi kan benytte os **Neyman Pearson** teorem 8.6.1, som fortæller os at forholdet mellem likelihoods skal være mindre end en konstant *k*. Da vi kun ser på en observation af X bliver det mere simpel:
+
+$$
+\frac{L(\theta_0)}{L(\theta_\alpha)}=\frac{\frac{1}{2}x^{\frac{1}{2}-1}}{\frac{1}{4}x^{\frac{1}{4}-1}}
+$$
+Det reduceres  til:
+
+$$
+=2x^{\frac{1}{4}}
+$$
+Dermed er rejction regionen for the most powerful test:
+
+$$
+2x^{\frac{1}{4}}\le k
+$$
+Alternativ kan vi skrive, grundet $2x^\frac{1}{4}$ er en konstant, $k^*$ som en ny konstant
+
+$$
+x <\frac{1}{16}k^4 = k^*
+$$
+
+Nu skal vi finde k*, hvor vi gerne vil have
+
+$$
+\alpha=\text{P(Type I error)}=\text{P(rejecting H0 when it is true)}
+$$
+
+som skal være lig med 0.05. Dermed skal følgende holde:
+
+$$
+\alpha=P(X< k^* \text{ når }\theta=\frac{1}{2})\\
+= \int^{k^*}_0 \frac{1}{2}x^{\frac{1}{2}-1} \\
+= [\sqrt{x}]^{k^*}_0 \\
+= \sqrt{k^*} = 0.05
+$$
+Hermed kan vi løse for k*
+
+$$
+k^*=0.0025
+$$
+Det vil sige at forkastning regionen af the most powerful test for
+
+$$
+H_0:\theta=1/2\\
+H_1:\theta=1/4
+$$
+under fordeling funktionen er:
+
+$$
+x< 0.0025
+$$
+
+
+### b)
+
+Herfra kan vi beregne power of the test:
+
+$$
+\gamma=\int^{0.0025}_0 \frac{1}{4}x^{\frac{1}{4}-1}dx\\
+= \frac{1}{2\cdot\sqrt{5}}\approx22.36 \%
+$$
 
