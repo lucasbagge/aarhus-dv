@@ -8,6 +8,7 @@ output: pdf_document
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
+> se https://online.stat.psu.edu/stat415/lesson/26/26.1
 
 ## 8.42
 
