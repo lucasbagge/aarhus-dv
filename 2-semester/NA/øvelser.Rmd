@@ -1030,6 +1030,17 @@ efter størrelse. U og V.T vil kun indeholde indgange der er 0 eller 1.
 
 ![](7.1.png)
 
+
+### a)
+
+sin diff er cos
+
+ser at de er mindre en 1, så hvis vi får en floating fejl, så vil den vokse lineære og ikke en eksponentiel stining. Fejlen skal helst være så tæt på 1 som muligt.
+
+Hvad vhis nævner kommer tæt på nul. Så bliver fejlen uendelig stor. 
+
+### b)
+
 Det ser ud til vi skal bruge en formel for at lave beregningen.
 
 $$
@@ -1044,6 +1055,13 @@ x = np.linspace(0, 6, 100)
 y = np.sin(x)
 ```
 
+Her skal vi bruge den anden formel hvor vi har gradienten. 
+
+
+Her ser vi at fejlen vil vokse polomiel i stedet. 
+
+
+
 # Opgave 7.2
 
 ![](7.2.png)
@@ -1056,9 +1074,7 @@ $$
 
 ```{python}
 z = 3.0 + 2.0j
-z
 w = (-1.0+1.0j)
-w
 z + w
 ```
 
@@ -1105,7 +1121,7 @@ increase()
 ## e)
 
 ```{python}
-E = np.array([
+E = np.array([ 
   [1- 1j, 1j,-(1+1j)],
   [1, -(2+1j),1j],
   [1j,1-1j,1-1j]
@@ -1115,14 +1131,7 @@ b = np.array([5,2,0])
 x = np.linalg.solve(E,b)
 print(np.round(x,5))
 ```
-
-
-```{python}
-a = np.array([[(1.0-1.0j)*a + j*b-(1.0 + 1.0j)*c],
-              [a - (2.+1.0j)*b + jc],
-              [j*a +(1.0 -j)*b+(1.0-j)*c]])
-
-```
+  
 
 # Opgave 7.3
 
@@ -1133,9 +1142,15 @@ defition 12.1 vektorrum består af mængde V hvis elementer vi kalder vektor.
 definition 12.11: en ikke tim delmængde w delmænde V er et underum hvis sum og
 skalarmultiplikaiton sender element W til elementer W.
 
+vi skal undersøge om det er et underrum. Vi får af vide f har funktionsværdier mellem -1 og 1. Her skal vi undersøge om de forskellige er underrum. Her skal vi bruge de tre definitioner i 12.11
+
+- a) W er ikke tom,
+- b) v,w $\in W$ medfører $n+w\in W$,
+- c) $w\in W$ og s en skalar medfører $sw\in W$
+ 
 ## a) {f \in V | f(0) = 0}
 
-den må være i da 0 er en del af intervallet.
+For alle gælder det at V ikke er tom. FOr den anden regle så deler vi op og pludser. Da 0 er en del af funktionsværdien eller intervallet for værdier vi acceptere, så er b også overholdt.  Det handler altså om at se om hvis vi enden lægger to værdier sammen eller ganger en skalar på, så skal vores resultat være en del af de funktionerværdier som V må antage. 
 
 $$
 \begin{align*}
@@ -1145,7 +1160,7 @@ $$
 \end{align*}
 $$
 
-## b)
+## b) f(1) = 0
 
 $$
 \begin{align*}
@@ -1155,7 +1170,11 @@ $$
 \end{align*}
 $$
 
-## c)
+
+
+## c) f(-1) = 1
+
+ 
 
 $$
 \begin{align*}
@@ -1164,7 +1183,9 @@ $$
 \end{align*}
 $$
 
-## d)
+## d) f'(0)=0
+
+
 
 $$
 \begin{align*}
@@ -1187,11 +1208,54 @@ $$
 \begin{align*}
 \nabla f(x)=(1/4-\sqrt 3 /12, \sqrt 3 / 12-1/4, -\sqrt 3 / 6) && \text{gradienten}
 \end{align*} \\
-
-\kappa(x) &=\frac{||(2.0, 2.0, -1.0)||_2||(-1,0,1||_2}{|f(x)|} \\
- &= \frac{\sqrt{2.0^2+2.0^2+(-1)^2}||(1/4-\sqrt 3 /12, \sqrt 3 / 12-1/4, -\sqrt 3 / 6)||_2}{|\frac{-b+\sqrt{b^2-4ac}}{2a}|}
-
 $$
+$$
+\kappa(x) =\frac{||(2.0, 2.0, -1.0)||_2||(-1,0,1||_2}{|f(x)|} \\
+$$
+$$ 
+= \frac{\sqrt{2.0^2+2.0^2+(-1)^2}||(1/4-\sqrt 3 /12, \sqrt 3 / 12-1/4, -\sqrt 3 / 6)||_2}{|\frac{-b+\sqrt{b^2-4ac}}{2a}|}
+$$
+
+### simons løsning
+
+```{python}
+def f(a, b, c):
+  return (-b + np.sqrt(b**2 -4*a*c))/(2*a)
+
+print(f(2,2,-1))
+print(f(2.1,2,-1))
+print(f(2,2.1,-1))
+print(f(2,2,-1.1))
+  
+```
+
+Ved ovenstående ser simon hvilken der varier mest, da en del af opgaven netop beståe i at udtale sig om hvilken der.
+
+
+```{python}
+def gradf(a,b,c):
+  x = ((-b**2 + 2*a*b)/np.sqrt(b**2 - 4*a*c) + b) / 2*a
+  y = (b/np.sqrt(b**2-4*a*c)+1)/2*a
+  z = -1/np.sqrt(b**2-4*a*c)
+  return np.array([x, y, z])
+
+print("K(2,2,-1) = ", \
+        np.linalg.norm(gradf(2,2,-1))*\
+        np.linalg.norm(np.array([2,2,-1]))/\
+        abs(f(2,2,-1)))
+print("K(2,2,-10) = ", \
+        np.linalg.norm(gradf(2,2,-10))*\
+        np.linalg.norm(np.array([2,2,-10]))/\
+        abs(f(2,2,-10)))
+```
+
+Udregner gradienten.
+
+FInd konditionstallet for de to punkter. Bruger formlen på noter.
+
+Får to forskellige tal 29 og 15 og dem relateres tli variationen. 
+
+Vi vil gerne have et konditionstal mellem 1 og 10, da det er til at acceptere, menss hvis de er over så sker der for store fejl. 
 
 
 ```{python}
@@ -1205,7 +1269,7 @@ first = np.array([(1/4) - (math.sqrt(3) / 6), \
                  
 # udregner længden
 value1 = np.linalg.norm(first)
-
+ 
 print("Normen af gradienten for første funktion er: ", value1)
 print("Den partiel afledte for a: ", (1/4) - (math.sqrt(3) / 6))
 print("Den partiel afledte for b: ", (math.sqrt(3) / 12) - (1/4))
@@ -1220,7 +1284,7 @@ c = -1.0
 
 # udregner konditionstal
 ((math.sqrt(a**2+b**2+c**2) *value1) * (2*a)) / \
-(-b + math.sqrt(b**2 - 4 * a * c))
+(-b + math.sqrt(b**2 - 4 * a * c)) 
 ```
 
 c har altså den største påvirkning, hvor den er
@@ -1229,9 +1293,10 @@ $$
 \kappa(x)=2.54
 $$
 
-## b) er den samme som a
+## b) lavet foroven.
 
 # Opgave 7.5
 
 ![](7.5.png)
+
 

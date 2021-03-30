@@ -78,7 +78,7 @@ def convex_hull(P):
 	return list(L)
 
 # plot
-points = random_points(1000)
+points = random_points(10)
 test = convex_hull(points)
 plt.clf()
 plot_hull(test, points)

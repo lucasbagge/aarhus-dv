@@ -219,8 +219,90 @@ class
 - functools findes og til decorator. 
 
 
+## dynamisk programmering
 
+- teknik hvor man løser rekursiv. Man regner de samme ting flere gang.
 
+```{python}
+def binomial(n, k):
+  if k == 0 or k ==n:
+    return 1
+  return binomial(n-1, k) + binomial(n-1, k-1)
+binomial(7,5)
+```
+
+- i dynamisk programmering vil vi undgå at regne ting flere gange.
+- Husk svar man kender og kendes under **memoization**. 
+- tilføj en dic
+
+```{python}
+answers = {}
+def binomial(n, k):
+  if (n,k) not in answers:
+    if k == 0 or k ==n:
+      answer = 1
+    else:
+      answer = binomial(n-1, k) + binomial(n-1, k-1)
+    answers[(n,k)] = answer # tabel til at husek tabellen
+  return answers[(n,k)]
+binomial(7,5)
+```
+
+- den er slet ikke så stor som før.  
+
+```{python}
+answers
+```
+
+- Hvor stor skal den tabel være? n*k, alle de rekursive kald de bliver n mindre.
+
+- man kan bruge decorators.@memoize til at bruge til at effektivserer koden. 
+
+```{python}
+def memoize(f):
+  answers = {}
+  
+  def wrapper(*args):
+    if args not in answers:
+      answers[args] = f(*args)
+    return answers[args]
+  return wrapper
+```
+
+```{python}
+@memoize
+
+def binomial(n, k):
+  if k == 0 or k ==n:
+    return 1
+  else:
+    return binomial(n-1, k) + binomial(n-1, k-1)
+binomial(7,5)
+```
+
+- args skal være nøgle i dict. den skal være mutable. Men gælder ikke for list.
+- lave en trace funktion til at se hvor fork den er blevet.
+
+- @lru_cache i functools er det samme som memoize.
+
+- et andet eksemple er subset sum using dynamisk problem. 
+- s(v, k-1) or s(v - L[k - 1], k-1) er den rekursive provess vi skal implementere.
+
+```{python}
+def subset_sum(x, L):
+  @memoize
+  def solve(value, k):
+    if k == 0:
+      return value == 0
+    return solve(value, k-1) or solve(value - L[k-1], k-1)
+  return solve(x, len(L))
+
+subset_sum(11, [2,3,8,11,-1])
+```
+
+- skal have index så ikke true.
+
+- Et andet eksempel som er sværer **knapsack**, V(c, k - 1) og max{V[c, k-1], value[k-1] + V(c - volume[k-1], k-1)}
 
 
 
