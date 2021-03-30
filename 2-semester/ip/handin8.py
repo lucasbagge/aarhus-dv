@@ -15,6 +15,8 @@ Reflection upon solution:
     >
 """
 
+# til opgaven http://wordaligned.org/articles/longest-common-subsequence
+
 def memoize(f):
     '''
     Implementer nøjagtig samme memoize decorator fra

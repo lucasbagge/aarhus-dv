@@ -1,0 +1,134 @@
+---
+title: "Aflevering 8"
+subtitle: Lucas Bagge
+output:
+  pdf_document: default
+  html_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(magrittr)
+```
+
+## 3.5
+
+I denne opgave skal I bruge en lineær regressionsmodel til at sige noget om værdien af den forklarende variabel ud fra en målt responsværdi. I opgaven her er den forklarende variabel alderen af en løve, og respons er fraktion af sort pigment i løvens næsetip.
+
+I artiklen Sustainable trophy hunting of African lions diskuteres hvordan trofæjagt af løver kan gøres bæredygtigt. Forfatternes konklusion er, at man skal sørge for, at de løver, der jages, er hanløver over en vis alder. Ofte bruger jægeren størelsen og farven af løvens manke til at vurdere alderen, men dette er en meget usikker metode. En mere sikker metode består i at bruge andelen af sort pigment i løvens næsetip. I opgaven her skal I se på, hvordan andelen af sort pigment afhænger af alderen, og hvor godt vi kan estimere alderen ud fra dette.
+
+Data for 32 hanløver fra Serengeti og Ngorongoro nationalparkerne ligger i filen Loeve.csv, der har to søjler med henholdsvis alder (år) og fraktion af sort.
+
+Indlæs data:
+
+```{r}
+data <- read.csv("MatStat-R/data/JLJfiler/Loeve.csv") %>% 
+  janitor::clean_names() 
+head(data)
+```
+
+
+#### a) Lav en figur, hvor fraktion af sort afsættes mod alder. Styr start og slut på andenaksen med tilføjelsen ylim=c(0,1) til plot. Synes du, at der er en lineær sammenhæng i data? Synes du, at sammenhængen er god med henblik på at estimere alder ud fra fraktion af sort i næstippen?
+
+Jeg laver et scatter plot.
+
+```{r}
+attach(data)
+plot(alder, sortfraktion, ylim = c(0,1))
+```
+
+Hvis vi ser fra vores bog *Mathematical statistic with resampling and R* på side 39, så ser der ud til at være en positiv lineær sammenhæng og vi kan dermed godt estimere alder ud fra fraktion af sort i næsetippen.
+
+#### b) Opskriv den lineære regressionsmodel, hvor respons er fraktion af sort i næsetippen, og den forklarende variabel er alder. Find skøn og 95%-konfidensinterval for hældning og skæring, og indtegn den skønnede linje i figuren fra foregående spørgsmål. Angiv også et skøn over spredningen $\sigma$ omkring den lineære sammenhæng. Lav figurer, der kan bruges til modelkontrol, og kommenter på disse figurer.
+
+Den lineære regressions model vil være følgende:
+
+$$
+sortfraktion = \alpha + alder \cdot x
+$$
+
+Implementerin i R:
+
+```{r}
+model <- lm(sortfraktion ~ alder, data = data)
+sumUD <- summary(model)
+sumUD
+```
+
+Hvor skøn for skæring er: 0.069696 mens den for hældning er 0.041956.
+
+Vi kan burge `confint` til at finde konfidens intervallet.
+
+```{r}
+confint(model)
+```
+
+Herefter skal vi tegne vores skøn ind:
+
+```{r}
+plot(alder, sortfraktion, ylim = c(0,1))
+abline(model, col = "red")
+```
+
+Så skal vi angive skønnet over spredning, $s_r$:
+
+```{r}
+sumUD$sigma
+```
+
+Så for modelkontrol
+
+```{r}
+model_res <- resid(model)
+par(mfrow=c(1,2))
+plot(data$alder,model_res)
+abline(0,0)
+qqnorm(model_res)
+```
+
+Residualplotter tyder ikke på afvigelser fra en lineære sammenhæng. Kun vi en outlier måske med den ydersste observation.
+QQplottet giver ikke anledning til bekymring med hensyn til normalfordelingsantagelsen.
+
+#### c) Betragt situationen, hvor en ny løve registreres, og fraktion af sort i næsen for denne løve er 0.2. Beregn et 95%-konfidensinterval for løvens alder i dette tilfælde. Gentag beregningen i tre andre tilfælde, hvor en løve er observeret med henholdsvis 0.4, 0.6 og 0.8 for fraktionen af sort i næsen. Lav en tabel med resultaterne for de fire tilfælde. Hvis vi kun ønsker at skyde løver, der er mindst 5 år gamle, hvor stor synes du så fraktionen af sort i næsen skal være, før du skyder?
+
+Nu lader vi som om vi observer en ny løve der har en sort fraktion på 0.2. Hertil laver jeg et nyt datasæt.
+
+```{r}
+new_data <- data.frame(
+  sortfraktion = 0.2
+)
+```
+
+Nu skal vi altså forudsige hvad alderen på den nye løve er når den har en sortfraktion på 0.2. Hertil laver vi en ny model hvor vi regresser alder på sortfraktion og bruger R prediction til at lave denne analyse:
+
+
+```{r}
+model_2 <- lm(alder ~ sortfraktion, data = data)
+predict(model_2, newdata = new_data, interval = "confidence")
+```
+
+Her ser vi at løven burde være 3 år indenfor 2.29 og 3.7.
+
+Nu får vi yderligere tre nye løver hvor vi skal lave samme analyse. Her kobler jeg bare alle fire på, da vi bliver bedt om at lave en tabel:
+
+```{r}
+new_data <- data.frame(
+  sortfraktion = c(0.2, 0.4, 0.6, 0.8)
+)
+predict(model_2, newdata = new_data, interval = "confidence")
+```
+
+Her til sidst skal vi så svarer på hvad fraktionen af sort skal være før vi vil skyde en løve på baggrund af den er mindst 5 år.
+Ud fra vores prediction så skal skal en løve have omkring 0.4 fraktion så vil den være omkring 5 år.
+
+Kigger vi dog på selve data:
+
+```{r}
+library(dplyr)
+data %>% 
+  filter(alder > 5.0)
+```
+
+Foroven laver jeg et filter på mit data og ser at mange løver som er omkring 5 til 6 år har en sortfraktion på 0.5 til 0.7, som giver god mening ud fra vores model prediction, men ser vi på alderen 7, så har den en sortfraktion på under 0.5, og det er misvisende for så tyder det på at vi har nogle løver som er gammel men ikke har meget fraktion på næsen.
+
+Derfor er vores model ikke særlig god og jeg tør ikke udtale mig om hvad fraktionen skal være for vi vil skyde en løve som er mindst 5 år. 
