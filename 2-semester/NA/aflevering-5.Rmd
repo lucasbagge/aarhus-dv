@@ -5,8 +5,6 @@ output: pdf_document
 ---
 
 
-* kommentar til *plot, det betyder den folder listen ud således vi plotter alle elementer.
-
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 library(reticulate)
@@ -65,8 +63,8 @@ Herefter definerer jeg min rotationsmatrice:
 ```{python}
 c = np.cos(theta)
 s = np.sin(theta)
-R = np.array([[c * theta, -s  * theta],\
-              [s  * theta, c  * theta]])
+R = np.array([[c, -s],
+              [s, c]])
 
 ```
 
@@ -141,10 +139,11 @@ print("Værdien af vt: \n", vt)
 
 ## f)
 
-se på 10.3.2 bemærk at værdier kan vi e hvilken er størst, og se på de retnings
-vektor i matricen. i matricen U får vi to vektor ud og tegn dem ind i vores.
-Hvilken retning giver mest varians. Hvilken retning er figuren længst. 
+I opgave f skal vi se på hvordan singulærværdierne for B er relateret til den
+første figur.
+
  
+Det jeg vil starte med a gøre er at plotte matricen U: 
 ```{python}
 n = 1000
 scale = 2/np.sqrt(n)
@@ -160,13 +159,13 @@ plt.xlim([-6.0, 6.0])
 plt.show()
 ```
 
-Når vi ser på vores singulærværdier:
+Ud fra ovenstående figur kan vi se hvilken retning der giver mest varians. I dette tlfælde er det de venstresingulærvektorer, som også bliver af vores singulærværdier:
 
 ```{python}
 print("Singulærværdier: \n", s)
 ```
 
-Her kan vi se at 43 er støsrt som er vores s[0].
+Her kan vi se at 67 er støsrt som er vores s[0].
 
 Denne singulærværdi har venstesingulærvektor som er den første føjle af u. Vores figur foroven viser at det således er de venstresingulærvektorer giver retningerne hvor variationen af punkterne er størst.
 
