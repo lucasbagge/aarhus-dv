@@ -1,0 +1,220 @@
+---
+title: "Bambuser analyse"
+description: |
+  En simple analyse med indtroduktion til glidende gennemsnit indikator
+author:
+  - name: Lucas Bagge 
+date: "`r Sys.Date()`"
+output: distill::distill_article
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+library(quantmod)
+library(highcharter)
+library(dplyr)
+library(magrittr)
+library(tidyquant)
+library(ggplot2)
+library(plotly)
+```
+
+Den **simple moving average** (på dansk glidende gennmsnit (SMA)) er en arithmeisk glidende gennemsnit beregning ved at lægge tidligere priser sammen og dele med tidsperioden. F.eks kan vi tage lukke prisen og dele med antal af periode. Det er givet ved formlen:
+
+$$
+SMA=\frac{A_1+A_2+...+A_n}{n}
+$$
+
+Det er en meget kendt og brugt teknisk indikator, der kan hjælper med at finde ud af om en aktie er i trend eller ej. 
+
+```{r}
+buser <- tq_get("ORSTED.CO", get="stock.prices")
+my_palette <- c("black", "blue", "red")
+
+ggplotly(
+  buser %>% 
+    tidyr::drop_na() %>% 
+    tq_mutate(ohlc_fun = Cl, mutate_fun = EMA, n = 15) %>% 
+    rename(SMA.15 = EMA) %>% 
+    tq_mutate(ohlc_fun = Cl, mutate_fun = EMA, n = 50) %>%
+    rename(SMA.50 = EMA) %>% 
+    #tq_mutate(ohlc_fun = Cl, mutate_fun = EMA, m = 30) %>% 
+    #rename(EMA.30 = EMA) %>% 
+    select(date, close, SMA.15, SMA.50) %>%
+    filter(date > "2020-01-01") %>% 
+    tidyr::gather(key = type, value = price, close:SMA.50) %>% 
+    ggplot(aes(x = date, y = price, col = type)) +
+    geom_line() +
+    scale_colour_manual(values = my_palette) + 
+    theme(legend.position="bottom") +
+    ggtitle("Glidende gennemsnit") +
+    xlab("") + 
+    ylab("Stock Price") +
+    theme_tq() 
+) %>% 
+  layout(legend = list(
+    orientation = "h"
+  )
+  )
+```
+
+Ser vi på ovenstående plot så har vi et 15- og 50 dages glidende gennemsnit. Det der er interssant og en indikator er når de krydser hiannden. Her ser vi for den *2020-11-06* at de krydser hinanden og aktien i i trend og fortsætter med at stige. Ved den *2021-01-27* ser vi at der er et fald i aktien, men den krydser ikke den 50-glidende gennemsnit. Det er en indikation for det er et støtte niveau og aktien er fortsat i trend og vil stige mere.
+
+Den *2021-03-15* har vi igen et fald i aktien, men ingen krydsning og af den grund et støtte niveau og man kan med argumenterer for at aktien skal yderligere op.
+
+
+
+## Udemy course
+
+- Ser på technical indicator til at finde trend. 
+- momentum (tendenct of either rising or falling prices to keep doing so)
+- Bruger S%P 500 state exchange traded. 
+- Kan hente det eller bruge yahoo.
+- Bruger TTR, quantmod og performanceAnalytics r pakker. 
+
+
+```{r}
+library(TTR)
+library(quantmod)
+library(PerformanceAnalytics)
+library(tidyquant)
+```
+
+
+```{r}
+SPY <- tidyquant::tq_get("SPY", from = "2016-01-01", to = "2017-01-01")
+```
+
+```{r}
+SPY %>% 
+  ggplot(aes(x = date, y = close)) +
+  geom_line() +
+  labs(title = "AAPL Line Chart", y = "Closing Price", x = "") + 
+  theme_tq()
+```
+
+```{r}
+SPY %>%
+  ggplot(aes(x = date, y = close)) +
+  geom_barchart(aes(open = open, high = high, low = low, close = close)) +
+  labs(title = "AAPL Bar Chart", y = "Closing Price", x = "") + 
+  theme_tq()
+```
+
+```{r}
+SPY %>%
+  ggplot(aes(x = date, y = close)) +
+  geom_candlestick(aes(open = open, high = high, low = low, close = close)) +
+  labs(title = "AAPL Bar Chart", y = "Closing Price", x = "") + 
+  theme_tq()
+
+```
+
+## Section 2: stock technical indicators
+
+- Laggin stock technical indicator bruges til at følge pris bevægelser.
+- Moving averages MA bruges til at identificer trend. SMA og EMA er populær
+
+$$
+SMA_n=\frac{sum_n(Close)}{n}
+$$
+
+$$
+EMA_n = \frac{2}{n+1}\cdot (currenc Close - preciois EMA) + previous EMA
+$$
+
+### SMA
+
+```{r}
+SPY %>% 
+  tq_mutate(ohlc_fun = Cl, mutate_fun = SMA, n = 5) %>% 
+  rename(SMA.5 = SMA) %>% 
+  tq_mutate(ohlc_fun = Cl, mutate_fun = SMA, n = 21) %>%
+  rename(SMA.21 = SMA) %>% 
+  select(date, close, SMA.5, SMA.21) %>%
+  tidyr::gather(key = type, value = price, close:SMA.21) %>% 
+  ggplot(aes(x = date, y = price, col = type)) +
+  geom_line() +
+  scale_colour_manual(values = my_palette) + 
+  theme(legend.position="bottom") +
+  ggtitle("Glidende gennemsnit") +
+  xlab("") + 
+  ylab("Stock Price") +
+  theme_tq() 
+```
+- den smiple i rød minder mere om data. Den 21 er mere smooth. 
+
+### EMA
+
+```{r}
+SPY %>% 
+  # se på MA
+  # # Cl er close.
+  tq_mutate(ohlc_fun = Cl, mutate_fun = EMA, n = 5) %>% 
+  rename(SMA.5 = EMA) %>% 
+  tq_mutate(ohlc_fun = Cl, mutate_fun = EMA, n = 21) %>%
+  rename(SMA.21 = EMA) %>% 
+  select(date, close, SMA.5, SMA.21) %>%
+  tidyr::gather(key = type, value = price, close:SMA.21) %>% 
+  ggplot(aes(x = date, y = price, col = type)) +
+  geom_line() +
+  scale_colour_manual(values = my_palette) + 
+  theme(legend.position="bottom") +
+  ggtitle("Glidende gennemsnit") +
+  xlab("") + 
+  ylab("Stock Price") +
+  theme_tq() 
+```
+- Minder om SMA i mønster.
+
+## Bolling bands
+
+- er overlay der identificer statistiker nomarl stock pris bevægelse. 20 dage og t.
+
+$$
+mindleband = SMA_{20}(CLOSe) \\
+Upper \ band = SMA_{20}{Close} + 2 * SRDEV_{20}(Close)\\
+Lower \ band = SMA_{20}{Close} - 2 * SRDEV_{20}(Close)
+$$
+```{r}
+SPY %>% 
+  ggplot(aes(x = date, y = close, 
+             open = open, high = high, low = low, close = close, 
+             group = symbol)) +
+  geom_barchart() +
+  geom_bbands(ma_fun = SMA, sd = 2, n = 20, linetype = 5) +
+  labs(title = "FANG Bar Chart", 
+       subtitle = "BBands with SMA Applied, Experimenting with Multiple Stocks", 
+       y = "Closing Price", x = "") +
+  theme_tq()
+
+```
+- en del af lag indikator.
+
+## parabolix stop and reverse
+
+- identifiere reversal punkter mellem uptrend og downtrend.
+- læs j welles wilder new concepts in technical trading system.
+- En extreme point.
+
+```{r}
+SPY %>% 
+  tq_mutate(
+    select = c(high, low),
+    mutate_fun = SAR,
+    accel = c(0.02, 0.2),
+    col_rename = "sar") %>% 
+  ggplot(aes(x = date, y = close, 
+             open = open, high = high, low = low, close = close, 
+             group = symbol)) +
+  geom_barchart() +
+  geom_point(aes(x = date, y = sar)) +
+  labs(title = "SAR", 
+       subtitle = "Parabolic stop and reverse", 
+       y = "Closing Price", x = "") +
+  theme_tq()
+```
+
+
+## Average directional movement index indicator
+
