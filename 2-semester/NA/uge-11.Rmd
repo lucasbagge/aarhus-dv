@@ -11,22 +11,26 @@ knitr::opts_chunk$set(echo = TRUE)
 
 ### indre produkt
 
-- fra sidste gang så vi på vektorrum. R^n, og med skalar; C.
-- Vi så også op komplekse tal hvor vi har et i komponent med der er negativ.
+-   fra sidste gang så vi på vektorrum. R\^n, og med skalar; C.
 
-- For indre produkt vil vi nu udvide vore koncept med de udvidelser.
-- på vektorum V med enten reelle eller kompleks skalarer er skallara <u,v> for alle
-  u,v i V sålades den opfylder egenskabr angiver på sliden.
-- Kompleks konjugering; z = x +iy, hvor vi skifter til -yi.
-- med komplekse tal skal vi passe på. Da I2 gælder ikke. 
-- Den inducerede norm er:
+-   Vi så også op komplekse tal hvor vi har et i komponent med der er negativ.
+
+-   For indre produkt vil vi nu udvide vore koncept med de udvidelser.
+
+-   på vektorum V med enten reelle eller kompleks skalarer er skallara \<u,v\> for alle u,v i V sålades den opfylder egenskabr angiver på sliden.
+
+-   Kompleks konjugering; z = x +iy, hvor vi skifter til -yi.
+
+-   med komplekse tal skal vi passe på. Da I2 gælder ikke.
+
+-   Den inducerede norm er:
 
 $$
 ||v||=\sqrt{\langle v,v \rangle}
 $$
 
-- Ser på de forskellige typer af indre produkt. 
-- bar står for konvergerede. 
+-   Ser på de forskellige typer af indre produkt.
+-   bar står for konvergerede.
 
 $$
 \langle (1+i,1-i), (2+i,i) \rangle\\
@@ -38,37 +42,31 @@ $$
 =2
 $$
 
-- i python kan vi bruge np.conj til at bruge den.
-- i eksempel fro python ved brug af vdot bruge omvendt.
-- Man kan tage normen af sig selv. 
+-   i python kan vi bruge np.conj til at bruge den.
+-   i eksempel fro python ved brug af vdot bruge omvendt.
+-   Man kan tage normen af sig selv.
 
 #### vægtede indre produkter
 
-- man smider flere tal i de tindre produkt. Skal være positiv, så er der nogle tal der betyder mere end andre.
-- Det kan også gøres med komplekse tal.
-
+-   man smider flere tal i de tindre produkt. Skal være positiv, så er der nogle tal der betyder mere end andre.
+-   Det kan også gøres med komplekse tal.
 
 #### indre produkt på matricer
 
-- for matricer hedder det **frobeniusnormen**.
-- Det er annalog til tidligere.
-- Andre er L^2 indre produkt hvor V er vektorrummet af kontinuerte f. Det er L2 indre produkt. 
+-   for matricer hedder det **frobeniusnormen**.
+-   Det er annalog til tidligere.
+-   Andre er L\^2 indre produkt hvor V er vektorrummet af kontinuerte f. Det er L2 indre produkt.
 
 #### egenskaber
 
-- ser på nogle egenskaber som man kan slå op i hans slide. 
-- Især ser vi Cauchy Schwarz uligheden.
-- Fourierrækker man ser fra - pi til pi. med en integral se hans slide. 
+-   ser på nogle egenskaber som man kan slå op i hans slide.
+-   Især ser vi Cauchy Schwarz uligheden.
+-   Fourierrækker man ser fra - pi til pi. med en integral se hans slide.
 
 ### numerisk integration
 
-- Vi skal regne integraler i python.
-- ser på integral teori.
-- ser på regler for integral eori og inplementerin i python.
+-   Vi skal regne integraler i python.
+-   ser på integral teori.
+-   ser på regler for integral eori og inplementerin i python.
 
 ## Lektion 14
-
-
-
-
-

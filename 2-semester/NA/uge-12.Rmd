@@ -573,7 +573,7 @@ a.shape
 
 #### reduceret svd
 
-#### psudoinversen af A 
+#### psudoinversen af A
 
 $$
 A^+=V \Sigma^{-1}U^T
@@ -583,9 +583,8 @@ $$
 
 -   anden metode til mindste kvadrater
 
-```{=html}
 <!-- -->
-```
+
 -   
 
 ```{python}

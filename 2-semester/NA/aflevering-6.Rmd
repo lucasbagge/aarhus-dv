@@ -54,39 +54,31 @@ Dermed får vi nul og vi har de er ortogonale.
 For at vise dette kan vi bare beregne det indre produkt af funktionerne
 
 $$
-\begin{align*}
-\langle 1, sin(w) \rangle &= \int^\pi_01\cdot sin(w) \ dw\\
-&=[-cos(w)]^\pi_0\\
-&=2
-\end{align*}
+\langle 1, sin(w) \rangle = \int^\pi_01\cdot sin(w) \ dw\\
+=[-cos(w)]^\pi_0\\
+=2
 $$
 
 Ikke vinkelret.
 
 $$
-\begin{align*}
-\langle 1, sin(3w) \rangle &= \int^\pi_01\cdot sin(3w) \ dw\\
-&=\frac{1}{3}[-cos(w)]^{3 \pi}_0\\
-&=\frac{2}{3}
-\end{align*}
+\langle 1, sin(3w) \rangle = \int^\pi_01\cdot sin(3w) \ dw\\
+=\frac{1}{3}[-cos(w)]^{3 \pi}_0\\
+=\frac{2}{3}
 $$
 Ikke vinkelret.
 
 $$
-\begin{align*}
-\langle 1, sin(2w) \rangle &= \int^\pi_01\cdot sin(3w) \ dw\\
-&=\frac{1}{2}[-cos(w)]^{2 \pi}_0\\
-&=0
-\end{align*}
+\langle 1, sin(2w) \rangle = \int^\pi_01\cdot sin(3w) \ dw\\
+=\frac{1}{2}[-cos(w)]^{2 \pi}_0\\
+=0
 $$
 Vinkelret
 
 $$
-\begin{align*}
-\langle 1, sin(4w) \rangle &= \int^\pi_01\cdot sin(3w) \ dw\\
-&=\frac{1}{4}[-cos(w)]^{4 \pi}_0\\
-&=0
-\end{align*}
+\langle 1, sin(4w) \rangle = \int^\pi_01\cdot sin(3w) \ dw\\
+=\frac{1}{4}[-cos(w)]^{4 \pi}_0\\
+=0
 $$
 Den er vinkelret.
 
@@ -114,5 +106,69 @@ Denne kombination er vinkelret på alle funktioenr i 8.1, da det er et eksempel 
 ### d)
 
 ![](na_alf_6_d.png)
+I denne opgave skal vi bruge python til at plotte ovenstående funktion og beregne en approximering baseret på vores funktion givet i 8.1.
+
+Allerførst indlæser modulerne  numpy og matplotli.
+
+```{python}
+import numpy as np
+import matplotlib.pyplot as plt
+```
+
+Efterfølgende bruger jeg samme metode som Andrew vise i hans undervisning, men hvor han viste en fourier cosinus udvikling. 
+
+```{python}
+n = 100
+x, h = np.linspace(0, np.pi, n, retstep = True)
+print("De først 10 obervationer i x: \n",x[:10])
+print("Vores h observation, som er pi: \n", h)
+```
+Nu vil jeg plotte vores eksponential funktion.
+ 
+```{python}
+fig, ax = plt.subplots()
+ax.set_aspect("equal")
+ax.plot(x, 1-np.exp(-x))
+plt.show()
+```
+
+Herefter benytter jeg mig ad de tre funktioner vi så i undervisning:
+
+- `indre_produkt` den beregner det indre produkt ved hjælp af **Trapezreglen**.
+- ´nor_sq´ beregner længden.
+- `proj` beregner projektionen for os.
+
+```{python}
+def indre_produkt(f, g, h):
+  return np.trapz(f * g, dx = h)
+
+def nor_sq(f, h):
+  return indre_produkt(f, f, h)
+
+def proj(f, k, x, h):
+  konstant = np.ones_like(x)
+  out = indre_produkt(f, konstant, h) / nor_sq(konstant, h) * konstant 
+  for m in range(1, k, 2):
+    out += indre_produkt(f, np.sin(m * x), h) / nor_sq(np.sin(m * x), h) * np.sin(m * x)
+  return out
+```
+
+```{python}
+f = 1 - np.exp(-x)
+
+fig, ax = plt.subplots()
+ax.set_aspect('equal')
+ax.plot(x, f)
+ax.plot(x, proj(f, 2, x, h), label = "til sin(w)")
+ax.plot(x, proj(f, 3, x, h), label = "til sin(2w)")
+ax.plot(x, proj(f, 4, x, h), label = "til sin(3w)")
+ax.plot(x, proj(f, 5, x, h), label = "til sin(4w)")
+plt.legend(loc = "lower right")
+plt.show()
+```
+Her ser vi at funktionen sin(w), sin(2w) ligger oveni hinanden og det samme gælder for sin(3w) og sin(4w).
+
+Vores tilnærmelse er ikke særlig god og vi kommer ikke rigtig tilnærmelsesvis tæt på. 
 
 
+ 

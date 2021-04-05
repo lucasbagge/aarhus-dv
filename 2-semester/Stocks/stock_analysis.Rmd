@@ -107,7 +107,9 @@ SPY %>%
   geom_candlestick(aes(open = open, high = high, low = low, close = close)) +
   labs(title = "AAPL Bar Chart", y = "Closing Price", x = "") + 
   theme_tq()
-
+SPY %>% 
+  timetk::tk_xts(date_var = "date") %>% 
+  hchart()
 ```
 
 ## Section 2: stock technical indicators
@@ -133,16 +135,15 @@ SPY %>%
   rename(SMA.21 = SMA) %>% 
   select(date, close, SMA.5, SMA.21) %>%
   tidyr::gather(key = type, value = price, close:SMA.21) %>% 
-  ggplot(aes(x = date, y = price, col = type)) +
-  geom_line() +
-  scale_colour_manual(values = my_palette) + 
-  theme(legend.position="bottom") +
-  ggtitle("Glidende gennemsnit") +
-  xlab("") + 
-  ylab("Stock Price") +
-  theme_tq() 
+  hchart("line", hcaes(x = date, y = price, group = type))
+
 ```
 - den smiple i rød minder mere om data. Den 21 er mere smooth. 
+
+$$
+\text{Buy signal: Previous (Close < } SMA_5) \rightarrow \text{Current (Slose > }SMA_5)\\
+\text{Sell signal: Previous (Close > } SMA_5) \rightarrow \text{Current (Slose < }SMA_5)\\
+$$
 
 ### EMA
 
@@ -218,3 +219,150 @@ SPY %>%
 
 ## Average directional movement index indicator
 
+- Finder momentum for at se om prisen skal op eller ned.
+- ADX er en bounded oscilator der måler stock pris trend styrke og momentum. 14 dages bruges til beregning.
+- læs new concepts in technical trading system. Welles Wilder. 
+
+![](APX.png)
+
+```{r}
+SPY %>% 
+     tq_mutate(
+     select = c("high", "low", "close"),
+     mutate_fun = ADX,
+     n = 14,
+     maType = "SMA"
+     ) %>% 
+  tidyr::pivot_longer(
+     cols = c("DIp", "DIn", "ADX"),
+     names_to = "Indicator",
+     values_to = "Indicator_value"
+     ) %>% 
+  ggplot(aes(x = date, y = Indicator_value, color = Indicator)) +
+   geom_line() +
+  directlabels::geom_dl(aes(label = Indicator), 
+                        method = list(directlabels::dl.combine("first.points", "last.points"))) 
+```
+
+
+## commodity channel index
+
+- CCI, bruger pris variation fra mean.
+
+```{r}
+SPY %>% 
+     tq_mutate(
+     select = c("high", "low", "close"),
+     mutate_fun = CCI,
+     n = 14,
+     maType = "SMA"
+     ) %>% 
+  ggplot(aes(x = date, y = cci))+
+  geom_line()
+```
+
+
+## MOving aveagers convergence /divergence indicator
+
+- MACD
+- center ossicilator, og ser på trend. 
+
+```{r}
+SPY %>% 
+      tq_mutate(select     = close, 
+              mutate_fun = MACD, 
+              nFast      = 12, 
+              nSlow      = 26, 
+              nSig       = 9, 
+              maType     = SMA) %>%
+    mutate(diff = macd - signal) %>%
+    select(-(open:volume)) %>% 
+  ggplot(aes(x = date)) + 
+    geom_hline(yintercept = 0, color = palette_light()[[1]]) +
+    geom_line(aes(y = macd)) +
+    geom_line(aes(y = signal), color = "blue", linetype = 2) +
+    geom_bar(aes(y = diff), stat = "identity", color = palette_light()[[1]]) +
+    labs(title = "FANG: Moving Average Convergence Divergence",
+         y = "MACD", x = "", color = "") +
+    theme_tq() +
+    scale_color_tq()
+```
+
+
+## Rate of change indicator
+
+- ROC er en bundet oscilator der måler aktie prisen hastighed eller momentum.
+
+$$
+ROC(21)=\frac{\text{Current close -close 21 days ago}}{\text{close 21 days ago}}\cdot 100
+$$
+
+```{r}
+SPY %>% 
+      tq_mutate(select     = close, 
+              mutate_fun = ROC, 
+              n       = 21) %>%
+    select(-(open:volume)) %>% 
+  ggplot(aes(x = date)) + 
+    geom_hline(yintercept = 0, color = palette_light()[[1]]) +
+    geom_line(aes(y = ROC)) +
+    labs(title = "ROC",
+         y = "MACD", x = "", color = "") +
+    theme_tq() +
+    scale_color_tq()
+```
+
+## Relative strength index
+
+- RSI: Måler aktien styrker og svagheder. 
+
+```{r}
+SPY %>% 
+      tq_mutate(select     = close, 
+              mutate_fun = RSI, 
+              n       = 14) %>%
+  hchart("line", hcaes(x = date, y = rsi))
+
+```
+
+
+## Stochastic momentum index indicator
+
+- sammenlign prisen med tidligere range. 
+- smi.
+
+```{r}
+SPY %>% 
+      tq_mutate(select     = c(high, low, close), 
+              mutate_fun = SMI, 
+              n = 13,
+              nFast = 2, 
+              nSlow = 25,
+              nSig = 9) %>% 
+  tidyr::pivot_longer(
+     cols = c("SMI", "signal"),
+     names_to = "Indicator", 
+     values_to = "Indicator_value"
+     )  %>% 
+  ggplot(aes(x = date, y = Indicator_value, color = Indicator)) +
+   geom_line() +
+  directlabels::geom_dl(aes(label = Indicator), 
+                        method = list(directlabels::dl.combine("first.points", "last.points"))) 
+```
+
+
+## Williams %R indicator
+
+- sammen aktie prisen med dens tidligere maximum værdi. 
+
+```{r}
+SPY %>% 
+      tq_mutate(select     = c(high, low, close), 
+              mutate_fun = WPR, 
+              n = 14) %>% 
+  hchart("line", hcaes(x = date, y = WPR))
+```
+
+## Section 3 Stock trading signals
+
+- 
