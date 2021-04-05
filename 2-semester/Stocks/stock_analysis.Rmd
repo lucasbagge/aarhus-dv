@@ -30,37 +30,131 @@ Det er en meget kendt og brugt teknisk indikator, der kan hjælper med at finde 
 ```{r}
 buser <- tq_get("ORSTED.CO", get="stock.prices")
 my_palette <- c("black", "blue", "red")
+```
 
-ggplotly(
-  buser %>% 
-    tidyr::drop_na() %>% 
-    tq_mutate(ohlc_fun = Cl, mutate_fun = EMA, n = 15) %>% 
-    rename(SMA.15 = EMA) %>% 
-    tq_mutate(ohlc_fun = Cl, mutate_fun = EMA, n = 50) %>%
-    rename(SMA.50 = EMA) %>% 
-    #tq_mutate(ohlc_fun = Cl, mutate_fun = EMA, m = 30) %>% 
-    #rename(EMA.30 = EMA) %>% 
-    select(date, close, SMA.15, SMA.50) %>%
-    filter(date > "2020-01-01") %>% 
-    tidyr::gather(key = type, value = price, close:SMA.50) %>% 
-    ggplot(aes(x = date, y = price, col = type)) +
-    geom_line() +
-    scale_colour_manual(values = my_palette) + 
-    theme(legend.position="bottom") +
-    ggtitle("Glidende gennemsnit") +
-    xlab("") + 
-    ylab("Stock Price") +
-    theme_tq() 
-) %>% 
-  layout(legend = list(
-    orientation = "h"
-  )
+```{r}
+myBBands <- function (price,n,sd){
+  mavg <- SMA(price,n)
+  sdev <- rep(0,n)
+  N <- nrow(price)
+  for (i in (n+1):N){
+    sdev[i]<- sd(price[(i-n+1):i])
+  }
+  sdev <- sqrt((n-1)/n)*sdev
+  up <- mavg + sd*sdev
+  dn <- mavg - sd*sdev
+  pctB <- (price - dn)/(up - dn)
+  output <- cbind(dn, mavg, up, pctB)
+  colnames(output) <- c("dn", "mavg", "up", 
+        "pctB")
+  return(output)
+}
+```
+
+```{r}
+
+buser <- tq_get("ORSTED.CO", get="stock.prices")
+
+SPY <- buser
+
+bb <-myBBands(Cl(SPY %>% timetk::tk_xts(date_var = "date")), n = 20, sd = 2)
+
+full_data <- SPY %>% 
+  tq_mutate(ohlc_fun = Cl, mutate_fun = SMA, n = 5) %>% 
+  rename(SMA.5 = SMA) %>% 
+  tq_mutate(ohlc_fun = Cl, mutate_fun = SMA, n = 21) %>%
+  rename(SMA.21 = SMA) %>% 
+  tq_mutate(
+    select = c(high, low),
+    mutate_fun = SAR,
+    accel = c(0.02, 0.2),
+    col_rename = "sar") %>% 
+  tq_mutate(
+    select = c("high", "low", "close"),
+    mutate_fun = ADX,
+    n = 14,
+    maType = "SMA"
+  ) %>% 
+    tq_mutate(select     = c(high, low, close), 
+            mutate_fun = WPR, 
+            n = 14) %>% 
+  tq_mutate(
+    select = c("high", "low", "close"),
+    mutate_fun = CCI,
+    n = 14,
+    maType = "SMA"
+  ) %>%
+  tq_mutate(select     = close, 
+            mutate_fun = MACD, 
+            nFast      = 12, 
+            nSlow      = 26, 
+            nSig       = 9, 
+            maType     = SMA) %>%
+  mutate(diff = macd - signal) %>% 
+  tq_mutate(select     = close, 
+            mutate_fun = ROC, 
+            n       = 21) %>% 
+  tq_mutate(select     = close, 
+            mutate_fun = RSI, 
+            n       = 14) %>% 
+  tq_mutate(select     = c(high, low, close), 
+            mutate_fun = SMI, 
+            n = 13,
+            nFast = 2, 
+            nSlow = 25,
+            nSig = 9)
+
+meta_adx <- full_data %>% 
+  tidyr::pivot_longer(
+    cols = c("DIp", "DIn", "ADX"),
+    names_to = "Indicator",
+    values_to = "Indicator_value"
+  )  
+
+meta_smi <- full_data %>% 
+  tidyr::pivot_longer(
+    cols = c("SMI", "signal"),
+    names_to = "Indicator", 
+    values_to = "Indicator_value"
   )
 ```
 
-Ser vi på ovenstående plot så har vi et 15- og 50 dages glidende gennemsnit. Det der er interssant og en indikator er når de krydser hiannden. Her ser vi for den *2020-11-06* at de krydser hinanden og aktien i i trend og fortsætter med at stige. Ved den *2021-01-27* ser vi at der er et fald i aktien, men den krydser ikke den 50-glidende gennemsnit. Det er en indikation for det er et støtte niveau og aktien er fortsat i trend og vil stige mere.
 
-Den *2021-03-15* har vi igen et fald i aktien, men ingen krydsning og af den grund et støtte niveau og man kan med argumenterer for at aktien skal yderligere op.
+
+```{r,layout="l-screen-inset", fig.width=6, fig.height=20}
+highchart(type = "stock") %>% 
+  hc_yAxis_multiples(
+    create_yaxis(6, height = c(2, 1, 1, 1, 1,1), turnopposite = TRUE)
+  ) %>% 
+  hc_add_series(SPY %>% timetk::tk_xts(date_var = "date"), yAxis = 0, name = "SPY")  %>% 
+  hc_add_series(full_data %>% 
+                  select(date, SMA.5) %>% 
+                  timetk::tk_xts(date_var = "date"),
+                yAxis = 0, 
+                name = "SMA - 5") %>% 
+  hc_add_series(full_data %>% 
+                  select(date, SMA.21) %>% 
+                  timetk::tk_xts(date_var = "date"),
+                yAxis = 0, 
+                name = "SMA - 21") %>% 
+  hc_add_series(full_data %>% 
+                  select(date, sar) %>% 
+                  timetk::tk_xts(date_var = "date"),
+                yAxis = 0, 
+                name = "SAR",
+                type = "line") %>% 
+  hc_add_series(SPY %>% timetk::tk_xts(date_var = "date") %$% volume , color = "gray", yAxis = 1, name = "Volume", type = "column") %>% 
+  hc_add_series(full_data %>% timetk::tk_xts(date_var = "date") %$% ADX, yAxis = 2, name = "ADX", type = "line") %>% 
+  hc_add_series(full_data %>% timetk::tk_xts(date_var = "date") %$% DIn, yAxis = 2, name = "DIn", type = "line") %>% 
+  hc_add_series(full_data %>% timetk::tk_xts(date_var = "date") %$% DIp, yAxis = 2, name = "DIp", type = "line") %>% 
+  hc_add_series(full_data %>% timetk::tk_xts(date_var = "date") %$% WPR, yAxis = 3, name = "WPR", type = "line") %>% 
+  hc_add_series(full_data %>% timetk::tk_xts(date_var = "date") %$% ROC, yAxis = 4, name = "ROC", type = "line") %>%
+  hc_add_series(bb %$% dn, yAxis = 5, name = "bb-down", type = "line") %>% 
+  hc_add_series(bb %$% mavg, yAxis = 5, name = "bb-mavg", type = "line") %>% 
+  hc_add_series(bb %$% up, yAxis = 5, name = "bb-up", type = "line") %>% 
+  hc_add_series(SPY %>% timetk::tk_xts(date_var = "date"), yAxis = 5, name = "SPY")
+  
+```
 
 
 
@@ -80,10 +174,6 @@ library(PerformanceAnalytics)
 library(tidyquant)
 ```
 
-
-```{r}
-SPY <- tidyquant::tq_get("SPY", from = "2016-01-01", to = "2017-01-01")
-```
 
 ```{r}
 SPY %>% 
@@ -112,7 +202,7 @@ SPY %>%
   hchart()
 ```
 
-## Section 2: stock technical indicators
+## Appendix
 
 - Laggin stock technical indicator bruges til at følge pris bevægelser.
 - Moving averages MA bruges til at identificer trend. SMA og EMA er populær
@@ -199,21 +289,18 @@ SPY %>%
 - En extreme point.
 
 ```{r}
-SPY %>% 
+sar_value <- SPY %>% 
   tq_mutate(
     select = c(high, low),
     mutate_fun = SAR,
     accel = c(0.02, 0.2),
     col_rename = "sar") %>% 
-  ggplot(aes(x = date, y = close, 
-             open = open, high = high, low = low, close = close, 
-             group = symbol)) +
-  geom_barchart() +
-  geom_point(aes(x = date, y = sar)) +
-  labs(title = "SAR", 
-       subtitle = "Parabolic stop and reverse", 
-       y = "Closing Price", x = "") +
-  theme_tq()
+  timetk::tk_xts(date_var = "date")
+
+SPY %>% 
+  timetk::tk_xts(date_var = "date") %>% 
+  hchart() %>% 
+  hc_add_series(sar_value$sar, type = "scatter")
 ```
 
 
@@ -227,21 +314,18 @@ SPY %>%
 
 ```{r}
 SPY %>% 
-     tq_mutate(
-     select = c("high", "low", "close"),
-     mutate_fun = ADX,
-     n = 14,
-     maType = "SMA"
-     ) %>% 
+  tq_mutate(
+    select = c("high", "low", "close"),
+    mutate_fun = ADX,
+    n = 14,
+    maType = "SMA"
+  ) %>% 
   tidyr::pivot_longer(
-     cols = c("DIp", "DIn", "ADX"),
-     names_to = "Indicator",
-     values_to = "Indicator_value"
-     ) %>% 
-  ggplot(aes(x = date, y = Indicator_value, color = Indicator)) +
-   geom_line() +
-  directlabels::geom_dl(aes(label = Indicator), 
-                        method = list(directlabels::dl.combine("first.points", "last.points"))) 
+    cols = c("DIp", "DIn", "ADX"),
+    names_to = "Indicator",
+    values_to = "Indicator_value"
+  ) %>% 
+  hchart("line", hcaes(x = date, y = Indicator_value, group = Indicator )) 
 ```
 
 
@@ -251,41 +335,40 @@ SPY %>%
 
 ```{r}
 SPY %>% 
-     tq_mutate(
-     select = c("high", "low", "close"),
-     mutate_fun = CCI,
-     n = 14,
-     maType = "SMA"
-     ) %>% 
-  ggplot(aes(x = date, y = cci))+
-  geom_line()
+  tq_mutate(
+    select = c("high", "low", "close"),
+    mutate_fun = CCI,
+    n = 14,
+    maType = "SMA"
+  ) %>% 
+  hchart("line", hcaes(x = date, y = cci))
 ```
 
 
-## MOving aveagers convergence /divergence indicator
+## (MACD) MOving aveagers convergence /divergence indicator
 
 - MACD
 - center ossicilator, og ser på trend. 
 
 ```{r}
 SPY %>% 
-      tq_mutate(select     = close, 
-              mutate_fun = MACD, 
-              nFast      = 12, 
-              nSlow      = 26, 
-              nSig       = 9, 
-              maType     = SMA) %>%
-    mutate(diff = macd - signal) %>%
-    select(-(open:volume)) %>% 
+  tq_mutate(select     = close, 
+            mutate_fun = MACD, 
+            nFast      = 12, 
+            nSlow      = 26, 
+            nSig       = 9, 
+            maType     = SMA) %>%
+  mutate(diff = macd - signal) %>%
+  select(-(open:volume)) %>% 
   ggplot(aes(x = date)) + 
-    geom_hline(yintercept = 0, color = palette_light()[[1]]) +
-    geom_line(aes(y = macd)) +
-    geom_line(aes(y = signal), color = "blue", linetype = 2) +
-    geom_bar(aes(y = diff), stat = "identity", color = palette_light()[[1]]) +
-    labs(title = "FANG: Moving Average Convergence Divergence",
-         y = "MACD", x = "", color = "") +
-    theme_tq() +
-    scale_color_tq()
+  geom_hline(yintercept = 0, color = palette_light()[[1]]) +
+  geom_line(aes(y = macd)) +
+  geom_line(aes(y = signal), color = "blue", linetype = 2) +
+  geom_bar(aes(y = diff), stat = "identity", color = palette_light()[[1]]) +
+  labs(title = "FANG: Moving Average Convergence Divergence",
+       y = "MACD", x = "", color = "") +
+  theme_tq() +
+  scale_color_tq()
 ```
 
 
@@ -299,17 +382,11 @@ $$
 
 ```{r}
 SPY %>% 
-      tq_mutate(select     = close, 
-              mutate_fun = ROC, 
-              n       = 21) %>%
-    select(-(open:volume)) %>% 
-  ggplot(aes(x = date)) + 
-    geom_hline(yintercept = 0, color = palette_light()[[1]]) +
-    geom_line(aes(y = ROC)) +
-    labs(title = "ROC",
-         y = "MACD", x = "", color = "") +
-    theme_tq() +
-    scale_color_tq()
+  tq_mutate(select     = close, 
+            mutate_fun = ROC, 
+            n       = 21) %>%
+  select(-(open:volume)) %>% 
+  hchart("line", hcaes(x = date, y = ROC))
 ```
 
 ## Relative strength index
@@ -318,9 +395,9 @@ SPY %>%
 
 ```{r}
 SPY %>% 
-      tq_mutate(select     = close, 
-              mutate_fun = RSI, 
-              n       = 14) %>%
+  tq_mutate(select     = close, 
+            mutate_fun = RSI, 
+            n       = 14) %>%
   hchart("line", hcaes(x = date, y = rsi))
 
 ```
@@ -333,21 +410,18 @@ SPY %>%
 
 ```{r}
 SPY %>% 
-      tq_mutate(select     = c(high, low, close), 
-              mutate_fun = SMI, 
-              n = 13,
-              nFast = 2, 
-              nSlow = 25,
-              nSig = 9) %>% 
+  tq_mutate(select     = c(high, low, close), 
+            mutate_fun = SMI, 
+            n = 13,
+            nFast = 2, 
+            nSlow = 25,
+            nSig = 9) %>% 
   tidyr::pivot_longer(
-     cols = c("SMI", "signal"),
-     names_to = "Indicator", 
-     values_to = "Indicator_value"
-     )  %>% 
-  ggplot(aes(x = date, y = Indicator_value, color = Indicator)) +
-   geom_line() +
-  directlabels::geom_dl(aes(label = Indicator), 
-                        method = list(directlabels::dl.combine("first.points", "last.points"))) 
+    cols = c("SMI", "signal"),
+    names_to = "Indicator", 
+    values_to = "Indicator_value"
+  )  %>% 
+  hchart("line", hcaes(date, Indicator_value, group = Indicator))
 ```
 
 
@@ -357,12 +431,35 @@ SPY %>%
 
 ```{r}
 SPY %>% 
-      tq_mutate(select     = c(high, low, close), 
-              mutate_fun = WPR, 
-              n = 14) %>% 
+  tq_mutate(select     = c(high, low, close), 
+            mutate_fun = WPR, 
+            n = 14) %>% 
   hchart("line", hcaes(x = date, y = WPR))
 ```
 
-## Section 3 Stock trading signals
 
-- 
+
+## plot
+
+### bolling band calculation
+
+```{r}
+myBBands <- function (price,n,sd){
+  mavg <- SMA(price,n)
+  sdev <- rep(0,n)
+  N <- nrow(price)
+  for (i in (n+1):N){
+    sdev[i]<- sd(price[(i-n+1):i])
+  }
+  sdev <- sqrt((n-1)/n)*sdev
+  up <- mavg + sd*sdev
+  dn <- mavg - sd*sdev
+  pctB <- (price - dn)/(up - dn)
+  output <- cbind(dn, mavg, up, pctB)
+  colnames(output) <- c("dn", "mavg", "up", 
+        "pctB")
+  return(output)
+}
+
+bb <-myBBands(Cl(SPY %>% timetk::tk_xts(date_var = "date")), n = 20, sd = 2)
+```
