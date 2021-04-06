@@ -19,6 +19,45 @@ library(ggplot2)
 library(plotly)
 ```
 
+```{r}
+SPY_tibble <- tq_get("SPY",from="2016-01-01",to="2017-01-01")
+SPY_tibble <- tq_get("FLS.CO", get="stock.prices")
+
+stategies <- function(data, col){
+  placeholder <- ifelse(col > 1, 0, 1)
+  data_length <- nrow(data)
+  for(i in 1:data_length) {
+    placeholder[i] <- ifelse(col[i] == 1, 1, ifelse(col[i] == -1, 0, placeholder[i-1]))
+  }
+  placeholder[is.na(placeholder)] <- 1
+  placeholder
+}
+
+SPY_tibble_1 <- 
+  SPY_tibble %>% 
+  tq_mutate(select = c(close), mutate_fun = SMA, n = 5) %>% 
+  mutate(sma5tr_tibble = Lag(case_when(
+    Lag(close) < Lag(SMA) & close > SMA ~ 1,
+    Lag(close) > Lag(SMA) & close < SMA ~ -1,
+    TRUE ~ 0
+  )),
+  sma5pos_tibble = stategies(., sma5tr_tibble))  
+
+highchart(type = "stock") %>% 
+  hc_yAxis_multiples(
+    create_yaxis(2, height = c(2, 1), turnopposite = TRUE)
+  ) %>% 
+  hc_add_series(SPY_tibble_1 %>% timetk::tk_xts(date_var = "date"), yAxis = 0, name = "SPY")  %>% 
+  hc_add_series(SPY_tibble_1 %>% 
+                  select(date, SMA) %>% 
+                  timetk::tk_xts(date_var = "date"),
+                yAxis = 0, 
+                name = "SMA - 5")
+  
+```
+
+
+
 Den **simple moving average** (på dansk glidende gennmsnit (SMA)) er en arithmeisk glidende gennemsnit beregning ved at lægge tidligere priser sammen og dele med tidsperioden. F.eks kan vi tage lukke prisen og dele med antal af periode. Det er givet ved formlen:
 
 $$
@@ -119,6 +158,32 @@ meta_smi <- full_data %>%
   )
 ```
 
+```{r}
+highchart(type = "stock") %>% 
+  hc_yAxis_multiples(
+    create_yaxis(2, height = c(2, 1), turnopposite = TRUE)
+  ) %>% 
+  hc_add_series(SPY %>% timetk::tk_xts(date_var = "date"), yAxis = 0, name = "SPY")  %>% 
+  hc_add_series(full_data %>% 
+                  select(date, SMA.5) %>% 
+                  timetk::tk_xts(date_var = "date"),
+                yAxis = 0, 
+                name = "SMA - 5") %>% 
+  hc_add_series(full_data %>% 
+                  select(date, SMA.21) %>% 
+                  timetk::tk_xts(date_var = "date"),
+                yAxis = 0, 
+                name = "SMA - 21") %>% 
+  hc_add_series(full_data %>% 
+                  select(date, sar) %>% 
+                  timetk::tk_xts(date_var = "date"),
+                yAxis = 0, 
+                name = "SAR",
+                type = "line") %>% 
+  hc_add_series(full_data %>% timetk::tk_xts(date_var = "date") %$% ADX, yAxis = 1, name = "ADX", type = "line") %>% 
+  hc_add_series(full_data %>% timetk::tk_xts(date_var = "date") %$% DIn, yAxis = 1, name = "DIn", type = "line") %>% 
+  hc_add_series(full_data %>% timetk::tk_xts(date_var = "date") %$% DIp, yAxis = 1, name = "DIp", type = "line")
+```
 
 
 ```{r,layout="l-screen-inset", fig.width=6, fig.height=20}
