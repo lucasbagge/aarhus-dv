@@ -20,7 +20,6 @@ library(plotly)
 ```
 
 ```{r}
-SPY_tibble <- tq_get("SPY",from="2016-01-01",to="2017-01-01")
 SPY_tibble <- tq_get("FLS.CO", get="stock.prices")
 
 stategies <- function(data, col){
@@ -35,7 +34,9 @@ stategies <- function(data, col){
 
 SPY_tibble_1 <- 
   SPY_tibble %>% 
-  tq_mutate(select = c(close), mutate_fun = SMA, n = 5) %>% 
+  tq_mutate(select = c(close), mutate_fun = SMA, n = 200) %>% 
+  rename(SMA_200 = SMA) %>% 
+  tq_mutate(select = c(close), mutate_fun = SMA, n = 50) %>% 
   mutate(sma5tr_tibble = Lag(case_when(
     Lag(close) < Lag(SMA) & close > SMA ~ 1,
     Lag(close) > Lag(SMA) & close < SMA ~ -1,
@@ -52,233 +53,26 @@ highchart(type = "stock") %>%
                   select(date, SMA) %>% 
                   timetk::tk_xts(date_var = "date"),
                 yAxis = 0, 
-                name = "SMA - 5")
+                name = "SMA - 50") %>% 
+  hc_add_series(SPY_tibble_1 %>% 
+                  select(date, SMA_200) %>% 
+                  timetk::tk_xts(date_var = "date"),
+                yAxis = 0, 
+                name = "SMA - 200")
   
 ```
 
-
-
-Den **simple moving average** (på dansk glidende gennmsnit (SMA)) er en arithmeisk glidende gennemsnit beregning ved at lægge tidligere priser sammen og dele med tidsperioden. F.eks kan vi tage lukke prisen og dele med antal af periode. Det er givet ved formlen:
-
-$$
-SMA=\frac{A_1+A_2+...+A_n}{n}
-$$
-
-Det er en meget kendt og brugt teknisk indikator, der kan hjælper med at finde ud af om en aktie er i trend eller ej. 
-
 ```{r}
-buser <- tq_get("ORSTED.CO", get="stock.prices")
-my_palette <- c("black", "blue", "red")
+SPY_tibble_1 <- 
+  SPY_tibble_1 %>% 
+  relocate(SMA, .after = close) %>% 
+  select(-c(volume, adjusted))
 ```
 
-```{r}
-myBBands <- function (price,n,sd){
-  mavg <- SMA(price,n)
-  sdev <- rep(0,n)
-  N <- nrow(price)
-  for (i in (n+1):N){
-    sdev[i]<- sd(price[(i-n+1):i])
-  }
-  sdev <- sqrt((n-1)/n)*sdev
-  up <- mavg + sd*sdev
-  dn <- mavg - sd*sdev
-  pctB <- (price - dn)/(up - dn)
-  output <- cbind(dn, mavg, up, pctB)
-  colnames(output) <- c("dn", "mavg", "up", 
-        "pctB")
-  return(output)
-}
-```
+med sm5tr så hvis close er mindre end sma så bliver -1 og vi skal sælge
 
-```{r}
-
-buser <- tq_get("ORSTED.CO", get="stock.prices")
-
-SPY <- buser
-
-bb <-myBBands(Cl(SPY %>% timetk::tk_xts(date_var = "date")), n = 20, sd = 2)
-
-full_data <- SPY %>% 
-  tq_mutate(ohlc_fun = Cl, mutate_fun = SMA, n = 5) %>% 
-  rename(SMA.5 = SMA) %>% 
-  tq_mutate(ohlc_fun = Cl, mutate_fun = SMA, n = 21) %>%
-  rename(SMA.21 = SMA) %>% 
-  tq_mutate(
-    select = c(high, low),
-    mutate_fun = SAR,
-    accel = c(0.02, 0.2),
-    col_rename = "sar") %>% 
-  tq_mutate(
-    select = c("high", "low", "close"),
-    mutate_fun = ADX,
-    n = 14,
-    maType = "SMA"
-  ) %>% 
-    tq_mutate(select     = c(high, low, close), 
-            mutate_fun = WPR, 
-            n = 14) %>% 
-  tq_mutate(
-    select = c("high", "low", "close"),
-    mutate_fun = CCI,
-    n = 14,
-    maType = "SMA"
-  ) %>%
-  tq_mutate(select     = close, 
-            mutate_fun = MACD, 
-            nFast      = 12, 
-            nSlow      = 26, 
-            nSig       = 9, 
-            maType     = SMA) %>%
-  mutate(diff = macd - signal) %>% 
-  tq_mutate(select     = close, 
-            mutate_fun = ROC, 
-            n       = 21) %>% 
-  tq_mutate(select     = close, 
-            mutate_fun = RSI, 
-            n       = 14) %>% 
-  tq_mutate(select     = c(high, low, close), 
-            mutate_fun = SMI, 
-            n = 13,
-            nFast = 2, 
-            nSlow = 25,
-            nSig = 9)
-
-meta_adx <- full_data %>% 
-  tidyr::pivot_longer(
-    cols = c("DIp", "DIn", "ADX"),
-    names_to = "Indicator",
-    values_to = "Indicator_value"
-  )  
-
-meta_smi <- full_data %>% 
-  tidyr::pivot_longer(
-    cols = c("SMI", "signal"),
-    names_to = "Indicator", 
-    values_to = "Indicator_value"
-  )
-```
-
-```{r}
-highchart(type = "stock") %>% 
-  hc_yAxis_multiples(
-    create_yaxis(2, height = c(2, 1), turnopposite = TRUE)
-  ) %>% 
-  hc_add_series(SPY %>% timetk::tk_xts(date_var = "date"), yAxis = 0, name = "SPY")  %>% 
-  hc_add_series(full_data %>% 
-                  select(date, SMA.5) %>% 
-                  timetk::tk_xts(date_var = "date"),
-                yAxis = 0, 
-                name = "SMA - 5") %>% 
-  hc_add_series(full_data %>% 
-                  select(date, SMA.21) %>% 
-                  timetk::tk_xts(date_var = "date"),
-                yAxis = 0, 
-                name = "SMA - 21") %>% 
-  hc_add_series(full_data %>% 
-                  select(date, sar) %>% 
-                  timetk::tk_xts(date_var = "date"),
-                yAxis = 0, 
-                name = "SAR",
-                type = "line") %>% 
-  hc_add_series(full_data %>% timetk::tk_xts(date_var = "date") %$% ADX, yAxis = 1, name = "ADX", type = "line") %>% 
-  hc_add_series(full_data %>% timetk::tk_xts(date_var = "date") %$% DIn, yAxis = 1, name = "DIn", type = "line") %>% 
-  hc_add_series(full_data %>% timetk::tk_xts(date_var = "date") %$% DIp, yAxis = 1, name = "DIp", type = "line")
-```
-
-
-```{r,layout="l-screen-inset", fig.width=6, fig.height=20}
-highchart(type = "stock") %>% 
-  hc_yAxis_multiples(
-    create_yaxis(6, height = c(2, 1, 1, 1, 1,1), turnopposite = TRUE)
-  ) %>% 
-  hc_add_series(SPY %>% timetk::tk_xts(date_var = "date"), yAxis = 0, name = "SPY")  %>% 
-  hc_add_series(full_data %>% 
-                  select(date, SMA.5) %>% 
-                  timetk::tk_xts(date_var = "date"),
-                yAxis = 0, 
-                name = "SMA - 5") %>% 
-  hc_add_series(full_data %>% 
-                  select(date, SMA.21) %>% 
-                  timetk::tk_xts(date_var = "date"),
-                yAxis = 0, 
-                name = "SMA - 21") %>% 
-  hc_add_series(full_data %>% 
-                  select(date, sar) %>% 
-                  timetk::tk_xts(date_var = "date"),
-                yAxis = 0, 
-                name = "SAR",
-                type = "line") %>% 
-  hc_add_series(SPY %>% timetk::tk_xts(date_var = "date") %$% volume , color = "gray", yAxis = 1, name = "Volume", type = "column") %>% 
-  hc_add_series(full_data %>% timetk::tk_xts(date_var = "date") %$% ADX, yAxis = 2, name = "ADX", type = "line") %>% 
-  hc_add_series(full_data %>% timetk::tk_xts(date_var = "date") %$% DIn, yAxis = 2, name = "DIn", type = "line") %>% 
-  hc_add_series(full_data %>% timetk::tk_xts(date_var = "date") %$% DIp, yAxis = 2, name = "DIp", type = "line") %>% 
-  hc_add_series(full_data %>% timetk::tk_xts(date_var = "date") %$% WPR, yAxis = 3, name = "WPR", type = "line") %>% 
-  hc_add_series(full_data %>% timetk::tk_xts(date_var = "date") %$% ROC, yAxis = 4, name = "ROC", type = "line") %>%
-  hc_add_series(bb %$% dn, yAxis = 5, name = "bb-down", type = "line") %>% 
-  hc_add_series(bb %$% mavg, yAxis = 5, name = "bb-mavg", type = "line") %>% 
-  hc_add_series(bb %$% up, yAxis = 5, name = "bb-up", type = "line") %>% 
-  hc_add_series(SPY %>% timetk::tk_xts(date_var = "date"), yAxis = 5, name = "SPY")
-  
-```
-
-
-
-## Udemy course
-
-- Ser på technical indicator til at finde trend. 
-- momentum (tendenct of either rising or falling prices to keep doing so)
-- Bruger S%P 500 state exchange traded. 
-- Kan hente det eller bruge yahoo.
-- Bruger TTR, quantmod og performanceAnalytics r pakker. 
-
-
-```{r}
-library(TTR)
-library(quantmod)
-library(PerformanceAnalytics)
-library(tidyquant)
-```
-
-
-```{r}
-SPY %>% 
-  ggplot(aes(x = date, y = close)) +
-  geom_line() +
-  labs(title = "AAPL Line Chart", y = "Closing Price", x = "") + 
-  theme_tq()
-```
-
-```{r}
-SPY %>%
-  ggplot(aes(x = date, y = close)) +
-  geom_barchart(aes(open = open, high = high, low = low, close = close)) +
-  labs(title = "AAPL Bar Chart", y = "Closing Price", x = "") + 
-  theme_tq()
-```
-
-```{r}
-SPY %>%
-  ggplot(aes(x = date, y = close)) +
-  geom_candlestick(aes(open = open, high = high, low = low, close = close)) +
-  labs(title = "AAPL Bar Chart", y = "Closing Price", x = "") + 
-  theme_tq()
-SPY %>% 
-  timetk::tk_xts(date_var = "date") %>% 
-  hchart()
-```
 
 ## Appendix
-
-- Laggin stock technical indicator bruges til at følge pris bevægelser.
-- Moving averages MA bruges til at identificer trend. SMA og EMA er populær
-
-$$
-SMA_n=\frac{sum_n(Close)}{n}
-$$
-
-$$
-EMA_n = \frac{2}{n+1}\cdot (currenc Close - preciois EMA) + previous EMA
-$$
 
 ### SMA
 
@@ -325,13 +119,26 @@ SPY %>%
 
 ## Bolling bands
 
-- er overlay der identificer statistiker nomarl stock pris bevægelse. 20 dage og t.
+```{r}
+myBBands <- function (price,n,sd){
+  mavg <- SMA(price,n)
+  sdev <- rep(0,n)
+  N <- nrow(price)
+  for (i in (n+1):N){
+    sdev[i]<- sd(price[(i-n+1):i])
+  }
+  sdev <- sqrt((n-1)/n)*sdev
+  up <- mavg + sd*sdev
+  dn <- mavg - sd*sdev
+  pctB <- (price - dn)/(up - dn)
+  output <- cbind(dn, mavg, up, pctB)
+  colnames(output) <- c("dn", "mavg", "up", 
+        "pctB")
+  return(output)
+}
+```
 
-$$
-mindleband = SMA_{20}(CLOSe) \\
-Upper \ band = SMA_{20}{Close} + 2 * SRDEV_{20}(Close)\\
-Lower \ band = SMA_{20}{Close} - 2 * SRDEV_{20}(Close)
-$$
+
 ```{r}
 SPY %>% 
   ggplot(aes(x = date, y = close, 
@@ -349,9 +156,6 @@ SPY %>%
 
 ## parabolix stop and reverse
 
-- identifiere reversal punkter mellem uptrend og downtrend.
-- læs j welles wilder new concepts in technical trading system.
-- En extreme point.
 
 ```{r}
 sar_value <- SPY %>% 
@@ -371,11 +175,6 @@ SPY %>%
 
 ## Average directional movement index indicator
 
-- Finder momentum for at se om prisen skal op eller ned.
-- ADX er en bounded oscilator der måler stock pris trend styrke og momentum. 14 dages bruges til beregning.
-- læs new concepts in technical trading system. Welles Wilder. 
-
-![](APX.png)
 
 ```{r}
 SPY %>% 
@@ -396,8 +195,6 @@ SPY %>%
 
 ## commodity channel index
 
-- CCI, bruger pris variation fra mean.
-
 ```{r}
 SPY %>% 
   tq_mutate(
@@ -411,9 +208,6 @@ SPY %>%
 
 
 ## (MACD) MOving aveagers convergence /divergence indicator
-
-- MACD
-- center ossicilator, og ser på trend. 
 
 ```{r}
 SPY %>% 
@@ -439,11 +233,6 @@ SPY %>%
 
 ## Rate of change indicator
 
-- ROC er en bundet oscilator der måler aktie prisen hastighed eller momentum.
-
-$$
-ROC(21)=\frac{\text{Current close -close 21 days ago}}{\text{close 21 days ago}}\cdot 100
-$$
 
 ```{r}
 SPY %>% 
@@ -456,8 +245,6 @@ SPY %>%
 
 ## Relative strength index
 
-- RSI: Måler aktien styrker og svagheder. 
-
 ```{r}
 SPY %>% 
   tq_mutate(select     = close, 
@@ -469,9 +256,6 @@ SPY %>%
 
 
 ## Stochastic momentum index indicator
-
-- sammenlign prisen med tidligere range. 
-- smi.
 
 ```{r}
 SPY %>% 
@@ -492,39 +276,10 @@ SPY %>%
 
 ## Williams %R indicator
 
-- sammen aktie prisen med dens tidligere maximum værdi. 
-
 ```{r}
 SPY %>% 
   tq_mutate(select     = c(high, low, close), 
             mutate_fun = WPR, 
             n = 14) %>% 
   hchart("line", hcaes(x = date, y = WPR))
-```
-
-
-
-## plot
-
-### bolling band calculation
-
-```{r}
-myBBands <- function (price,n,sd){
-  mavg <- SMA(price,n)
-  sdev <- rep(0,n)
-  N <- nrow(price)
-  for (i in (n+1):N){
-    sdev[i]<- sd(price[(i-n+1):i])
-  }
-  sdev <- sqrt((n-1)/n)*sdev
-  up <- mavg + sd*sdev
-  dn <- mavg - sd*sdev
-  pctB <- (price - dn)/(up - dn)
-  output <- cbind(dn, mavg, up, pctB)
-  colnames(output) <- c("dn", "mavg", "up", 
-        "pctB")
-  return(output)
-}
-
-bb <-myBBands(Cl(SPY %>% timetk::tk_xts(date_var = "date")), n = 20, sd = 2)
 ```
