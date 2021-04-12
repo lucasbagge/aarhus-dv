@@ -235,10 +235,10 @@ SPY %>%
 
 
 ```{r}
-SPY %>% 
+SPY_tibble %>% 
   tq_mutate(select     = close, 
             mutate_fun = ROC, 
-            n       = 21) %>%
+            n       = 10) %>%
   select(-(open:volume)) %>% 
   hchart("line", hcaes(x = date, y = ROC))
 ```

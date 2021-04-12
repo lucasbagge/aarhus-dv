@@ -347,7 +347,9 @@ print(r2)
 r er øvre triangulær, alt under diagonal skal være nul ikke opfyldt her
 
 ```{python}
+import numpy as np
 c = np.array([[1, 0, 1], [0, 1, 1], [1, 1, 0]])
+#c = np.array([[1, 1, 3], [1, -2, 1], [1, 1, 1]])
 q3, r3 = klassisk_gram_schmidt(c)
 print(q3)
 print(r3)
@@ -400,3 +402,21 @@ print(simpson(lambda x: np.log(x)/(1+x), y, s))
 jo flere små andengrad jeg deler op desto mere prævis, så de 5 decimaler skal ikke flytte sig for meget.
 
 her kan man lave et loop som iterer over mange små 2 grads polynomier så vi får at væriden ikke ændre sig.
+
+```{r}
+x <- cbind(c(1,1,1),c(1,-2,1), c(3, 1, 1))
+x
+
+```
+
+```{python}
+x1 = np.array([1, 0, 2, -1])[:, np.newaxis]
+x2 = np.array([-1, 1, 0, 1])[:, np.newaxis]
+x3 = np.array([2, 0, 0, -2])[:, np.newaxis]
+X = np.hstack([x1, x2, x3])
+
+q5, r5 = klassisk_gram_schmidt(X)
+print(q5)
+print(r5)
+print(q5.T @ q5)
+```

@@ -1,0 +1,97 @@
+---
+title: "Untitled"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+## 15 Decorators
+
+### 15.1
+
+Create a function decorator @enforce_integer_return that checks if a function returns a value of type int and raises an AssertionError if the result is of a different type. The decorator could e.g. be used as in the example below.
+
+> @enforce_integer_return
+  def my_sum(x, y):
+      return x + y
+
+> my_sum(19, 23)
+42
+
+> my_sum(1, 2.5)
+...
+AssertionError: result must be int
+
+### 15.2
+
+Create a decorator @BoxIt for functions returning a string. The output of a function returning a string should be converted into a new string, with the output put into a "box" (see example below). You can assume that the string returned by a function only consist of a single line of text, i.e. the string does not contain '\n'.
+
+@BoxIt
+def plus(x, y):
+    return "The sum of %s and %s is %s" % (x, y, x + y)
+
+print(plus(3,4))
+should print the following
+
+<!-- --------------------------- -->
+<!-- | The sum of 3 and 4 is 7 | -->
+<!-- --------------------------- -->
+
+### 15.3
+
+Generalize your solution to Exercise 15.3, so that it can handle multiline output.
+
+@BoxIt
+def test():
+    return "This\n   is a\n      test"
+
+@BoxIt
+@BoxIt
+def plus(x, y):
+    return "%s + %s = %s" % (x, y, x+y)
+
+print(test())
+print(plus(3, 4))
+should print the following
+
++------------+
+| This       |
+|    is a    |
+|       test |
++------------+
++---------------+
+| +-----------+ |
+| | 3 + 4 = 7 | |
+| +-----------+ |
++---------------+
+
+## 16 Dynamic programming
+
+### 16.1
+
+In this exercise we would like to achive some currency amount using the fewest coins available in the currency. We assume that the set of different coin values of the currency is represented by a tuple, e.g. coins = (1, 2, 5, 10, 20) could represent the Danish coins. In this exercise you can assume that all amounts and coins have integer values, and that there is coin of value 1 in the currency - this guarantees that all values can be expressed using the available coin values. Furthermore you might assume that all amounts are ≤ 200.
+
+Consider the above coints. The amount 33 can be achieved in many different ways, e.g. 10 + 10 + 5 + 5 + 1 + 1 +1 and 20 + 10 + 2 + 1. The last sum is a solution using the fewest coins.
+
+A simple greedy strategy to construct a list of coins for a given value, is to repeatedly take the coin with largest value until the remaining value is less that the value of the largest coin. Then repeatedly take the second largest valued coin as long as possible, etc. For some set of coins this strategy is guaranteeed to always find an optimal solution, like for the above tuple coins. But in general this strategy will not always find the optimal stragey, e.g. for the value 14 and possible coins (1, 7, 10), the greedy strategy will find the solution 10 + 1 + 1 + 1 + 1, whereas an optimal solution using the fewest coins is 7 + 7.
+
+#### a) Implement a function change_greedy(value, coins) that implements the greedy change strategy, and returns a list of integers, each integer in coins, and with sum equal to value.
+
+Example: change_greedy(35, (1, 7, 10)) should return [10, 10, 10, 1, 1, 1, 1, 1].
+
+
+#### b) Implement a recursive function number_of_coins(value, coins) that returns the numer of coins in an optimal solution. The function can implement the following recursive expression: If value = 0, then number_of_coins(value) = 0, and otherwise number_of_coins(value) = mincoin in coins where coin ≤ value(1 + number_of_coins(value - coin)). To speed up your computation use memoization, e.g. using the decorator @memoized (without memoization, the second example below will run for a very very long time).
+Example: number_of_coins(35, (1, 7, 10)) should return 5, and number_of_coins(100, (1, 2)) should return 50.
+
+
+#### c) Implement a recursive function change(value, coins) that returns an optimal solution, i.e. a list of integers, each integer in coins and where the sum equals value. One approach could be to modify your function number_of_coins appropriately to return a list of coins instead of a number.
+
+Example: change(35, (1, 7, 10)) could return the list [1, 7, 7, 10, 10].
+The depth of the recursion when running the above recursive functions depends on the parameter value, and it is very likely you will get a RecursionError: maximum recursion depth exceeded when trying to compute number_of_coins(1000, (1,)). In the final question you should convert your change function into an iterative solution that systematically fills out the "memoization table".
+
+#### d) Implement a function change_iterative(value, coins) that returns an optimal solution. The function should fill out a table of solutions for increasing values of value.
+Example: change_iterative(12345, [1, 2, 5, 10, 20]) could return [20, 20, ..., 20, 20, 5].
+
