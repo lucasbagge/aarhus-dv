@@ -157,6 +157,52 @@ Får en nul række igen.
 
 #### a)
 
+alternativ med python
+
+```{python}
+def f_norm(a):
+  temp = []
+  for i in range(len(a)):
+    for j in range(len(a)):
+      if a[i][j] != 0:
+        temp.append(a[i][j])
+  L = [x**2 for x in temp]
+  return np.sqrt(sum(L))
+
+A = np.array([[6.0, 0.],
+              [0.,-3.]])
+B = np.array([[1., 2.],
+              [-1.,-2.]])
+              
+Af = f_norm(A)
+Bf = f_norm(B)
+print(f'af: {Af}\n Bf: {Bf}')
+```
+
+indre produkt
+
+$$
+\langle A,B \rangle =\langle (a_{ij}),(b_{ij})\rangle=\sqrt{\sum \sum (a_{ij})^2}
+$$
+
+Også i python
+
+```{python}
+def inner_produkt(a,b):
+  temp = []
+  for i in range(len(a)):
+    for j in range(len(a)): 
+      product = a[i][j] * b[i][j]
+      if product != 0:
+        temp.append(product)
+  return sum(temp)
+
+print(f'Inner product: {inner_produkt(A,B)}') 
+print(f'Cauchy Schwart uligheden {inner_produkt(A,B) <= Af * Bf}, da {inner_produkt(A,B)} <= {Af * Bf}')
+
+
+```
+
 fro-ben-i-us, bestemmes med formlen
 
 $$
@@ -220,6 +266,8 @@ print("2-normen af A: \n", str(sa[0]))
 print("2-normen af B: \n", str(sb[0]))
 ```
 
+-   Den størse sigma værdi skal være lig a 2 normen. 6 og får 3 det samme som f normen som ikke må ære ens, men bare nogelunde lige.
+
 Alternativ:
 
 ```{python}
@@ -250,8 +298,8 @@ Se kode fra Ditte.
 Skal udelukke den sidste værdi
 
 ```{python}
-x = np.array([-2.0, -1.0, 0.0, 1.0, 2.0])
-h = 1 #  
+x = np.array([-2.0, -1.0, 0.0, 1.0, 2.0]) # angies i tekseten
+h = 1 #  b - a delt med antal elementer
 f_x = 1.0 / (1.0 + x**2)
 
 a = h * np.sum(f_x[:-1]) # gøres for alle indgange på nær den sidste 
@@ -269,12 +317,16 @@ print("b = ", b)
 
 #### c)
 
+Simon bruger en formel
+
 ```{python}
 c = np.trapz(f_x, dx = h) # gøres for alle indgange på nær den sidste 
 print("c = ", c)
 ```
 
 #### d)
+
+for hver anden ganger vi med 4, 2 og det
 
 ```{python}
 # simps formel.
@@ -320,6 +372,20 @@ def forbedret_gram_schmidt(a):
     r[[i], i+1:] = q[:, [i]].T @ q[:, i+1:]
     q[:, i+1:] -= q[:, [i]] @ r[[i], i+1:]
   return q, r
+
+def qr_simon(A):
+  k, n = A.shape
+  R = np.zeros((n, n))
+  Q = np.zeros((n, n))
+  for j in range(0, k):
+    wj = A[:, j]
+    for i in range(0, j):
+      R[i, j] = np.vdot(A[:, j], Q[:, i])
+      wj = wj - R[i, j]*Q[:, i]
+    rjj = np.linalg.norm(wj)
+    Q[:, j] = wj * 1/rjj
+    R[j, j] = rjj
+  return np.round(Q,2), np.round(R, 2)
 ```
 
 #### a)
@@ -329,6 +395,8 @@ a = np.array([[2, 0], [0, 1]])
 q1, r1 = klassisk_gram_schmidt(a)
 print(q1)
 print(r1)
+q_simon, r_simon = qr_simon(a)
+print(f'Ser på simons version \n{q_simon} \n og r: \n {r_simon}')
 ```
 
 Får det samme ud, vi kan se qr er en ortonormal samling da vi får identitetsmtri
@@ -366,7 +434,8 @@ q4, r4 = klassisk_gram_schmidt(d)
 print(q4) # ikke ortonormal samling. 
 print(r4)
 print( q4.T @ q4) # ikke nær nul. 
-print()
+q_simon, r_simon = qr_simon(d)
+print(f'Ser på simons version \n{q_simon} \n og r: \n {r_simon}')
 ```
 
 qr decomponering kan vi afgøre om vi har en linær uafhængighed.
@@ -389,6 +458,12 @@ def simpson(f, xs, h):
   sum += f(xs[len(x) - 1])
   return result * sum
 
+def simpson_simon(f, a, b, n):
+  h = (b-a) / (n-1)
+  l = enumerate(np.linspace(a, b, n)[1:-1]) # 1 til -1 så vi ikke får den første med.
+  middle = sum([4*f(v) if (k % 2 == 0) else 2*f(v) for (k, v) in l])
+  return (h/3) * (f(a) + middle + f(b))
+
 def g(x):
   return np.log(x)/(1+x)
 
@@ -397,6 +472,8 @@ y2, s2 = np.linspace(1/5, 5, 10000, retstep = True)
 print(simpson(g, y, s))
 print(simpson(g, y2, s2))
 print(simpson(lambda x: np.log(x)/(1+x), y, s))
+
+print("Integral of function: ", simpson_simon(lambda x: np.log(x)/(1 + x), 1/5, 5, 251))
 ```
 
 jo flere små andengrad jeg deler op desto mere prævis, så de 5 decimaler skal ikke flytte sig for meget.

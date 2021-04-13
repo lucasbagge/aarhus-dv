@@ -1,0 +1,18 @@
+---
+title: "Untitled"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+I artiklen Effects of user age on smartphone and tablet use, measured with an eye-tracker via fixa-tion duration, scan-path duration, and saccades proportion studeres, hvordan brugen af smartp-hones og tablets varierer mellem forskellige aldersgrupper. Under brugen følges en persons øjen-bevægelse, og herudfra dannes et mål SPD (scan-path duration, målt i millisekunder), der afspej-ler en persons evne til at bruge redskabet. I artiklen siges der: "SPD measures global processing ofinterfaces, where longer SPD indicates less efficient scanning and browsing". Personer deles op itre aldersgrupper:unge,midaldrendeogaeldre. Desuden fordeles personerne på to eksperimen-ter (Ex1ogEx2). Hvert eksperiment består af ni opgaver inden for brugen af forskellige smartp-hone apps, og opgaven hørende til en app er forskellig mellem de to eksperimenter. Data er i filenSmartphone.csvder har tre søjler med henholdsvis eksperiment, aldersgruppe og SPD-målingen
+
+#### a)  Lav en figur med 3 delplots med qqplots af SPD for de tre aldersgrupper for eksperiment 1.Kommenter på figuren.Opskriv den statistiske model, hvor hver gruppe bestemt af aldersgruppe og eksperimenthar sin egen middelværdi og sin egen varians afSPD, og data er normalfordelt. Lav et testfor hypotesen, at der er samme varians i de 6 grupper.
+
+#### b)  Lav  et  interaktionsplot,  og  kommenter  på  hvad  du  ser  i  figuren.  Opskriv  modellen,  hvorhver gruppe bestemt af aldersgruppe og eksperiment har sin egen middelværdi afSPD, ogalle grupperne har den samme varians. Opskriv hypotesen om en additiv struktur af mid-delværdien med et bidrag fra aldersgruppe og fra eksperiment. LavF-testet for hypotesenom additivitet.
+
+#### c)  Undersøg,  om  det  kan  antages,  at  aldersgruppe  ikke  har  nogen  effekt  påSPD.  Undersøgogså, om eksperiment har nogen effekt påSPD. Husk at skrive modellerne op.
+
+#### d)  Angiv  skøn  over  middelværdien  blandt  deaeldrefor  eksperimentEx1.  Angiv  et  95%-konfidensinterval for forskellen i middelværdi afSPDmellem gruppen afungeog gruppenafaeldreinden for den additive model.Angiv skøn over spredningen påSPDi den additive model
