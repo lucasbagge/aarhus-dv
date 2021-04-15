@@ -26,7 +26,7 @@ ui <- dashboardPage(
 
 server <- function(input, output) { 
   #SPY_tibble <- tq_get("ORSTED.CO", get="stock.prices")
-  SPY_tibble <- tq_get("BAVA.CO", get="stock.prices")
+  SPY_tibble <- tq_get("GMAB.CO", get="stock.prices")
   SPY_tibble_1 <- 
     SPY_tibble %>% 
     tq_mutate(select = c(close), mutate_fun = SMA, n = 12) %>% 
@@ -116,14 +116,18 @@ server <- function(input, output) {
   
   output$plot5 <- renderHighchart({
     SPY_tibble %>% 
+      filter(date > "2020-06-01") %>% 
       tq_mutate(select     = c(high, low, close), 
                 mutate_fun = SMI, 
                 n = 10,
-                nFast = 8, 
-                nSlow = 50,
+                nFast = 5, 
+                nSlow = 3,
                 nSig = 30) %>% 
+      mutate(higher_value = 40,
+             buffer_lowr = -15,
+             buffer_higher = 15) %>% 
       tidyr::pivot_longer(
-        cols = c("SMI", "signal"),
+        cols = c("SMI", "signal", "higher_value", "buffer_lowr", "buffer_higher"),
         names_to = "Indicator", 
         values_to = "Indicator_value"
       )  %>% 

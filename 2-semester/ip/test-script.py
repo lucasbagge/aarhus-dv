@@ -30,3 +30,18 @@ plt.minorticks_on()
 plt.legend()
 plt.show()
 
+## numpy
+
+import numpy as np
+x = np.arange(6)
+y = x.reshape(2,3)
+y[0][0] = 42
+z = y.flatten()
+z
+# numpy - broadcasting 
+## måde at finde dimensioenr på hvis de ikke er ens.
+
+x = np.array([[1, 2, 3], [4,5,6]])
+y = np.array([1, 2, 3])
+
+x + y 

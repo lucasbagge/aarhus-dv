@@ -31,7 +31,7 @@ a = np.vander(x, cols)
 print(f'værdien af a: \n{a}')
 ```
 
-#### a) lav anden grads polynomium. 
+#### a) lav anden grads polynomium.
 
 ```{python}
 # lav forbedret gram smith
@@ -274,7 +274,7 @@ print(u)
 
 u udgør en ortonormal samling.
 
-### 9.5 
+### 9.5
 
 ![](9.5.png)
 

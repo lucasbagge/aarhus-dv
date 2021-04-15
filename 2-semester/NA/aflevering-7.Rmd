@@ -1,0 +1,48 @@
+---
+title: "Untitled"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(reticulate)
+```
+
+```{python}
+import numpy as np
+#import matplotlib.pyplot as plt
+```
+
+
+## Intro
+![](7ind.png)
+![](na7-park.png)
+
+### a)
+![](7-a.png)
+
+```{python}
+# linspace (a (x0),  b(x_n-1), n)
+np.linspace(0, 11, 20)
+np.linspace(0, 30, 600)
+```
+
+
+### b)
+![](7-b.png)
+### c)
+
+![](7-c.png)
+
+
+### d)
+
+![](7-d1.png)
+
+![](7-d2.png)
+
+### e)
+
+![](7-e.png)
+
+

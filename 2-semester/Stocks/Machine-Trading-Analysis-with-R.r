@@ -15,6 +15,9 @@ library("neuralnet")
 library("PerformanceAnalytics")
 library("quantmod")
 library("tseries")
+library(tidymodels)
+library(tidyverse)
+library(tidyquant)
 library("xgboost")
 
 # 1.2. Data Downloading or Reading
@@ -24,9 +27,9 @@ library("xgboost")
 # spy <- SPY$SPY.Adjusted
 
 # 1.2.2. Data Reading
-data <- read.csv("Machine-Trading-Analysis-Data.txt",header=T)
-spy <- xts(data[,2],order.by=as.Date(data[,1]))
-
+# data <- read.csv("Machine-Trading-Analysis-Data.txt",header=T)
+#spy <- xts(data[,2],order.by=as.Date(data[,1]))
+spy_tiblle <- tq_get("SPY",get = "stock.prices",from="2007-01-01",to="2017-01-01")
 # 2. Feature Creation
 
 # 2.1. Target Feature
