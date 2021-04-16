@@ -23,20 +23,26 @@ library("xgboost")
 # 1.2. Data Downloading or Reading
 
 # 1.2.1. Yahoo Finance
-# getSymbols(Symbols="SPY",src="yahoo",from="2007-01-01",to="2017-01-01")
-# spy <- SPY$SPY.Adjusted
-
+getSymbols(Symbols="SPY",src="yahoo",from="2007-01-01",to="2017-01-01")
+spy <- SPY$SPY.Adjusted
+spy %>% head()
 # 1.2.2. Data Reading
 # data <- read.csv("Machine-Trading-Analysis-Data.txt",header=T)
 #spy <- xts(data[,2],order.by=as.Date(data[,1]))
-spy_tiblle <- tq_get("SPY",get = "stock.prices",from="2007-01-01",to="2017-01-01")
+spy_tiblle <- tq_get("SPY",get = "stock.prices",from="2007-01-01",to="2017-01-01") %>% 
+  tq_mutate(select = adjusted, dailyReturn, type = "log") %>% 
+  tq_mutate(select = daily.returns, Lag, k = 1:9) %>% 
+  select(date, daily.returns, starts_with("Lag")) %>% 
+  na.omit()
+spy_tiblle %>% head()
 # 2. Feature Creation
 
 # 2.1. Target Feature
 rspy <- dailyReturn(spy,type="log")
-
+rspy %>% head()
 # 2.2. Predictor Features
 rspy1 <- Lag(rspy,k=1)
+rspy1 %>% head()
 rspy2 <- Lag(rspy,k=2)
 rspy3 <- Lag(rspy,k=3)
 rspy4 <- Lag(rspy,k=4)
@@ -50,20 +56,38 @@ rspy9 <- Lag(rspy,k=9)
 rspyall <- cbind(rspy,rspy1,rspy2,rspy3,rspy4,rspy5,rspy6,rspy7,rspy8,rspy9)
 colnames(rspyall) <- c("rspy","rspy1","rspy2","rspy3","rspy4","rspy5","rspy6","rspy7","rspy8","rspy9")
 rspyall <- rspyall[complete.cases(rspyall),]
-
+rspyall %>% head()
 # 3. Range Delimiting
 
 # 3.1. Training Range
-rspyt <- window(rspyall,end="2014-01-01")
-
+rspyt <- window(rspyall, end = "2014-01-01")
+rspyt %>% tail()
+rspyt %>% head()
+library(timetk)
+rspyt_tibble <- spy_tiblle %>%
+  filter(date <= "2014-01-01")
+rspyt_tibble %>% tail()
 # 3.2. Testing Range
+
 rspyf <- window(rspyall,start="2014-01-01",end="2016-01-01")
+rspyf %>% head()
+rspyf %>% tail()
+rspyf_tibble <- spy_tiblle %>%
+  filter(date >=  "2014-01-01" & date <= "2016-01-01")
+rspyf_tibble %>% head()
+rspyf_tibble %>% tail()
 
 # 3.3. Intermediate Testing Range 
 # Same length as Training Range
 rspyp <- window(rspyall,start="2009-01-15",end="2016-01-01")
 length(rspyt)
 length(rspyp)
+
+rspyp_tibble <- spy_tiblle %>% 
+  filter(date >=  "2009-01-15" & date <= "2016-01-01")
+  
+nrow(rspyt_tibble)
+nrow(rspyp_tibble)
 
 # 3.4. Trading Range
 rspys <- window(rspyall,start="2016-01-01")
