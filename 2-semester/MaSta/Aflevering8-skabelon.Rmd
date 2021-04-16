@@ -2,7 +2,7 @@
 title: "Aflevering 8"
 subtitle: Lucas Bagge
 output:
-  pdf_document: default
+  #pdf_document: default
   html_document: default
 ---
 
@@ -44,7 +44,7 @@ Hvis vi ser fra vores bog *Mathematical statistic with resampling and R* på sid
 Den lineære regressions model vil være følgende:
 
 $$
-sortfraktion = \alpha + alder \cdot x
+sortfraktion{\sim N(\alpha+\beta\cdot alder_i)}
 $$
 
 Implementerin i R:
@@ -55,7 +55,7 @@ sumUD <- summary(model)
 sumUD
 ```
 
-Hvor skøn for skæring er: 0.069696 mens den for hældning er 0.041956.
+Hvor skøn for skæring er: 0.069696 mens den for hældning er 0.5891.
 
 Vi kan burge `confint` til at finde konfidens intervallet.
 
@@ -80,10 +80,15 @@ Så for modelkontrol
 
 ```{r}
 model_res <- resid(model)
+sigma <- summary(model)$sigma
 par(mfrow=c(1,2))
-plot(data$alder,model_res)
+plot(data$alder, model_res)
+abline(0,0)
+abline(h = 2 * sigma, col = 2)
+abline(h = -(2 * sigma), col = 2)
 abline(0,0)
 qqnorm(model_res)
+
 ```
 
 Residualplotter tyder ikke på afvigelser fra en lineære sammenhæng. Kun vi en outlier måske med den ydersste observation.
@@ -103,11 +108,11 @@ Nu skal vi altså forudsige hvad alderen på den nye løve er når den har en so
 
 
 ```{r}
-model_2 <- lm(alder ~ sortfraktion, data = data)
-predict(model_2, newdata = new_data, interval = "confidence")
+source("MatStat-R/source/Rfunktioner.R")
+inversReg(model, new_data$sortfraktion)
 ```
 
-Her ser vi at løven burde være 3 år indenfor 2.29 og 3.7.
+Her ser vi at løven burde være omkring 2 år indenfor -2.59 og 6.65.
 
 Nu får vi yderligere tre nye løver hvor vi skal lave samme analyse. Her kobler jeg bare alle fire på, da vi bliver bedt om at lave en tabel:
 
@@ -115,7 +120,9 @@ Nu får vi yderligere tre nye løver hvor vi skal lave samme analyse. Her kobler
 new_data <- data.frame(
   sortfraktion = c(0.2, 0.4, 0.6, 0.8)
 )
-predict(model_2, newdata = new_data, interval = "confidence")
+inversReg(model, 0.4)
+inversReg(model, 0.6)
+inversReg(model, 0.8)
 ```
 
 Her til sidst skal vi så svarer på hvad fraktionen af sort skal være før vi vil skyde en løve på baggrund af den er mindst 5 år.
