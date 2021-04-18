@@ -228,13 +228,13 @@ splits <- time_series_split(df, assess = "2 years", cumulative = TRUE)
 
 train <- training(splits)
 test <- testing(splits)
-
+# split
 splits %>%
   tk_time_series_cv_plan() %>% 
   plot_time_series_cv_plan(date, daily.returns)
-
+# recipe feature enginerring
 recipe <- recipe(train, daily.returns ~ .) 
-
+# build model and fit
 iris_ranger <- 
   rand_forest(trees = 100, mode = "regression") %>%
   set_engine("randomForest") %>%
