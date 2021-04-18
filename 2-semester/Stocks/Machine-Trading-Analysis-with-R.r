@@ -222,106 +222,41 @@ xgbmmasea
 # 5.1.1. tidymodela eXtreme Gradient Boosting Regression training
 library(modeltime)
 library(timetk)
-splits <- time_series_split(spy_tiblle, assess = "2 years", cumulative = TRUE)
+
+df <- spy_tiblle %>% select(date, daily.returns, Lag.1, Lag.2, Lag.5)
+splits <- time_series_split(df, assess = "2 years", cumulative = TRUE)
+
+train <- training(splits)
+test <- testing(splits)
 
 splits %>%
   tk_time_series_cv_plan() %>% 
   plot_time_series_cv_plan(date, daily.returns)
 
+recipe <- recipe(train, daily.returns ~ .) 
 
-# preprocessing "recipe"
-recipe_spec <- recipe(daily.returns ~ date + Lag.1 +Lag.2 + Lag.3, training(splits)) %>%
-  #step_timeseries_signature(date) %>%
-  #step_rm(matches("(.iso$)|(.xts$)")) %>%
-  #step_normalize(matches("(index.num$)|(_year$)")) %>%
-  step_dummy(all_nominal())
-  #step_fourier(date, K = 1, period = 12)
+iris_ranger <- 
+  rand_forest(trees = 100, mode = "regression") %>%
+  set_engine("randomForest") %>%
+  fit(daily.returns ~ ., data = train)
 
-recipe_spec %>% prep() %>% juice()
+predict(iris_ranger, test) %>% 
+  bind_cols(test$daily.returns)
 
-# XGBoost model specification
-xgboost_model <- 
-  prophet_boost(
-    mode = "regression") %>%
-  set_engine("prophet_xgboost")
+iris_ranger %>%
+  predict(test) %>%
+  bind_cols(test) %>% 
+  metrics(truth = daily.returns, estimate = .pred)
 
-workflow_fit_prophet_boost <-
-  workflow() %>%
-  add_model(xgboost_model) %>%
-  add_recipe(recipe_spec) %>%
-  fit(training(splits))
-
-model_table <- modeltime_table(
-  workflow_fit_prophet_boost
-) 
-
-calibration_table <- model_table %>%
-  modeltime_calibrate(testing(splits))
-
-calibration_table %>%
-  modeltime_accuracy() %>%
-  table_modeltime_accuracy(.interactive = FALSE)
-
-calibration_table %>%
-  modeltime_forecast(actual_data = spy_tiblle %>% select(date, daily.returns)) 
-  plot_modeltime_forecast(.interactive = FALSE)
-
-# grid specification
-xgboost_params <- 
-  dials::parameters(
-    min_n(),
-    tree_depth(),
-    learn_rate(),
-    loss_reduction()
-  )
-
-xgboost_grid <- 
-  dials::grid_max_entropy(
-    xgboost_params, 
-    size = 60
-  )
-knitr::kable(head(xgboost_grid))
-
-xgboost_wf <- 
-  workflows::workflow() %>%
-  add_model(xgboost_model) %>% 
-  add_formula(daily.returns ~ Lag.1 + Lag.2 + Lag.5)
-
-# hyperparameter tuning
-xgboost_tuned <- tune::tune_grid(
-  object = xgboost_wf,
-  resamples = ames_cv_folds,
-  grid = xgboost_grid,
-  metrics = yardstick::metric_set(rmse, rsq, mae),
-  control = tune::control_grid(verbose = TRUE)
-)
-
-xgboost_tuned %>%
-  tune::show_best(metric = "rmse") %>%
-  knitr::kable()
-
-xgboost_best_params <- xgboost_tuned %>%
-  tune::select_best("rmse")
-knitr::kable(xgboost_best_params)
-
-xgboost_model_final <- xgboost_model %>% 
-  finalize_model(xgboost_best_params)
-
-train_processed <- bake(preprocessing_recipe,  new_data = training(ames_split))
-train_prediction <- xgboost_model_final %>%
-  # fit the model on all the training data
-  fit(
-    formula = sale_price ~ ., 
-    data    = train_processed
-  ) %>%
-  # predict the sale prices for the training data
-  predict(new_data = train_processed) %>%
-  bind_cols(training(ames_split))
-xgboost_score_train <- 
-  train_prediction %>%
-  yardstick::metrics(sale_price, .pred) %>%
-  mutate(.estimate = format(round(.estimate, 2), big.mark = ","))
-knitr::kable(xgboost_score_train)
+iris_ranger %>%
+  predict(test) %>%
+  bind_cols(test) %>% 
+  select(date, .pred, daily.returns) %>% 
+  pivot_longer(cols = c(.pred, daily.returns),
+               names_to = "values") %>% 
+  ggplot(aes(date, value, colour = values)) +
+  geom_line() +
+  facet_wrap(~ values)
 
 # 5.2. Algorithm Training Optimal Parameters Selection Control
 
