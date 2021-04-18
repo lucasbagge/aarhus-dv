@@ -2,7 +2,7 @@
 title: "Aflevering 8"
 subtitle: Lucas Bagge
 output:
-  #pdf_document: default
+  pdf_document: default
   html_document: default
 ---
 

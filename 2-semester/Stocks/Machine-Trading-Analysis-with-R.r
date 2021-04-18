@@ -85,7 +85,7 @@ length(rspyp)
 
 rspyp_tibble <- spy_tiblle %>% 
   filter(date >=  "2009-01-15" & date <= "2016-01-01")
-  
+
 nrow(rspyt_tibble)
 nrow(rspyp_tibble)
 
@@ -101,10 +101,32 @@ length(rspyi)
 # 4. Predictor Features Selection
 
 # 4.2. Predictor Features Linear Regression
+options(scipen = 999)
 lmta <- lm(rspy~rspy1+rspy2+rspy3+rspy4+rspy5+rspy6+rspy7+rspy8+rspy9,data=rspyt)
 summary(lmta)
 lmtb <- lm(rspy~rspy1+rspy2+rspy5,data=rspyt)
 summary(lmtb)
+
+lmta_tibble <-
+  linear_reg() %>% 
+  set_engine('lm') %>% # adds lm implementation of linear regression
+  set_mode('regression') %>% 
+  fit(rspyt_tibble$daily.returns ~ Lag.1+Lag.2+Lag.3+Lag.4+Lag.5+Lag.6+Lag.7+
+        Lag.8+Lag.9, 
+      data = rspyt_tibble)
+library(gtsummary)
+
+lmtb_tibble <-
+  linear_reg() %>% 
+  set_engine('lm') %>% # adds lm implementation of linear regression
+  set_mode('regression') %>% 
+  fit(rspyt_tibble$daily.returns ~ Lag.1+Lag.2 +Lag.5,
+      data = rspyt_tibble)
+
+tidy(lmtb_tibble)
+
+lmta_tibble %>% tbl_regression()
+
 # Clear Plots area before running code
 par(mfrow=c(1,2))
 plot(coredata(rspyt$rspy1),coredata(rspyt$rspy),xlab="rspy1t",ylab="rspyt")
@@ -115,28 +137,17 @@ plot(coredata(rspyt$rspy5),coredata(rspyt$rspy),xlab="rspy5t",ylab="rspyt")
 abline(lm(rspyt$rspy~rspyt$rspy5),col="red")
 par(mfrow=c(1,1))
 
+
 # 4.2. Predictor Features Correlation
 crspyt <- round(cor(rspyt[,2:10]),2)
-crspyt
+crspyt 
 corrplot(crspyt,type="lower")
 
-# 4.3. Predictor Features Selection Filter Methods
-
-# 4.3.1. Univariate Filters
-sbfctrlt <- sbfControl(functions=lmSBF)
-sbft <- sbf(rspy~rspy1+rspy2+rspy3+rspy4+rspy5+rspy6+rspy7+rspy8+rspy9,data=rspyt,sbfControl=sbfctrlt)
-sbft
-
-# 4.4. Predictor Features Selection Wrapper Methods
-
-# 4.4.1. Recursive Feature Elimination
-rfectrlt <- rfeControl(functions=lmFuncs)
-rfet <- rfe(rspy~rspy1+rspy2+rspy3+rspy4+rspy5+rspy6+rspy7+rspy8+rspy9,data=rspyt,rfeControl=rfectrlt)
-rfet
-
-# 4.5. Predictor Features Selection Embedded Methods
-lassot <- train(rspy~rspy1+rspy2+rspy3+rspy4+rspy5+rspy6+rspy7+rspy8+rspy9,data=rspyt,method="lasso")
-predictors(lassot)
+library(corrr)
+x <- corrr::correlate(rspyt_tibble %>% select(-date))
+x %>% fashion(decimals = 3)
+network_plot(x, min_cor = .7, colors = c("red", "green"), legend = TRUE)
+rplot(x)
 
 # 4.6. Predictor Features Extraction
 
@@ -144,6 +155,27 @@ predictors(lassot)
 pcat <- princomp(rspyt[,2:10])
 summary(pcat)
 plot(pcat)
+
+# 4.6.1. Principal Component Analysis tibble
+# https://clauswilke.com/blog/2020/09/07/pca-tidyverse-style/
+rspyt_fit <-
+  rspyt_tibble %>% 
+  select(where(is.numeric)) %>% # retain only numeric columns
+  prcomp(scale = TRUE) # do PCA on scaled data
+
+rspyt_fit %>% 
+  tidy(matrix = "rotation")
+
+rspyt_fit %>% 
+  tidy(matrix = "eigenvalues") %>% 
+  ggplot(aes(PC, percent)) +
+  geom_col(fill = "#56B4E9", alpha = 0.8) +
+  scale_x_continuous(breaks = 1:9) +
+  scale_y_continuous(
+    labels = scales::percent_format(),
+    expand = expansion(mult = c(0, 0.01))
+  ) +
+  theme_minimal()
 
 # 5. Algorithm Training and Testing
 
@@ -153,30 +185,22 @@ plot(pcat)
 
 # 5.1.1. eXtreme Gradient Boosting Regression training
 xgbmta <- train(rspy~rspy1+rspy2+rspy5,data=rspyt,method="xgbTree")
-xgbmtb <- train(rspy~rspy1+rspy2+rspy3+rspy4+rspy5+rspy6+rspy7+rspy8+rspy9,data=rspyt,method="xgbTree",preProcess="pca")
 
 # eXtreme Gradient Boosting Regression optimal training parameters
 xgbmta$bestTune
 plot(xgbmta)
-xgbmtb$bestTune
-plot(xgbmtb)
 
 # eXtreme Gradient Boosting Regression training results
 xgbmta$results
-xgbmtb$results
 
 # 5.1.2. eXtreme Gradient Boosting Regression testing
 # Intermediate testing step as newdata needs to be same length as training range 
 xgbmpa <- predict.train(xgbmta,newdata=rspyp)
-xgbmpb <- predict.train(xgbmtb,newdata=rspyp)
 
 # Limited to testing range
 xgbmdfa <- cbind(index(rspyp),as.data.frame(xgbmpa))
 xgbmla <- xts(xgbmdfa[,2],order.by=as.Date(xgbmdfa[,1]))
 xgbmfa <- window(xgbmla,start="2014-01-01")
-xgbmdfb <- cbind(index(rspyp),as.data.frame(xgbmpb))
-xgbmlb <- xts(xgbmdfb[,2],order.by=as.Date(xgbmdfb[,1]))
-xgbmfb <- window(xgbmlb,start="2014-01-01")
 
 # 5.1.3. eXtreme Gradient Boosting Regression testing chart
 plot(rspyf[,1],type="l",main="eXtreme Gradient Boosting Regression A Testing Chart")
@@ -190,13 +214,114 @@ xgbmftsa <- ts(coredata(xgbmfa),frequency=252,start=c(2014,1))
 xgbmftsb <- ts(coredata(xgbmfb),frequency=252,start=c(2014,1))
 rspyfts <- ts(coredata(rspyf[,1]),frequency=252,start=c(2014,1))
 rspy1fts <- ts(coredata(rspyf[,2]),frequency=252,start=c(2014,1))
-accuracy(xgbmftsa,rspyfts)
-rndmape <- accuracy(rspyfts,rspy1fts)[5]
-xgbmmasea <- accuracy(xgbmftsa,rspyfts)[5]/rndmape
+forecast::accuracy(xgbmftsa,rspyfts)
+rndmape <- forecast::accuracy(rspyfts,rspy1fts)[5]
+xgbmmasea <- forecast::accuracy(xgbmftsa,rspyfts)[5]/rndmape
 xgbmmasea
-accuracy(xgbmftsb,rspyfts)
-xgbmmaseb <- accuracy(xgbmftsb,rspyfts)[5]/rndmape
-xgbmmaseb
+
+# 5.1.1. tidymodela eXtreme Gradient Boosting Regression training
+library(modeltime)
+library(timetk)
+splits <- time_series_split(spy_tiblle, assess = "2 years", cumulative = TRUE)
+
+splits %>%
+  tk_time_series_cv_plan() %>% 
+  plot_time_series_cv_plan(date, daily.returns)
+
+
+# preprocessing "recipe"
+recipe_spec <- recipe(daily.returns ~ date + Lag.1 +Lag.2 + Lag.3, training(splits)) %>%
+  #step_timeseries_signature(date) %>%
+  #step_rm(matches("(.iso$)|(.xts$)")) %>%
+  #step_normalize(matches("(index.num$)|(_year$)")) %>%
+  step_dummy(all_nominal())
+  #step_fourier(date, K = 1, period = 12)
+
+recipe_spec %>% prep() %>% juice()
+
+# XGBoost model specification
+xgboost_model <- 
+  prophet_boost(
+    mode = "regression") %>%
+  set_engine("prophet_xgboost")
+
+workflow_fit_prophet_boost <-
+  workflow() %>%
+  add_model(xgboost_model) %>%
+  add_recipe(recipe_spec) %>%
+  fit(training(splits))
+
+model_table <- modeltime_table(
+  workflow_fit_prophet_boost
+) 
+
+calibration_table <- model_table %>%
+  modeltime_calibrate(testing(splits))
+
+calibration_table %>%
+  modeltime_accuracy() %>%
+  table_modeltime_accuracy(.interactive = FALSE)
+
+calibration_table %>%
+  modeltime_forecast(actual_data = spy_tiblle %>% select(date, daily.returns)) 
+  plot_modeltime_forecast(.interactive = FALSE)
+
+# grid specification
+xgboost_params <- 
+  dials::parameters(
+    min_n(),
+    tree_depth(),
+    learn_rate(),
+    loss_reduction()
+  )
+
+xgboost_grid <- 
+  dials::grid_max_entropy(
+    xgboost_params, 
+    size = 60
+  )
+knitr::kable(head(xgboost_grid))
+
+xgboost_wf <- 
+  workflows::workflow() %>%
+  add_model(xgboost_model) %>% 
+  add_formula(daily.returns ~ Lag.1 + Lag.2 + Lag.5)
+
+# hyperparameter tuning
+xgboost_tuned <- tune::tune_grid(
+  object = xgboost_wf,
+  resamples = ames_cv_folds,
+  grid = xgboost_grid,
+  metrics = yardstick::metric_set(rmse, rsq, mae),
+  control = tune::control_grid(verbose = TRUE)
+)
+
+xgboost_tuned %>%
+  tune::show_best(metric = "rmse") %>%
+  knitr::kable()
+
+xgboost_best_params <- xgboost_tuned %>%
+  tune::select_best("rmse")
+knitr::kable(xgboost_best_params)
+
+xgboost_model_final <- xgboost_model %>% 
+  finalize_model(xgboost_best_params)
+
+train_processed <- bake(preprocessing_recipe,  new_data = training(ames_split))
+train_prediction <- xgboost_model_final %>%
+  # fit the model on all the training data
+  fit(
+    formula = sale_price ~ ., 
+    data    = train_processed
+  ) %>%
+  # predict the sale prices for the training data
+  predict(new_data = train_processed) %>%
+  bind_cols(training(ames_split))
+xgboost_score_train <- 
+  train_prediction %>%
+  yardstick::metrics(sale_price, .pred) %>%
+  mutate(.estimate = format(round(.estimate, 2), big.mark = ","))
+knitr::kable(xgboost_score_train)
 
 # 5.2. Algorithm Training Optimal Parameters Selection Control
 

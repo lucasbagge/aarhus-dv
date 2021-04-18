@@ -1,6 +1,10 @@
 ---
-title: "Untitled"
-output: pdf_document
+title: "Aflevering 9"
+subtitle: Lucas Bagge
+output:
+  pdf_document: default
+  html_document:
+    df_print: paged
 ---
 
 ```{r setup, include=FALSE}
@@ -9,10 +13,142 @@ knitr::opts_chunk$set(echo = TRUE)
 
 I artiklen Effects of user age on smartphone and tablet use, measured with an eye-tracker via fixa-tion duration, scan-path duration, and saccades proportion studeres, hvordan brugen af smartp-hones og tablets varierer mellem forskellige aldersgrupper. Under brugen følges en persons øjen-bevægelse, og herudfra dannes et mål SPD (scan-path duration, målt i millisekunder), der afspej-ler en persons evne til at bruge redskabet. I artiklen siges der: "SPD measures global processing ofinterfaces, where longer SPD indicates less efficient scanning and browsing". Personer deles op itre aldersgrupper:unge,midaldrendeogaeldre. Desuden fordeles personerne på to eksperimen-ter (Ex1ogEx2). Hvert eksperiment består af ni opgaver inden for brugen af forskellige smartp-hone apps, og opgaven hørende til en app er forskellig mellem de to eksperimenter. Data er i filenSmartphone.csvder har tre søjler med henholdsvis eksperiment, aldersgruppe og SPD-målingen
 
+```{r}
+library(tidyverse)
+data <- read.csv("MatStat-R/data/JLJfiler/Smartphone.csv")
+head(data)
+```
+
+
 #### a)  Lav en figur med 3 delplots med qqplots af SPD for de tre aldersgrupper for eksperiment 1.Kommenter på figuren.Opskriv den statistiske model, hvor hver gruppe bestemt af aldersgruppe og eksperimenthar sin egen middelværdi og sin egen varians afSPD, og data er normalfordelt. Lav et testfor hypotesen, at der er samme varians i de 6 grupper.
+
+```{r}
+source("MatStat-R/source/Rfunktioner.R")
+data_eksperiment_1 <- data %>% 
+  filter(Eksperiment == "Ex1")
+eksperiment <- as.factor(data_eksperiment_1$Eksperiment)
+alder <- as.factor(data_eksperiment_1$Alder)
+spd <- data_eksperiment_1$SPD
+
+qqnormFlere(spd, eksperiment:alder)
+```
+
+Ud fra det ovenstående så er den eneste som ikke ser normalt fordelt ud Ex1:unge hvor vi har en observation der falder meget ud fra lingen.  
+
+Opskriv nu modellen for at hver faktor har sin engen middelværdi og varians.
+
+$$
+M_1:SPD\sim N(\mu_{alder}, \sigma_{alder}^2), (\mu_1,..,\mu_6,\sigma_1^2, ..,,\sigma_6^2)
+$$
+Nu skal vi have det andet eksperiment med i selve data så vi bruger bare det fulde data, hvor vi laver en barletts test
+
+```{r}
+eksperiment <- as.factor(data$Eksperiment)
+alder <- as.factor(data$Alder)
+spd <- data$SPD
+bartlett.test(spd, eksperiment:alder)
+```
+
+Vi ser p-værdien er over 0.05 og derfor ikke statistisk signifikant dermed accepter vi H0 og vores varianser er ens. 
 
 #### b)  Lav  et  interaktionsplot,  og  kommenter  på  hvad  du  ser  i  figuren.  Opskriv  modellen,  hvorhver gruppe bestemt af aldersgruppe og eksperiment har sin egen middelværdi afSPD, ogalle grupperne har den samme varians. Opskriv hypotesen om en additiv struktur af mid-delværdien med et bidrag fra aldersgruppe og fra eksperiment. LavF-testet for hypotesenom additivitet.
 
+Lav til en start en interaktionsplot:
+
+```{r}
+additivitetsPlot(eksperiment, alder, spd)
+```
+
+spd måler hvor god en person er er at browe gennem en hjemmeside. Destor lavere værdi desto bedre.
+
+Her ser vi at de unge er bedre til at browse gennem en hjemmeside end de midaldrende og ældre. Desuden ser vi at der er en forskel mellem de to eksperimenter. 
+
+Opskriv modellen for forskellig middelværid men ens varians:
+
+$$
+spd \sim N(\mu_{E_i,A_i}\sigma^2)
+$$
+Herefter skal vi opskrive den additive hypotese:
+
+$$
+M_2: spd  \sim \eta_{E_i}+\gamma_{A_i}, (\eta_1..,\eta_k,\gamma_1,...\gamma_m,\sigma^2)
+$$
+En additiv hypotese er egentlig bare hvor vi ser på at hvis vi har flere predictves features som kan være med til at forklare vores regressor. Det er egentlig umiddelbar multiple regression. 
+
+HYpotesen:
+
+$$
+H0: alder+ekspriment=alder:ekseriment
+$$
+
+Jeg forstår denne hypotese sådan at hvis vi accepter H0 så har den additive model samme midelværid for alder og eksperiment.
+
+Nu skal vi således la
+
+```{r}
+anova(lm(spd ~ eksperiment:alder), lm(spd ~ eksperiment + alder))
+```
+
+Vi ser vores p værdi er over 0.05 dermed kan vi ikke forkaste H0. Dermed tyder det på den middelværdien for den additive model er ens for hypotesen fra forrigere. 
+
+
 #### c)  Undersøg,  om  det  kan  antages,  at  aldersgruppe  ikke  har  nogen  effekt  påSPD.  Undersøgogså, om eksperiment har nogen effekt påSPD. Husk at skrive modellerne op.
 
-#### d)  Angiv  skøn  over  middelværdien  blandt  deaeldrefor  eksperimentEx1.  Angiv  et  95%-konfidensinterval for forskellen i middelværdi afSPDmellem gruppen afungeog gruppenafaeldreinden for den additive model.Angiv skøn over spredningen påSPDi den additive model
+Opskriv modellen for aldersgruppen
+
+$$ spd \sim N(\mu_E,\sigma^2)$$
+
+Hypotesen:
+$$ H0:\mu_E=0$$
+
+
+Test om en effekt, hvor jeg bruger en t test:
+
+```{r}
+t.test((spd ~ eksperiment))
+```
+
+Vi får en p værdi under 0.05 dermed kan vi forkaste H0. Det betyder altså at eksperiment har en betydning for værdien for spd. 
+
+Opskriv modellem for eksperiment
+$$ spd \sim N(\mu_A,\sigma^2)$$
+Hypotesen:
+$$ H0:\mu_A=0$$
+Test om en effekt:
+
+```{r}
+
+```
+
+#### d)  Angiv  skøn  over  middelværdien  blandt  de aeldre for  eksperiment Ex1.  Angiv  et  95%-konfidensinterval for forskellen i middelværdi af SPD mellem gruppen af unge og gruppen af aeldre inden for den additive model. Angiv skøn over spredningen på SPD i den additive model
+
+Angiv et skøn over middelværdien blandt ældre for eksperiment 1:
+
+```{r}
+summary(lm(SPD ~ Alder, data = data %>% filter(Eksperiment == "Ex1")))
+```
+
+Jeg er lidt i tvivl om hvorfar jeg i mit summary ikke ser Ældre, men jeg antager det er mit intercept. Det gør jeg da det vil give mening i forhold til min inutition at hvis du er ældre så vil din SPD stige, og vi lægge mærke til værdien er 2836. Modsat kan vi se at for de unge så er middelværiden -1036, som giver mening at jo yngre du er desto laver vil din spd værdi være.
+
+Angiv 95% konfidensinterval for forskellen i middelværid af SPD mellem unge og ældre indenfor den additive model.
+
+```{r}
+confint(lm(SPD ~ Alder + Eksperiment, data = data))
+```
+
+Her ser vi at konfidens båndet for de ældre er (2434, 3198) og for de unge der det (-1465, -317) 
+
+Angiv et skøn over spreding på SPD i den additive model
+
+```{r}
+summary(lm(SPD ~ Alder + Eksperiment, data = data))$sigma
+```
+
+Vi ser således at spredning for den additive model er 787. 
+
+
+Generelt kan man at vi nok approximativ sige at aldergruppen er normalt fordelt på trods af jeg nævnte tidligere at de yngre falder lidt ud.
+
+Desuden ser vi at ekseriment og aldersgruppen har bedtydning for SPD. Angående eksperiment så tænker jeg vi egentlig gerne så at det ikke havde en betydning, da det tyder på at vores sample af stikprøven ikke er random. 
+
+

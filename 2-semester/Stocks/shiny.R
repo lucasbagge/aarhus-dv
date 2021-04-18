@@ -11,7 +11,20 @@ library(plotly)
 
 ui <- dashboardPage(
   dashboardHeader(),
-  dashboardSidebar(),
+  dashboardSidebar(
+    selectInput("stock_id", 
+                "DAX Stock:",
+                c("BAVA.CO",
+                  "GMAB.CO",
+                  "ORSTED.CO",
+                  "CHR.CO",
+                  "VWS.CO",
+                  "CARL-B.CO",
+                  "NOVO-B.CO",
+                  "FLS.CO",
+                  "DANSKE.CO",
+                  "TRYG.CO"))
+  ),
   dashboardBody(
     fluidRow(
       box(highchartOutput("plot1"), width = "100%", height = "100%"),
@@ -26,46 +39,49 @@ ui <- dashboardPage(
 
 server <- function(input, output) { 
   #SPY_tibble <- tq_get("ORSTED.CO", get="stock.prices")
-  SPY_tibble <- tq_get("GMAB.CO", get="stock.prices")
-  SPY_tibble_1 <- 
+  SPY_tibble_1 <- reactive({
+    SPY_tibble <- tq_get(input$stock_id, get="stock.prices")
     SPY_tibble %>% 
-    tq_mutate(select = c(close), mutate_fun = SMA, n = 12) %>% 
-    rename(SMA_12 = SMA) %>% 
-    tq_mutate(select = c(close), mutate_fun = SMA, n = 5) %>% 
-    rename(SMA_5 = SMA) %>% 
-    tq_mutate(select = c(close), mutate_fun = SMA, n = 50) %>% 
-    mutate(sma5tr_tibble = Lag(case_when(
-      Lag(close) < Lag(SMA) & close > SMA ~ 1,
-      Lag(close) > Lag(SMA) & close < SMA ~ -1,
-      TRUE ~ 0))) %>% 
-    tq_mutate(select     = close, 
-              mutate_fun = MACD, 
-              nFast      = 12, 
-              nSlow      = 26, 
-              nSig       = 9, 
-              maType     = SMA) %>%
-    mutate(diff = macd - signal) %>% 
-    tq_mutate(select = c(close), mutate_fun = RSI, n = 10, maType = SMA)
+      tq_mutate(select = c(close), mutate_fun = SMA, n = 12) %>% 
+      rename(SMA_12 = SMA) %>% 
+      tq_mutate(select = c(close), mutate_fun = SMA, n = 5) %>% 
+      rename(SMA_5 = SMA) %>% 
+      tq_mutate(select = c(close), mutate_fun = SMA, n = 50) %>% 
+      mutate(sma5tr_tibble = Lag(case_when(
+        Lag(close) < Lag(SMA) & close > SMA ~ 1,
+        Lag(close) > Lag(SMA) & close < SMA ~ -1,
+        TRUE ~ 0))) %>% 
+      tq_mutate(select     = close, 
+                mutate_fun = MACD, 
+                nFast      = 12, 
+                nSlow      = 26, 
+                nSig       = 9, 
+                maType     = SMA) %>%
+      mutate(diff = macd - signal) %>% 
+      tq_mutate(select = c(close), mutate_fun = RSI, n = 10, maType = SMA)
+  })
+  
+    
   
   output$plot1 <- renderHighchart({
     highchart(type = "stock") %>% 
       # hc_yAxis_multiples(
       #   create_yaxis(2, height = c(2, 1), turnopposite = TRUE)
       # ) %>% 
-      hc_add_series(SPY_tibble_1 %>% timetk::tk_xts(date_var = "date"), 
+      hc_add_series(SPY_tibble_1() %>% timetk::tk_xts(date_var = "date"), 
                     #yAxis = 0,
                     name = "SPY")  %>% 
-      hc_add_series(SPY_tibble_1 %>% 
+      hc_add_series(SPY_tibble_1() %>% 
                       select(date, SMA) %>% 
                       timetk::tk_xts(date_var = "date"),
                     #yAxis = 0, 
                     name = "SMA - 50") %>% 
-      hc_add_series(SPY_tibble_1 %>% 
+      hc_add_series(SPY_tibble_1() %>% 
                       select(date, SMA_12) %>% 
                       timetk::tk_xts(date_var = "date"),
                     #yAxis = 0, 
                     name = "SMA - 200") %>% 
-      hc_add_series(SPY_tibble_1 %>% 
+      hc_add_series(SPY_tibble_1() %>% 
                       select(date, SMA_5) %>% 
                       timetk::tk_xts(date_var = "date"),
                     #yAxis = 0, 
@@ -73,7 +89,7 @@ server <- function(input, output) {
   })
   
   output$plot2 <- renderPlot({
-    SPY_tibble_1 %>%
+    SPY_tibble_1() %>%
       filter(date > "2020-06-01") %>% 
       ggplot(aes(x = date)) + 
       geom_hline(yintercept = 0, color = palette_light()[[1]]) +
@@ -87,7 +103,7 @@ server <- function(input, output) {
   })
   
   output$plot3 <- renderPlot({
-    SPY_tibble_1 %>% 
+    SPY_tibble_1() %>% 
       filter(date > "2020-06-01") %>% 
       ggplot(aes(x=date,y=rsi)) +
       geom_line(color = "blue", size=0.8) +
@@ -98,7 +114,7 @@ server <- function(input, output) {
   })
   
   output$plot4 <- renderPlot({
-    SPY_tibble_1 %>%
+    SPY_tibble_1() %>%
       filter(date > "2020-06-01") %>% 
       ggplot(aes(x = date, y = close, open = open,
                  high = high, low = low, close = close)) +
@@ -115,7 +131,7 @@ server <- function(input, output) {
   })
   
   output$plot5 <- renderHighchart({
-    SPY_tibble %>% 
+    SPY_tibble_1() %>% 
       filter(date > "2020-06-01") %>% 
       tq_mutate(select     = c(high, low, close), 
                 mutate_fun = SMI, 

@@ -13,6 +13,7 @@ def my_sum(x, y):
 print(my_sum(19,23))
 print(my_sum(x=13,y=56))
 print(my_sum(287.84, 132.85))
+my_sum(1, 2.5)
 
 #Exercise 15.2 (box it)
 def BoxIt(f):
@@ -26,6 +27,7 @@ def BoxIt(f):
 def plus(x, y):
     return "The sum of %s and %s is %s" % (x, y, x + y)
 
+print(plus(3,4))
 
 #Exercise 15.3 (multiline box it) [optional]
 def multi_BoxIt(f):
