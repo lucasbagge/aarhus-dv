@@ -1,0 +1,80 @@
+---
+title: "Øvelser for lektion 17, 18 og 19"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(reticulate)
+```
+
+```{python}
+import numpy as np
+#import matplotlib.pyplot as plt
+```
+
+
+### Exercise 17.3 (Jupyter plotting)
+
+Plot the function $f(x) = 100·(x - 3)^2$ + ex for the x in the range [0,10] using matplotlib.pyplot in Jupyter.
+
+```{python}
+X = range(0,10)
+Y = [100 * (x - 3) ** 2 for x in X]
+plt.plot(X, Y)
+plt.show()
+
+```
+
+
+### Exercise 17.4 (Jupyter function minimization)
+
+Find the minimum of the function in Exercise 17.3 using scipy.optimize.minimize. Extend the plot in Exercise 17.3 to illustrate the minimum, e.g. using a dot.
+
+### Exercise 18.1 (numpy)
+
+#### a) 
+
+Generate two 5x5 matrices with entries drawn from a standard normal distribution (mean 0, variance 1). numpy.random.normal might come in handy here. Find the inverse of the matrices. Check by matrix multiplication, that it is in fact the inverses you have found.
+
+
+
+#### b) 
+Find the mean of each row and each column of the matrices without using loops. numpy.mean might come in handy here.
+
+#### c) 
+Create a 100x100 matrix with entries drawn from the uniform distribution between 0 and 1. Find all rows where the sum exceeds 55. Find both the row index and the sum. (Try to have a look at the functions numpy.sum and numpy.where).
+
+
+### Exercise 18.2 (computing $\pi$ using sampling)
+
+In this exercise we want compute an approximation of $\pi$ using random sampling: Given a uniformly selected random point in the unit-square $[0,1]^2$, it has probability $\pi/4$ to have distance ≤ 1.0 to (0,0), i.e. to be within the circle with raidus one and center located in the origo
+
+#### a)
+
+Compute an approximation of $\pi$ from sufficiently many uniform samples from the unit-square $[0,1]^2$. You solution must use numpy. You can e.g. generate a 2x1000000 matrix with random values and use some of the functions numpy.random.random, numpy.random.uniform, numpy.linalg.norm, numpy.average, numpy.sum, numpy.size, ...
+
+
+#### b) 
+Use numpy and matplotlib to plot a figure of your sample, like the figure to the right. Try to use numpy masking to the select the different colors.
+
+### Exercise 18.3 (polynomial fit)
+
+Consider the below list L of 2D points. Apply numpy.polyfit for different degrees of the polymial fitting, and find the minimum degree polynomial where the maximal vertical distance between a point (x, y) in L and the polynomial poly is at most 1, i.e. |y - poly(x)| ≤ 1 for all (x, y) in L. Plot the data points and the different polynomial approximations. Present your work in Jupyter.
+
+L = [(2, 3), (5, 7), (4, 10), (10, 15), (2.5, 5), (8, 4), (9, 10), (6, 6)]
+
+### Exercise 19.1 (linear program)
+
+Solve the below linear program using scipy.optimize.linprog.
+
+Maximize (objective function)
+     350·x1 + 300·x2
+Subject to
+     x1 + x2 ≤ 200
+     9·x1 + 6·x2 ≤ 1566
+     12·x1 + 16·x2 ≤ 2880
+     x1 ≥ 3
+     x2 ≥ 7
+
+Hint. The maximum of the objective function is 66100.

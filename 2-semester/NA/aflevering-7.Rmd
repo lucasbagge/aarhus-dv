@@ -62,6 +62,8 @@ print(f'Vores koefficienter er \n{koeffs}')
 ### b)
 ![](7-b.png)
 
+- hvordan får vi at x = 1?
+
 ```{python}
 fig, ax = plt.subplots()
 ax.set_aspect('equal')
@@ -80,6 +82,7 @@ plt.show()
 er allerede lavet.
 
 #### i) QR dekomponering via SVD dekomponering
+
 
 
 

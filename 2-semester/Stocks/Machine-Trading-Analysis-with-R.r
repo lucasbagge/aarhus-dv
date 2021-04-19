@@ -222,7 +222,7 @@ xgbmmasea
 # 5.1.1. tidymodela eXtreme Gradient Boosting Regression training
 library(modeltime)
 library(timetk)
-
+library(tidymodels)
 df <- spy_tiblle %>% select(date, daily.returns, Lag.1, Lag.2, Lag.5)
 splits <- time_series_split(df, assess = "2 years", cumulative = TRUE)
 
@@ -235,20 +235,21 @@ splits %>%
 # recipe feature enginerring
 recipe <- recipe(train, daily.returns ~ .) 
 # build model and fit
-iris_ranger <- 
-  rand_forest(trees = 100, mode = "regression") %>%
-  set_engine("randomForest") %>%
+spec <- 
+  boost_tree(trees = 100, 
+              mode = "regression") %>%
+  set_engine("xgboost") %>%
   fit(daily.returns ~ ., data = train)
 
-predict(iris_ranger, test) %>% 
+predict(spec, test) %>% 
   bind_cols(test$daily.returns)
 
-iris_ranger %>%
+spec %>%
   predict(test) %>%
   bind_cols(test) %>% 
   metrics(truth = daily.returns, estimate = .pred)
 
-iris_ranger %>%
+spec %>%
   predict(test) %>%
   bind_cols(test) %>% 
   select(date, .pred, daily.returns) %>% 
@@ -269,36 +270,26 @@ tsctrlt <- trainControl(method="timeslice",initialWindow=168,horizon=82,fixedWin
 
 # 5.3.1. RBF Support Vector Machine Regression training
 rsvmta <- train(rspy~rspy1+rspy2+rspy5,data=rspyt,method="svmRadial",trControl=tsctrlt)
-rsvmtb <- train(rspy~rspy1+rspy2+rspy3+rspy4+rspy5+rspy6+rspy7+rspy8+rspy9,data=rspyt,method="svmRadial",preProcess="pca",trControl=tsctrlt)
 
 # RBF Support Vector Machine Regression optimal training parameters
 rsvmta$bestTune
 plot(rsvmta)
-rsvmtb$bestTune
-plot(rsvmtb)
 
 # RBF Support Vector Machine Regression training results
 rsvmta$results
-rsvmtb$results
 
 # 5.3.2. RBF Support Vector Machine Regression testing
 # Intermediate testing step as newdata needs to be same length as training range 
 rsvmpa <- predict.train(rsvmta,newdata=rspyp)
-rsvmpb <- predict.train(rsvmtb,newdata=rspyp)
 
 # Limited to testing range
 rsvmdfa <- cbind(index(rspyp),as.data.frame(rsvmpa))
 rsvmla <- xts(rsvmdfa[,2],order.by=as.Date(rsvmdfa[,1]))
 rsvmfa <- window(rsvmla,start="2014-01-01")
-rsvmdfb <- cbind(index(rspyp),as.data.frame(rsvmpb))
-rsvmlb <- xts(rsvmdfb[,2],order.by=as.Date(rsvmdfb[,1]))
-rsvmfb <- window(rsvmlb,start="2014-01-01")
 
 # 5.3.3. RBF Support Vector Machine Regression testing chart
 plot(rspyf[,1],type="l",main="RBF Support Vector Machine Regression A Testing Chart")
 lines(rsvmfa,col="blue")
-plot(rspyf[,1],type="l",main="RBF Support Vector Machine Regression B Testing Chart")
-lines(rsvmfb,col="green")
 
 # 5.3.4. RBF Support Vector Machine Regression forecasting accuracy
 # Convert xts to ts for accuracy function
@@ -306,10 +297,53 @@ rsvmftsa <- ts(coredata(rsvmfa),frequency=252,start=c(2014,1))
 accuracy(rsvmftsa,rspyfts)
 rsvmmasea <- accuracy(rsvmftsa,rspyfts)[5]/rndmape
 rsvmmasea
-rsvmftsb <- ts(coredata(rsvmfb),frequency=252,start=c(2014,1))
-accuracy(rsvmftsb,rspyfts)
-rsvmmaseb <- accuracy(rsvmftsb,rspyfts)[5]/rndmape
-rsvmmaseb
+
+# tidymodels
+
+df <- spy_tiblle %>% select(date, daily.returns, Lag.1, Lag.2, Lag.5)
+
+# tidymodels
+
+splits <- time_series_split(df, assess = "2 years", cumulative = TRUE)
+
+train <- training(splits)
+test  <- testing (splits)
+
+rec <- 
+  recipe(daily.returns ~ ., train)
+
+spec <- 
+  svm_poly() %>% 
+  set_engine("kernlab") %>% 
+  set_mode("regression")
+
+wflow <- 
+  workflow() %>% 
+  add_model(spec) %>% 
+  add_recipe(rec)
+
+df_fit <-
+  wflow %>% 
+  fit(data = train)
+
+predict(spec, test) %>% 
+  bind_cols(test$daily.returns)
+
+df_fit %>%
+  predict(test) %>%
+  bind_cols(test) %>% 
+  metrics(truth = daily.returns, estimate = .pred)
+
+df_fit %>%
+  predict(test) %>%
+  bind_cols(test) %>% 
+  select(date, .pred, daily.returns) %>% 
+  pivot_longer(cols = c(.pred, daily.returns),
+               names_to = "values") %>% 
+  ggplot(aes(date, value, colour = values)) +
+  geom_line() +
+  facet_wrap(~ values)
+
 
 # 5.4. Multi-Layer Perceptron Methods
 
@@ -317,47 +351,77 @@ rsvmmaseb
 
 # 5.4.1. Artificial Neural Network Regression training
 annta <- train(rspy~rspy1+rspy2+rspy5,data=rspyt,method="neuralnet",trControl=tsctrlt)
-anntb <- train(rspy~rspy1+rspy2+rspy3+rspy4+rspy5+rspy6+rspy7+rspy8+rspy9,data=rspyt,method="neuralnet",preProcess="pca",trControl=tsctrlt)
 
 # Artificial Neural Network Regression optimal training parameters
 annta$bestTune
 plot(annta)
-anntb$bestTune
-plot(anntb)
 
 # Artificial Neural Network Regression training results
 annta$results
-anntb$results
 
 # 5.4.2. Artificial Neural Network Regression testing
 # Intermediate testing step as newdata needs to be same length as training range 
 annpa <- predict.train(annta,newdata=rspyp)
-annpb <- predict.train(anntb,newdata=rspyp)
 
 # Limited to testing range
 anndfa <- cbind(index(rspyp),as.data.frame(annpa))
 annla <- xts(anndfa[,2],order.by=as.Date(anndfa[,1]))
 annfa <- window(annla,start="2014-01-01")
-anndfb <- cbind(index(rspyp),as.data.frame(annpb))
-annlb <- xts(anndfb[,2],order.by=as.Date(anndfb[,1]))
-annfb <- window(annlb,start="2014-01-01")
 
 # 5.4.3. Artificial Neural Network Regression testing chart
 plot(rspyf[,1],type="l",main="Artificial Neural Network Regression A Testing Chart")
 lines(annfa,col="blue")
-plot(rspyf[,1],type="l",main="Artificial Neural Network Regression B Testing Chart")
-lines(annfb,col="green")
 
 # 5.4.4. Artificial Neural Network Regression forecasting accuracy
 # Convert xts to ts for accuracy function
 annftsa <- ts(coredata(annfa),frequency=252,start=c(2014,1))
 accuracy(annftsa,rspyfts)
-annmasea <- accuracy(annftsa,rspyfts)[5]/rndmape
-annmasea
-annftsb <- ts(coredata(annfb),frequency=252,start=c(2014,1))
-accuracy(annftsb,rspyfts)
-annmaseb <- accuracy(annftsb,rspyfts)[5]/rndmape
-annmaseb
+
+#tidy
+
+df <- spy_tiblle %>% select(date, daily.returns, Lag.1, Lag.2, Lag.5)
+
+# tidymodels
+
+splits <- time_series_split(df, assess = "2 years", cumulative = TRUE)
+
+train <- training(splits)
+test  <- testing (splits)
+
+rec <- 
+  recipe(daily.returns ~ ., train)
+
+spec <- 
+  nnetar_reg() %>%
+  set_engine("nnetar")
+
+wflow <- 
+  workflow() %>% 
+  add_model(spec) %>% 
+  add_recipe(rec)
+
+df_fit <-
+  wflow %>% 
+  fit(data = train)
+
+predict(df_fit, test) %>% 
+  bind_cols(test$daily.returns)
+
+df_fit %>%
+  predict(test) %>%
+  bind_cols(test) %>% 
+  metrics(truth = daily.returns, estimate = .pred)
+
+df_fit %>%
+  predict(test) %>%
+  bind_cols(test) %>% 
+  select(date, .pred, daily.returns) %>% 
+  pivot_longer(cols = c(.pred, daily.returns),
+               names_to = "values") %>% 
+  ggplot(aes(date, value, colour = values)) +
+  geom_line() +
+  facet_wrap(~ values)
+
 
 # 5.6. Algorithm Testing Accuracy Comparison
 accuracy(xgbmftsb,rspyfts)
