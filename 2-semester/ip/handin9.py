@@ -34,20 +34,13 @@ edges = [('A', 'C', 4),
          ('E', 'D', 3),
          ('E', 'F', 1),
          ('D', 'F', 5)]
+source = 'A'
+sink = 'F'
+
 edge_from, edge_to, capacity2 = zip(*edges)
 edge_from
 edge_to
 capacity2
-
-capacity3 = np.array(capacity2)
-capacity3
-res2 = linprog(-sinks,
-              A_eq = conservation, 
-              b_eq = np.zeros(conservation.shape[0]),
-              A_ub = np.eye(capacity3.size),
-              b_ub = capacity3)
-
-print(res2)
 
 string = edge_to + edge_from
 unique = []
@@ -55,7 +48,12 @@ for char in string[::]:
     if char not in unique:
         unique.append(char)
 unique.sort()
-unique = unique[:-1]
-unique = unique[1:]
-conservation = np.empty([len(unique), len(cap2)])
+uq = unique
+uq_dict = {f:i for i, f in enumerate(uq)}
+uq_dict # >>> uq_dict {'A': 0, 'B': 1, 'C': 2, 'D': 3, 'E': 4, 'F': 5}
+source_sink = [source, sink] # ['A', 'F']
+delete_items_array = [uq_dict[i] for i in source_sink if i in uq_dict]
+delete_items_array # [0, 5]
+conservation = np.zeros([len(uq), len(capacity2)])
+np.delete(conservation, delete_items_array ,axis = 0)
 

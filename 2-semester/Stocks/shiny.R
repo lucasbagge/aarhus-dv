@@ -22,6 +22,7 @@ ui <- dashboardPage(
                   "CARL-B.CO",
                   "NOVO-B.CO",
                   "FLS.CO",
+                  "JYSK.CO",
                   "DANSKE.CO",
                   "TRYG.CO"))
   ),

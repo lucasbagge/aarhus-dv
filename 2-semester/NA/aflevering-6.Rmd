@@ -88,14 +88,66 @@ Således har jeg vist at f(w)=1 er vinkelret på sin(2w) og sin(4w), men ikke vi
 
 ![](na_alf_6_c.png)
 
+Det indre produkt for $L^2$ er
+
+$$
+\langle f,g\rangle = \int^b_a f(x)g(x) dx
+$$
+
 Opskriv projektionen:
 
 $$
 pr_{sin(x),sin(3w)}(1)=\frac{\langle 1, sin(w)\rangle}{||sin(w)||^2}sin(w) + 
 \frac{\langle 1, sin(3w)\rangle}{||sin(3w)||^2}sin(3w)
 $$
+Lad os udregne nogle enkelte skridt ad gangen:
+
+$$
+\langle 1, sin(w) \rangle = \int^\pi_0 1\cdot sin(w) dw \\
+= 2
+$$
+
+$$
+||sin(w)||^2=\int^\pi_0 sin(w)^2 \\
+= \frac{\pi}{2}
+$$
+
+Indsæt i formlen:
+
+
 
 Herefter foretages der en del udregning af det indre produkt og normen, men ender ud med:
+
+$$
+pr_{sin(x),sin(3w)}(1)=
+\frac{2}{\frac{\pi}{2}}\cdot sin(w) + 
+\frac{\langle 1, sin(3w)\rangle}{||sin(3w)||^2}sin(3w)
+$$
+
+$$
+pr_{sin(x),sin(3w)}(1)=
+\frac{4}{\pi}\cdot sin(w) + 
+\frac{\langle 1, sin(3w)\rangle}{||sin(3w)||^2}sin(3w)
+$$
+Så udregner vi andet led:
+
+$$
+||sin(3w)||^2=\int^\pi_0sin(3w)^2\\ = \pi/2
+$$
+
+$$
+\langle 1, sin(w) \rangle = \int^\pi_0 1\cdot sin(3w) dw \\
+= \frac{2}{3}
+$$
+
+$$
+pr_{sin(x),sin(3w)}(1)=
+\frac{4}{\pi}\cdot sin(w) + 
+\frac{\frac{2}{3}}{\frac{\pi}{3}} \cdot sin(3w)\\
+= \frac{4}{\pi}\cdot sin(w) + \frac{4}{3\pi}\cdot sin(3w)
+$$
+
+Med ovenståedne projektion kan vi nu finde den vinkelrette funktion:
 
 $$
 1-\frac{4}{\pi}sin(w)-\frac{4}{3\pi}sin(3w)
@@ -112,7 +164,7 @@ Allerførst indlæser modulerne  numpy og matplotli.
 
 ```{python}
 import numpy as np
-import matplotlib.pyplot as plt
+#import matplotlib.pyplot as plt
 ```
 
 Efterfølgende bruger jeg samme metode som Andrew vise i hans undervisning, men hvor han viste en fourier cosinus udvikling. 
@@ -126,11 +178,13 @@ print("Vores h observation, som er pi: \n", h)
 Nu vil jeg plotte vores eksponential funktion.
  
 ```{python}
-fig, ax = plt.subplots()
-ax.set_aspect("equal")
-ax.plot(x, 1-np.exp(-x))
-plt.show()
+# fig, ax = plt.subplots()
+# ax.set_aspect("equal")
+# ax.plot(x, 1-np.exp(-x))
+# plt.show()
 ```
+
+![](naalf61.png)
 
 Herefter benytter jeg mig ad de tre funktioner vi så i undervisning:
 
@@ -147,28 +201,29 @@ def nor_sq(f, h):
 
 def proj(f, k, x, h):
   konstant = np.ones_like(x)
-  out = indre_produkt(f, konstant, h) / nor_sq(konstant, h) * konstant 
-  for m in range(1, k, 2):
+  out = 0
+  for m in range(1, k):
     out += indre_produkt(f, np.sin(m * x), h) / nor_sq(np.sin(m * x), h) * np.sin(m * x)
   return out
 ```
 
 ```{python}
-f = 1 - np.exp(-x)
-
-fig, ax = plt.subplots()
-ax.set_aspect('equal')
-ax.plot(x, f)
-ax.plot(x, proj(f, 2, x, h), label = "til sin(w)")
-ax.plot(x, proj(f, 3, x, h), label = "til sin(2w)")
-ax.plot(x, proj(f, 4, x, h), label = "til sin(3w)")
-ax.plot(x, proj(f, 5, x, h), label = "til sin(4w)")
-plt.legend(loc = "lower right")
-plt.show()
+# f = 1 - np.exp(-x)
+# 
+# fig, ax = plt.subplots()
+# ax.set_aspect('equal')
+# ax.plot(x, f)
+# ax.plot(x, proj(f, 2, x, h), label = "til sin(w)")
+# ax.plot(x, proj(f, 3, x, h), label = "til sin(2w)")
+# ax.plot(x, proj(f, 4, x, h), label = "til sin(3w)")
+# ax.plot(x, proj(f, 5, x, h), label = "til sin(4w)")
+# plt.legend(loc = "lower right")
+# plt.show()
 ```
-Her ser vi at funktionen sin(w), sin(2w) ligger oveni hinanden og det samme gælder for sin(3w) og sin(4w).
 
-Vores tilnærmelse er ikke særlig god og vi kommer ikke rigtig tilnærmelsesvis tæt på. 
+![](naalf62.png)
+
+Ovenstående plot viser vores funktion og dens tilnærmelser.
 
 
  
