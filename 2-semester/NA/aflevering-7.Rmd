@@ -39,7 +39,7 @@ def forbedret_gram_schmidt(a):
 x = np.array([2.0,  5.0,  2.0,  4.0, 13.0, 20.0, 12.0, 19.0, 15.0, 13.0, 17.0, 10.0])
 y = np.array([3.0, 10.0, 15.0, 20.0,  5.0,  5.0, 12.0, 13.0, 18.0, 23.0, 25.0, 28.0])
 
-cols = 12
+cols = len(x)
 a = np.vander(x, cols)
 print(f'værdien af a: \n{a}')
 ```
@@ -81,8 +81,62 @@ plt.show()
 
 er allerede lavet.
 
+```{python}
+def forbedret_gram_schmidt(a):
+  k = a.shape[1]
+  q = np.copy(a)
+  r = np.zeros((k, k))
+  for i in range(k):
+    r[i, i] = np.linalg.norm(q[:, i])
+    q[:, i] /= r[i, i]
+    r[[i], i+1:] = q[:, [i]].T @ q[:, i+1:]
+    q[:, i+1:] -= q[:, [i]] @ r[[i], i+1:]
+  return q, r
+
+cols = len(x)
+a = np.vander(x, cols)
+c = q.T @ y[: np.newaxis]
+koeffs = np.linalg.solve(r, c)
+print(f'vores \n {koeffs}')
+```
+
+```{python}
+
+fig, ax = plt.subplots()
+#ax.set_ylim()
+ax.plot(x, y, 'o')
+ax.plot(t, np.vander(t, cols) @ koeffs)
+plt.show()
+```
+
+Afvigelsen fra polynomiet er givet ved restvektoren.
+
+```{python}
+rest = y[:, np.newaxis] - np.vander(x, cols) @ koeffs
+print(f'Vores restvektor: \n {rest}')
+```
+
+Hvor den samlede afvigelse kan måles med
+
+```{python}
+rest_norm = np.linalg.norm(rest)
+print(f'Samlet afvigelse med normen: \n {rest_norm}')
+```
+
+
+
 #### i) QR dekomponering via SVD dekomponering
 
+```{python}
+u, s, vt = np.linalg.svd(a, full_matrices = False)
+koeffs_svd = vt.T @ (np.diag(1/s) @ (u.T @ y[:, np.newaxis]))
+print(f'Koefficienter for svd er: \n {koeffs_svd}')
+```
+
+```{python}
+rest_svd = y[:, np.newaxis] - np.vander(x, cols) @ koeffs_svd
+print(f'Svd rest norm er \n {np.linalg.norm(rest_svd)}')
+```
 
 
 
