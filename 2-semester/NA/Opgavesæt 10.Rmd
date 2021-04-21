@@ -1,0 +1,42 @@
+---
+title: "Untitled"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## 10.2
+
+![](10.2.png)
+
+#### c)
+
+## 10.3
+
+![](10.3.png)
+
+a) p' og 2p er lineære afbildninger, per proposition 18.16, er p' - 2p det også.
+
+b)
+
+## 10.4
+
+![](10.4.png)
+
+## 10.5
+
+![](10.5.png)
+
+## 10.6
+
+![](10.6.png)
+
+## 10.7
+
+![](10.7.png)
+
+```{python}
+
+```

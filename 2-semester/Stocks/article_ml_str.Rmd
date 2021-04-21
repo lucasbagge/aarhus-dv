@@ -1,0 +1,494 @@
+---
+htitle: "Untitled"
+output: html_document
+---
+
+## lib
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library("caret")
+library("corrplot")
+library("forecast")
+library("kernlab")
+library("neuralnet")
+library("PerformanceAnalytics")
+library("quantmod")
+library("tseries")
+library(tidymodels)
+library(tidyverse)
+library(tidyquant)
+library("xgboost")
+library(timetk)
+library(gtsummary)
+library(modeltime)
+library(timetk)
+library(tidymodels)
+options(scipen = 999)
+library(gtsummary)
+library(corrr)
+```
+
+## Target features
+
+### old
+
+```{r}
+# 1.2.1. Yahoo Finance
+getSymbols(Symbols="SPY",src="yahoo",from="2007-01-01",to="2017-01-01")
+spy <- SPY$SPY.Adjusted
+
+rspy <- dailyReturn(spy,type="log")
+# 2.2. Predictor Features
+rspy1 <- Lag(rspy,k=1)
+rspy2 <- Lag(rspy,k=2)
+rspy3 <- Lag(rspy,k=3)
+rspy4 <- Lag(rspy,k=4)
+rspy5 <- Lag(rspy,k=5)
+rspy6 <- Lag(rspy,k=6)
+rspy7 <- Lag(rspy,k=7)
+rspy8 <- Lag(rspy,k=8)
+rspy9 <- Lag(rspy,k=9)
+
+# 2.3. All Features
+rspyall <- cbind(rspy,rspy1,rspy2,rspy3,rspy4,rspy5,rspy6,rspy7,rspy8,rspy9)
+colnames(rspyall) <- c("rspy","rspy1","rspy2","rspy3","rspy4","rspy5","rspy6","rspy7","rspy8","rspy9")
+rspyall <- rspyall[complete.cases(rspyall),]
+
+rspyf <- window(rspyall,start="2014-01-01",end="2016-01-01")
+
+rspyp <- window(rspyall,start="2009-01-15",end="2016-01-01")
+
+rspyi <- window(rspyall,start="2010-01-15")
+```
+
+### tidy
+
+```{r}
+spy_tiblle <- tq_get("SPY",
+                     get = "stock.prices",
+                     from="2007-01-01",
+                     to="2017-01-01") %>% 
+  tq_mutate(select = adjusted, dailyReturn, type = "log") %>% 
+  tq_mutate(select = daily.returns, Lag, k = 1:9) %>% 
+  select(date, daily.returns, starts_with("Lag")) %>% 
+  na.omit()
+
+rspyt_tibble <- spy_tiblle %>%
+  filter(date <= "2014-01-01")
+
+rspyf_tibble <- spy_tiblle %>%
+  filter(date >=  "2014-01-01" & date <= "2016-01-01")
+
+rspyp_tibble <- spy_tiblle %>% 
+  filter(date >=  "2009-01-15" & date <= "2016-01-01")
+
+```
+
+## Predictor Features selection
+
+### old
+
+```{r}
+lmta <- lm(rspy~rspy1+rspy2+rspy3+rspy4+rspy5+rspy6+rspy7+rspy8+rspy9,data=rspyt)
+summary(lmta)
+lmtb <- lm(rspy~rspy1+rspy2+rspy5,data=rspyt)
+summary(lmtb)
+
+crspyt <- round(cor(rspyt[,2:10]),2)
+crspyt 
+corrplot(crspyt,type="lower")
+
+# 4.6.1. Principal Component Analysis
+pcat <- princomp(rspyt[,2:10])
+summary(pcat)
+plot(pcat)
+```
+
+
+### tidy
+
+```{r}
+lmta_tibble <-
+  linear_reg() %>% 
+  set_engine('lm') %>% # adds lm implementation of linear regression
+  set_mode('regression') %>% 
+  fit(rspyt_tibble$daily.returns ~ Lag.1+Lag.2+Lag.3+Lag.4+Lag.5+Lag.6+Lag.7+
+        Lag.8+Lag.9, 
+      data = rspyt_tibble)
+
+
+lmtb_tibble <-
+  linear_reg() %>% 
+  set_engine('lm') %>% # adds lm implementation of linear regression
+  set_mode('regression') %>% 
+  fit(rspyt_tibble$daily.returns ~ Lag.1+Lag.2 +Lag.5,
+      data = rspyt_tibble)
+
+tidy(lmtb_tibble)
+
+lmta_tibble %>% tbl_regression()
+
+x <- correlate(rspyt_tibble %>% select(-date))
+x %>% fashion(decimals = 3)
+network_plot(x, min_cor = .7, colors = c("red", "green"), legend = TRUE)
+rplot(x)
+
+# 4.6.1. Principal Component Analysis tibble
+# https://clauswilke.com/blog/2020/09/07/pca-tidyverse-style/
+rspyt_fit <-
+  rspyt_tibble %>% 
+  select(where(is.numeric)) %>% # retain only numeric columns
+  prcomp(scale = TRUE) # do PCA on scaled data
+
+rspyt_fit %>% 
+  tidy(matrix = "rotation")
+
+rspyt_fit %>% 
+  tidy(matrix = "eigenvalues") %>% 
+  ggplot(aes(PC, percent)) +
+  geom_col(fill = "#56B4E9", alpha = 0.8) +
+  scale_x_continuous(breaks = 1:9) +
+  scale_y_continuous(
+    labels = scales::percent_format(),
+    expand = expansion(mult = c(0, 0.01))
+  ) +
+  theme_minimal()
+```
+
+
+## Algorithm Training and Testing
+
+### xgboost
+
+### old
+
+```{r xgboost old}
+# 5.1.1. eXtreme Gradient Boosting Regression training
+xgbmta <- train(rspy~rspy1+rspy2+rspy5,data=rspyt,method="xgbTree")
+
+# eXtreme Gradient Boosting Regression optimal training parameters
+xgbmta$bestTune
+plot(xgbmta)
+
+# eXtreme Gradient Boosting Regression training results
+xgbmta$results
+
+# 5.1.2. eXtreme Gradient Boosting Regression testing
+# Intermediate testing step as newdata needs to be same length as training range 
+xgbmpa <- predict.train(xgbmta,newdata=rspyp)
+
+# Limited to testing range
+xgbmdfa <- cbind(index(rspyp),as.data.frame(xgbmpa))
+xgbmla <- xts(xgbmdfa[,2],order.by=as.Date(xgbmdfa[,1]))
+xgbmfa <- window(xgbmla,start="2014-01-01")
+
+# 5.1.3. eXtreme Gradient Boosting Regression testing chart
+plot(rspyf[,1],type="l",main="eXtreme Gradient Boosting Regression A Testing Chart")
+lines(xgbmfa,col="blue")
+
+
+# 5.1.4. eXtreme Gradient Boosting Regression forecasting accuracy
+# Convert xts to ts for accuracy function
+xgbmftsa <- ts(coredata(xgbmfa),frequency=252,start=c(2014,1))
+rspyfts <- ts(coredata(rspyf[,1]),frequency=252,start=c(2014,1))
+rspy1fts <- ts(coredata(rspyf[,2]),frequency=252,start=c(2014,1))
+forecast::accuracy(xgbmftsa,rspyfts)
+rndmape <- forecast::accuracy(rspyfts,rspy1fts)[5]
+xgbmmasea <- forecast::accuracy(xgbmftsa,rspyfts)[5]/rndmape
+xgbmmasea
+
+```
+
+
+### tidy
+
+```{r xgboost tidy}
+df <- spy_tiblle %>% select(date, daily.returns, Lag.1, Lag.2, Lag.5)
+splits <- time_series_split(df, assess = "2 years", cumulative = TRUE)
+
+train <- training(splits)
+test <- testing(splits)
+# split
+splits %>%
+  tk_time_series_cv_plan() %>% 
+  plot_time_series_cv_plan(date, daily.returns)
+# recipe feature enginerring
+recipe <- recipe(train, daily.returns ~ .) 
+# build model and fit
+spec <- 
+  boost_tree(trees = 100, 
+             mode = "regression") %>%
+  set_engine("xgboost") %>%
+  fit(daily.returns ~ ., data = train)
+
+predict(spec, test) %>% 
+  bind_cols(test$daily.returns)
+
+spec %>%
+  predict(test) %>%
+  bind_cols(test) %>% 
+  metrics(truth = daily.returns, estimate = .pred)
+
+spec %>%
+  predict(test) %>%
+  bind_cols(test) %>% 
+  select(date, .pred, daily.returns) %>% 
+  pivot_longer(cols = c(.pred, daily.returns),
+               names_to = "values") %>% 
+  ggplot(aes(date, value, colour = values)) +
+  geom_line() +
+  facet_wrap(~ values)
+```
+
+
+## SVM
+
+### old
+```{r svm old}
+
+# 5.2. Algorithm Training Optimal Parameters Selection Control
+
+# 5.2.1. Time Series Cross-Validation
+tsctrlt <- trainControl(method="timeslice",initialWindow=168,horizon=82,fixedWindow=TRUE)
+
+# 5.3. Maximum Margin Methods
+
+# Support Vector Machine Regression with Radial Basis Function Kernel
+
+# 5.3.1. RBF Support Vector Machine Regression training
+rsvmta <- train(rspy~rspy1+rspy2+rspy5,data=rspyt,method="svmRadial",trControl=tsctrlt)
+
+# RBF Support Vector Machine Regression optimal training parameters
+rsvmta$bestTune
+plot(rsvmta)
+
+# RBF Support Vector Machine Regression training results
+rsvmta$results
+
+# 5.3.2. RBF Support Vector Machine Regression testing
+# Intermediate testing step as newdata needs to be same length as training range 
+rsvmpa <- predict.train(rsvmta,newdata=rspyp)
+
+# Limited to testing range
+rsvmdfa <- cbind(index(rspyp),as.data.frame(rsvmpa))
+rsvmla <- xts(rsvmdfa[,2],order.by=as.Date(rsvmdfa[,1]))
+rsvmfa <- window(rsvmla,start="2014-01-01")
+
+# 5.3.3. RBF Support Vector Machine Regression testing chart
+plot(rspyf[,1],type="l",main="RBF Support Vector Machine Regression A Testing Chart")
+lines(rsvmfa,col="blue")
+
+# 5.3.4. RBF Support Vector Machine Regression forecasting accuracy
+# Convert xts to ts for accuracy function
+rsvmftsa <- ts(coredata(rsvmfa),frequency=252,start=c(2014,1))
+forecast::accuracy(rsvmftsa,rspyfts)
+rsvmmasea <- forecast::accuracy(rsvmftsa,rspyfts)[5]/rndmape
+rsvmmasea
+```
+
+
+### tidy
+
+```{r svm tidy}
+df <- spy_tiblle %>% select(date, daily.returns, Lag.1, Lag.2, Lag.5)
+
+splits <- time_series_split(df, assess = "2 years", cumulative = TRUE)
+
+train <- training(splits)
+test  <- testing (splits)
+
+rec <- 
+  recipe(daily.returns ~ ., train)
+
+
+spec <- 
+  svm_poly() %>% 
+  set_engine("kernlab") %>% 
+  set_mode("regression") %>% 
+  fit(daily.returns ~ ., data = train)
+
+predict(spec, test) %>% 
+  bind_cols(test$daily.returns)
+
+df_fit %>%
+  predict(test) %>%
+  bind_cols(test) %>% 
+  metrics(truth = daily.returns, estimate = .pred)
+
+df_fit %>%
+  predict(test) %>%
+  bind_cols(test) %>% 
+  select(date, .pred, daily.returns) %>% 
+  pivot_longer(cols = c(.pred, daily.returns),
+               names_to = "values") %>% 
+  ggplot(aes(date, value, colour = values)) +
+  geom_line() +
+  facet_wrap(~ values)
+```
+
+## Artificial Neural Network Regression training
+
+### old
+
+```{r AI}
+annta <- train(rspy~rspy1+rspy2+rspy5,data=rspyt,method="neuralnet",trControl=tsctrlt)
+
+# Artificial Neural Network Regression optimal training parameters
+annta$bestTune
+plot(annta)
+
+# Artificial Neural Network Regression training results
+annta$results
+
+# 5.4.2. Artificial Neural Network Regression testing
+# Intermediate testing step as newdata needs to be same length as training range 
+annpa <- predict.train(annta,newdata=rspyp)
+
+# Limited to testing range
+anndfa <- cbind(index(rspyp),as.data.frame(annpa))
+annla <- xts(anndfa[,2],order.by=as.Date(anndfa[,1]))
+annfa <- window(annla,start="2014-01-01")
+
+# 5.4.3. Artificial Neural Network Regression testing chart
+plot(rspyf[,1],type="l",main="Artificial Neural Network Regression A Testing Chart")
+lines(annfa,col="blue")
+
+# 5.4.4. Artificial Neural Network Regression forecasting accuracy
+# Convert xts to ts for accuracy function
+annftsa <- ts(coredata(annfa),frequency=252,start=c(2014,1))
+forecast::accuracy(annftsa,rspyfts)
+```
+
+
+
+### tidy
+
+```{r AI tidy}
+df <- spy_tiblle %>% select(date, daily.returns, Lag.1, Lag.2, Lag.5)
+
+splits <- time_series_split(df, assess = "2 years", cumulative = TRUE)
+
+train <- training(splits)
+test  <- testing (splits)
+
+rec <- 
+  recipe(daily.returns ~ ., train)
+
+spec <- 
+  nnetar_reg() %>%
+  set_engine("nnetar")
+
+wflow <- 
+  workflow() %>% 
+  add_model(spec) %>% 
+  add_recipe(rec)
+
+df_fit <-
+  wflow %>% 
+  fit(data = train)
+
+predict(df_fit, test) %>% 
+  bind_cols(test$daily.returns)
+
+df_fit %>%
+  predict(test) %>%
+  bind_cols(test) %>% 
+  metrics(truth = daily.returns, estimate = .pred)
+
+df_fit %>%
+  predict(test) %>%
+  bind_cols(test) %>% 
+  select(date, .pred, daily.returns) %>% 
+  pivot_longer(cols = c(.pred, daily.returns),
+               names_to = "values") %>% 
+  ggplot(aes(date, value, colour = values)) +
+  geom_line() +
+  facet_wrap(~ values)
+```
+
+## Modelling comparison
+
+### old
+
+```{r}
+# 5.6. Algorithm Testing Accuracy Comparison
+forecast::accuracy(rsvmftsa,rspyfts)
+forecast::accuracy(annftsa,rspyfts)
+rsvmmasea
+```
+
+
+### tidy
+
+## Machine Trading Strategies
+
+### old
+
+- `xgbmi` bliver en mellem led forcast. 
+- Skal begrænse for trænings range. 
+- Lav trænings signaler. En dag efter vi observer dem. hvis vores tidlig dag return va mindre end 0 og nuværende er større end 0 så køb. -1 er en salg signal. 
+-  1 hvis køb -1 hvis sælg 0 hvis ikke
+- salg position hviv vi ejer den eller ej. `xgbmpos` er vores position, som vi skal kigge. 
+- Her kommer forloop iteration for alle hvis signal er 1 så skal position være 1, hvis ikke går vi i den anden if else.
+- `xgbmtr` viser os vores forecast return signal og position. Hvis xgbmtr er grå fra positv til negativ er det et salg signal, mens vi får et køb signal når vi går fra negativ til positiv. Herefter vil vores køb position også ændre sig. 
+
+```{r}
+# Intermediate forecasting step as newdata needs to be same length as training range 
+xgbmi <- predict.train(xgbmta,
+                       newdata = rspyi) # inter
+
+# Limited to trading range
+xgbmdfi <- cbind(index(rspyi),
+                 as.data.frame(xgbmi))
+xgbmli <- xts(xgbmdfi[,2],order.by=as.Date(xgbmdfi[,1]))
+xgbms <- window(xgbmli,start="2016-01-01")
+
+# 6.1.2. eXtreme Gradient Boosting Regression trading signals
+xgbmsig <- 
+  Lag(ifelse(Lag(xgbms) < 0 & xgbms > 0, 1, 
+             ifelse(Lag(xgbms) > 0 & xgbms < 0, -1, 0)))
+xgbmsig[is.na(xgbmsig)] <- 0
+
+# 6.1.3. eXtreme Gradient Boosting Regression trading positions
+xgbmpos <- ifelse(xgbmsig>1,1,0)
+for(i in 1:length(xgbmpos)) {
+  xgbmpos[i] <- ifelse(xgbmsig[i] == 1,1,ifelse(xgbmsig[i]==-1,0,xgbmpos[i-1]))
+}
+xgbmpos[is.na(xgbmpos)] <- 0
+
+xgbmtr <- cbind(xgbms, xgbmsig, xgbmpos)
+colnames(xgbmtr) <- c("xgbms","xgbmsig","xgbmpos")
+View(xgbmtr)
+xgbmtr %>% tail()
+```
+
+Skal have et forecast.
+Subsetter data og så bruger vi modellen til at forcaste. 
+
+### tidy
+
+```{r}
+predict(spec, test) %>% 
+  bind_cols(test %>% select(date, daily.returns))
+
+position_ml <- function(data, signal){
+  for(i in 1:length(data)) {
+    data <- ifelse(signal>1,1,0)
+    data[i] <- ifelse(signal[i] == 1,1,ifelse(signal[i]==-1,0,data[i-1]))
+  }
+  return(data)
+}
+
+position_ml(xgbmi_tibble, xgbmi_tibble$xgbmsig)
+#xgbmi_tibble <- 
+  predict(spec, test) %>% 
+  bind_cols(date = test$date) %>% 
+  filter(date > '2016-01-04') %>% 
+  mutate(xgbmsig = case_when(
+    Lag(.pred) < 0 & .pred > 0 ~ 1,
+    Lag(.pred) > 0 & .pred < 0 ~ -1,
+    TRUE ~ 0))
+
+```
+

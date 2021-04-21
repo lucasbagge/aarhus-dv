@@ -3,6 +3,7 @@ title: "Untitled"
 output:
   html_document:
     df_print: paged
+  pdf_document: default
 ---
 
 ```{r setup, include=FALSE}
@@ -36,108 +37,98 @@ def forbedret_gram_schmidt(a):
 ![](7-a.png)
 
 ```{python}
-x = np.array([2.0,  5.0,  2.0,  4.0, 13.0, 20.0, 12.0, 19.0, 15.0, 13.0, 17.0, 10.0])
-y = np.array([3.0, 10.0, 15.0, 20.0,  5.0,  5.0, 12.0, 13.0, 18.0, 23.0, 25.0, 28.0])
+def afstand(i, point):
+  x = i % 20
+  y = i //  20
+  return (point[0] - x - 0.5)**2 + (point[1] - y - 0.5)**2 + (point[2])**2
 
-cols = len(x)
-a = np.vander(x, cols)
-print(f'værdien af a: \n{a}')
-```
+afstand_matrix = np.ones((600,12))
 
-```{python}
-t = np.linspace(x.min() - 0.5, x.max() + 0.5, 100)
-fig, ax = plt.subplots()
-ax.plot(x, y, 'o')
-plt.show()
-```
+lamps = np.array([
+  [2, 3, 3.0],
+  [14, 4, 3.6],
+  [19, 4, 3.0],
+  [10, 5, 3.5],
+  [12, 12, 4.0],
+  [18, 13, 3.6],
+  [2, 15, 4.5],
+  [15, 10, 3.0],
+  [5, 20, 2.8],
+  [12, 23, 4.0],
+  [10, 29, 3.4],
+  [16, 26, 3.8]
+])
 
-```{python}
-q, r = forbedret_gram_schmidt(a) # a: {ndarray: (1,)}
-c = q.T @ y[:, np.newaxis] # 
-koeffs = np.linalg.solve(r, c)
-print(f'Vores koefficienter er \n{koeffs}')
+for i in range(600):
+  for j, lamp in enumerate(lamps):
+    Afstand = 1 / afstand(i, lamp)
+    afstand_matrix[i, j] = Afstand
+print(afstand_matrix)
 ```
 
 
 ### b)
 ![](7-b.png)
 
-- hvordan får vi at x = 1?
 
 ```{python}
+x = np.ones(12)
+
+y = afstand_matrix @ x
+y_reshape = y.reshape((30, 20))
+
 fig, ax = plt.subplots()
 ax.set_aspect('equal')
-ax.matshow(a, cmap='Reds')
+ax.matshow(y_reshape, cmap='Reds')
 plt.show()
 ```
-
-
 
 ### c)
 
 ![](7-c.png)
 
+Husk at belysningsniveauet er vores **y**.
+
+
 #### i) QR dekomponering via forbedret gram schimidt
 
-er allerede lavet.
-
 ```{python}
-def forbedret_gram_schmidt(a):
-  k = a.shape[1]
-  q = np.copy(a)
-  r = np.zeros((k, k))
-  for i in range(k):
-    r[i, i] = np.linalg.norm(q[:, i])
-    q[:, i] /= r[i, i]
-    r[[i], i+1:] = q[:, [i]].T @ q[:, i+1:]
-    q[:, i+1:] -= q[:, [i]] @ r[[i], i+1:]
-  return q, r
+def gram_schmidt(a):
+    k = a.shape[1]
+    q = np.copy(a)
+    r = np.zeros((k,k))
+    for i in range(k):
+        r[i, i] = np.linalg.norm(q[:, i])
+        q[:, i] /= r[i,i]
+        r[[i], i+1:] = q[:, [i]].T @ q[:, i+1:]
+        q[:, i+1:] -= q[:, [i]] @ r[[i], i+1:]
+    return q, r
 
-cols = len(x)
-a = np.vander(x, cols)
-c = q.T @ y[: np.newaxis]
-koeffs = np.linalg.solve(r, c)
-print(f'vores \n {koeffs}')
+def least_squares(A, b):
+    Q, R = gram_schmidt(A)
+    b0 = Q.T @ b
+    return np.linalg.solve(R, b0)
+
+A = afstand_matrix
+
+print(f'Lystyrken skal være \n: {least_squares(A, y)}')
 ```
 
 ```{python}
+q, r = gram_schmidt(A)
+c = q.T @ y
 
-fig, ax = plt.subplots()
-#ax.set_ylim()
-ax.plot(x, y, 'o')
-ax.plot(t, np.vander(t, cols) @ koeffs)
-plt.show()
+test_solve=np.linalg.solve(r, c)
+test_solve
 ```
 
-Afvigelsen fra polynomiet er givet ved restvektoren.
+#### ii) QR dekomponering via SVD dekomponering
 
 ```{python}
-rest = y[:, np.newaxis] - np.vander(x, cols) @ koeffs
-print(f'Vores restvektor: \n {rest}')
+u, s, vt = np.linalg.svd(A, full_matrices = False)
+koeffs_svd = vt.T @ (np.diag(1/s) @ (u.T @ y))
+print(f'Resultatet når vi gør brug af svd \n {koeffs_svd}')
 ```
-
-Hvor den samlede afvigelse kan måles med
-
-```{python}
-rest_norm = np.linalg.norm(rest)
-print(f'Samlet afvigelse med normen: \n {rest_norm}')
-```
-
-
-
-#### i) QR dekomponering via SVD dekomponering
-
-```{python}
-u, s, vt = np.linalg.svd(a, full_matrices = False)
-koeffs_svd = vt.T @ (np.diag(1/s) @ (u.T @ y[:, np.newaxis]))
-print(f'Koefficienter for svd er: \n {koeffs_svd}')
-```
-
-```{python}
-rest_svd = y[:, np.newaxis] - np.vander(x, cols) @ koeffs_svd
-print(f'Svd rest norm er \n {np.linalg.norm(rest_svd)}')
-```
-
 
 
 ### d)
@@ -145,9 +136,41 @@ print(f'Svd rest norm er \n {np.linalg.norm(rest_svd)}')
 ![](7-d1.png)
 
 ![](7-d2.png)
+Nej der er ikke særlig stor forskel fra de to metoder.
 
 ### e)
 
 ![](7-e.png)
+
+Beregn
+
+
+```{python}
+u, s, vt = np.linalg.svd(A, full_matrices=False)
+kappa_a = s[0] / s[-1]
+print(f'{kappa_a:e}')
+
+```
+Det er stort.
+
+```{python}
+proj_b = u @ (u.T @ y)
+cos_theta = np.linalg.norm(proj_b) / np.linalg.norm(y)
+print(np.arccos(cos_theta) * 180 / np.pi)
+```
+
+```{python}
+x = vt.T @ (np.diag(1/s) @ (u.T @ y))
+eta = s[0] * np.linalg.norm(x) / np.linalg.norm(proj_b)
+print(f'{eta:e}')
+```
+
+```{python}
+kond_x_b = kappa_a / (eta * cos_theta)
+kond_x_a_højst = (kappa_a +(kappa_a**2 * np.sqrt(1-cos_theta**2) / (eta * cos_theta)))
+print(f'kond_x_b ={kond_x_b:e}')
+print(f'kond_x_a_højst ={kond_x_a_højst:e}')
+```
+
 
 

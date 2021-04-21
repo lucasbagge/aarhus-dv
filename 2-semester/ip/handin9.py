@@ -2,6 +2,11 @@ import numpy as np
 np.set_printoptions(suppress=True)
 from scipy.optimize import linprog
 
+# kilder ----
+## https://www.geeksforgeeks.org/python-filter-dictionary-key-based-on-the-values-in-selective-list/
+## https://cmdlinetips.com/2018/01/5-examples-using-dict-comprehension/
+
+
 #0  1  2  3  4  5  6  7  8
 conservation = np.array([
   # 0  1  2  3  4  5  6  7  8
