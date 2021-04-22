@@ -1,0 +1,58 @@
+---
+title: "Untitled"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+### 6.1
+
+![](6.1.png)
+
+### 5.1
+
+Opgaven kan ses som en forlængelse af opgave 5.1, hvor vi så på længde og bredde af sprækker i jordoverfladen i de canadiske Rocky Mountains. Vi vil udvide undersøgelsen og inddrage sprækker fra to andre steder på jorden, nemlig fra Kyushu i Japan og fra Kilve i England. Som i opgave 5.1 er data aflæst fra figur i A modern regression approach to determining fault displacement-length scaling relationships.
+
+Data findes i filen **Spraekker.csv**, der har tre søjler. Den første søjle angiver området (med værdierne RM, Kyushu og Kilve), den anden søjle indeholder længden og den tredje søjle bredden af sprækkerne, begge målt i meter.
+
+#### a) 
+Indlæs data, og dan variablen omr med område og variablene logL og logB med henholdsvis logaritmen til længden og logaritmen til bredden. Hvis omr ikke er en faktor efter indlæsningen, skal du omdanne den til en faktor.
+
+Lav en figur, hvor logaritmen til bredden afsættes mod logaritmen til længde, og hvor hver af de tre områder har sin egen farve (dette opnås med tilføjelsen col=omr til plot-kommandoen).
+
+Estimer for hver af de tre områder parametrene i modellen, hvor middelværdien af logaritmen til bredden afhænger lineært af logaritmen til længden. Du kan lade dig inspirere af koden i det første kodevindue i afsnit 5.2. Indtegn efterfølgende de tre estimerede linjer i jeres figur (jeg minder om, at en regressionslinje kan indtegnes ved at benytte abline, hvor input er output fra et kald til lm).
+
+#### b) 
+Opstil den statistiske model, hvor hvert område har sin egen lineære sammenhæng mellem middelværdien af logB og logL, og hvert område har sin egen varians omkring den lineære sammenhæng. Opstil hypotesen, at der er samme varians for de tre områder. Benyt Bartletts test for at vurdere denne hypotese. (I kan igen lade jer inspirere af koden i det første kodevindue i afsnit 5.2).
+
+#### c) 
+Opstil nu den reducerede model, hvor der er samme varians i de tre regressionsmodeller (selvom pp-værdien i Bartletts test var lidt under 5%, vælger vi at sige samme varians). Undersøg, om det kan antages, at de tre hældninger er ens.
+Undersøg dernæst, om det kan antages, at de tre skæringer er ens.
+
+#### d) 
+For modellen, hvor der er den samme hældning for de tre områder, skal du angive skøn og konfidensinterval for de parametre, der indgår i modellen.
+Kan det antages, at hældningen er 1, svarende til at bredden er proportional med længden?
+
+### 4.3
+
+![](ms4.3-1.png)
+
+![](ms4.3-2.png)
+
+
+### 3.3
+
+![](ms4.4-1.png)
+
+![](ms4.4-2.png)
+
+### 4.7
+
+Gå tilbage til opgave 4.1, hvor Bartletts test for ens varianser betragtes. Beregn Bartletts teststørrelse baseret udelukkende på informationen i tabellen med gennemsnit og empiriske spredninger i de tre grupper.
+
+### 6.2
+
+
+![](ms6.2.png)
