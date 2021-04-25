@@ -1,0 +1,133 @@
+---
+title: "generator"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+- der er to to generator i python
+- først ser vi på generator expression ( udtryk). Det ligner list compression
+
+```{python}
+[x**2 for x in range(5)]
+# () i stedet for [ ] så får vi generator
+(x**2 for x in range(5)) # objekt det er iterable og object
+```
+
+```{python}
+o = (x**2 for x in range(5))
+next(o)
+```
+
+- Vi kan også have nested generator udryk
+```{python}
+sqra = (x**2 for x in range(1, 6))
+rati = (1 / y for y in sqra)
+rati
+print(list(rati)) # returner de resterende værdier. 
+```
+
+- Nu kan vi se for **funktioner**
+
+```{python}
+sq = (x*2 for x in range(1,6))
+sum(sq)
+```
+
+
+- generator functioner hvor man bruger **yield**. 
+
+```{python}
+def two():
+  yield 1 # generator
+  yield 2
+two()  
+t = two()
+next(t) # laver objekt og så kan vi kalde det. 
+```
+
+```{python}
+def my_generator(n):
+  yield 'Start'
+  for i in range(n):
+    yield chr(ord('A') + i)
+  yield 'Done'
+```
+
+```{python}
+g = my_generator(3)
+print(g)
+
+print(list(g))
+```
+
+```{python}
+print(*my_generator(5)) # takes an iterabe så bliver alle seperate. 
+```
+
+
+```{python}
+def my_range(start, end, step):
+  x = start
+  while x < end:
+    yield x
+    x += step
+
+list(my_range(1.5, 2.0, 0.1)) # kører indtil vi får en  stop iterator. 
+```
+
+- pipelingin generator
+
+- yield from returner yield for hver objekt. Her kan vi returner hvert element. 
+
+```{python}
+deg g():
+  yield 1
+  yield from [2,3,4]
+  yield 5
+list(g())  
+```
+
+```{python}
+def tra(T):
+  if isinstance(T, tuple):
+    for child in T:
+      yield from tra(child)
+  else:
+    yield T
+
+```
+```{python}
+T = (((1,2), 3, (4,5)), (6, (7,9)))
+tra(T)
+list(tra(T))
+```
+
+- vi ser hver element bliver retuneret en hver gang istede for at giver os en nested liste. 
+
+- objekter kan også bruges med yield
+
+```{python}
+class vector2D:
+  def __init__(self, x_value, y_value):
+    self.x = x_value
+    self.y = y_value
+    
+  def __iter__(self): # generator
+    yield self.x
+    yield self.y
+    
+  def __iter__(self): # alternativ generator
+    yield from (self.x, self.y)
+```
+
+```{python}
+v = vector2D(5, 7)
+print(list(v))
+print(tuple(v))
+print(set(v))  
+```
+
+- iterator kan genbruges mens generator ikke kan. 

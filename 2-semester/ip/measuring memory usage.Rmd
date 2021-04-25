@@ -1,0 +1,30 @@
+---
+title: "measuring memory usage"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+- vigtig paramter når vi kører programmer. 
+
+- macro level brug task manager i windos, activity monito i mac. 
+
+- der er et module man kan bruge:
+
+```{python}
+from memory_profiler import profile
+
+@profile
+def use_m():
+  s = 0
+  x = list(range(20_000_000))
+  s += sum(x)
+  y = list(range(10_000_000))
+  s += sum(x)
+  
+use_m()
+```
+
+- man kan bruge i shell memeory profiler til at se hvad man bruger af hukommelse.
