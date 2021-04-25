@@ -1,0 +1,145 @@
+---
+title: "Aflevering 10"
+subtitle: Lucas Bagge
+output:
+  pdf_document: default
+  html_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+I denne opgave skal I studere sammenhængen mellem amerikanske firmaers markedsværdi og omsætning. I alt har vi data for 35 firmaer fordelt på tre sektorer. Mere præcist er 10 af firmaerne beskæftiget med detailhandel, 15 firmaer er indenfor energisektoren og de resterende 10 firmaer er i industrisektoren.
+
+I skal beskrive data med en model, hvor der for hver sektor er en lineær sammenhæng mellem markedsværdien og omsætningen. Data findes i filen Firmaer.csv der har fire søjler: observationsnummer, sektor angiver sektoren, vaerdi angiver firmaets markedsværdi, og omsaet firmaets omsætning. Husk i spørgsmålene nedenfor at opskrive den statistiske model.
+
+```{r}
+data <- read.csv("MatStat-R/data/AmFirma.csv")
+head(data)
+library(tidyverse)
+distinct(data, sektor)
+```
+
+
+### Lav et plot af omsætning mod værdi, hvor hver sektor har sin egen farve,og indtegn en regressionslinie til hver sektor.
+
+```{r}
+sektor <- factor(data$sektor)
+markedsværdien <- data$vaerdi
+omsætningen <- data$omsaet
+
+
+detailhandel <-     subset(data, sektor == "detail")
+energisektoren <-   subset(data,  sektor == "energi")
+industrisektoren <- subset(data,     sektor == "industri")
+
+lmUD_detailhandel <-     lm(detailhandel$omsaet ~ detailhandel$vaerdi)
+lmUD_energisektoren <-   lm(energisektoren$omsaet ~ energisektoren$vaerdi)
+lmUD_industrisektoren <- lm(industrisektoren$omsaet ~ industrisektoren$vaerdi)
+
+plot(omsætningen, markedsværdien, col = sektor)
+abline(lmUD_detailhandel, col = "red")
+abline(lmUD_energisektoren)
+abline(lmUD_industrisektoren, col = "green")
+```
+
+Ovenstående viser et plt af omsætning mod markedsvædien for de tre sektor og vi har også indtegnet en regressionslinje. 
+
+### Vis, at det kan antages, at variansen ikke afhænger af sektoren.
+
+Opstil modellen:
+
+$$
+omsætning\sim N(\alpha_{sektor_i} + \beta_{sektor_i}markedsværdi{sektor_i}, \sigma^2_{sektor_i}),1,...,35
+$$
+check om samme varians:
+
+```{r}
+bartlett.test(list(lmUD_detailhandel, lmUD_energisektoren, lmUD_industrisektoren))
+#  
+```
+
+
+Vi ser at p værdien er 0.1319 og dermed ikke statistik signifikant dermed accepter vi H0 og vores varianser er ens. 
+
+Derfor afhænger variansen ikke af sektoren.
+
+### Vis, at det kan antages, at der er samme hældning på de tre regressionslinjer.
+
+Opstil model:
+
+$$
+omsætning_{sektor_i}\sim N(\alpha_{sektor_i} + \beta_{sektor_i}lmarkedsværdi_{sektor_i}, \sigma^2)
+$$
+$$
+anova(lm(x\sim gr+t), lm(x\sim gr*t))
+$$
+
+```{r}
+M1_til_M2_alpha <- anova(lm(omsætningen ~ sektor + markedsværdien), 
+                         lm(omsætningen ~ sektor * markedsværdien))
+M1_til_M2_alpha
+```
+
+Data strider altså ikke mod hypotesen:
+
+$$
+\beta_U=\beta_M
+$$
+
+Vi kan godt beskrive ved den additive model.
+
+Vi laver altså en reduktion fra M1 til M2 som er den model hvor skæring er den samme, og undersøger om skæringen kan komme fra den samme foreling p væriden siger det kan godt lade sig gøre. 
+
+
+Nu vil jeg undrsøge sammde for skræing
+
+```{r}
+M1_til_M2_beta <- anova(lm(omsætningen ~ sektor : markedsværdien),
+                        lm(omsætningen ~ sektor * markedsværdien))
+M1_til_M2_beta
+```
+
+samme forklaring. Modellen kan beskrives additivt.
+
+
+
+
+###  Vis, at det ikke kan antages, at den fælles hældning er 0.
+
+```{r}
+confint(lm(omsætningen ~ markedsværdien))
+```
+
+Umiddelbart ud fra konfidens interval så vil jeg ikke sige at den fælles hældnign vil være nul, men derimod mellem 0.32 og 1.01.
+
+
+### Angiv et 95%-konfidensinterval for spredningen på omsætningen.
+
+```{r}
+lmSUM <- summary(lm(omsætningen ~ markedsværdien))
+lmSUM$sigma
+```
+
+```{r}
+df <- lmSUM$df
+df[2]
+```
+
+```{r}
+sqrt(df[2] * lmSUM$sigma^2 /
+       qchisq(c(0.975, 0.025), df[2]))
+```
+
+Finder konfidensinterval for spredning på omsætning.
+
+
+### Angiv et 95%-konfidensinterval for den fælles hældning på de tre regressionslinjer.
+
+```{r}
+confint(lm(omsætningen~sektor+markedsværdien))
+```
+
+Ovenstående viser konfidensinteval for den fællges hældning for de tre regressionslinjer:
+
