@@ -1,0 +1,31 @@
+---
+title: "Untitled"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+![](na.12.2.png)
+
+
+
+
+![](na.12.3.png)
+
+![](na.12.4.png)
+
+![](na.12.5.1.png)
+
+![](na.12.5.2.png)
+
+![](na.12.6.png)
+
+
+
+
+
+
+
+

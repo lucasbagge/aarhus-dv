@@ -60,5 +60,23 @@ source_sink = [source, sink] # ['A', 'F']
 delete_items_array = [uq_dict[i] for i in source_sink if i in uq_dict]
 delete_items_array # [0, 5]
 conservation = np.zeros([len(uq), len(capacity2)])
-np.delete(conservation, delete_items_array ,axis = 0)
+type(conservation)
 
+for edge, (f,t) in enumerate(zip(edge_from, edge_to)):
+  print (edge, f,t)
+uq_dict
+  
+  
+  
+  
+np.delete(conservation, delete_items_array ,axis = 0)
+list(enumerate(zip(edge_from, edge_to)))
+a = np.empty([3, 3])
+  
+# Initializing each element of the array
+# with 1 by using nested loops 
+for i in range(3):
+    for j in range(3):
+        a[i][j] = 1
+  
+print("a is : \n", a)  
