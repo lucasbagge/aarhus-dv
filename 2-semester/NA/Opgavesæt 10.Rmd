@@ -17,9 +17,9 @@ knitr::opts_chunk$set(echo = TRUE)
 
 ![](10.3.png)
 
-a) p' og 2p er lineære afbildninger, per proposition 18.16, er p' - 2p det også.
+a)  p' og 2p er lineære afbildninger, per proposition 18.16, er p' - 2p det også.
 
-b)
+b)  
 
 ## 10.4
 

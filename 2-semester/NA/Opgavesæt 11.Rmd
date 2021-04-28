@@ -1,0 +1,360 @@
+---
+title: "Opgavesæt 11"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+![](na.11.1.png)
+
+-   SMR?
+
+-   Jeg anvender proposition 18.13
+
+    -   18.13
+
+-   samt eksempel 18.15
+
+$$
+u_0=L(e_0)=L(\begin{pmatrix} 1 \\ 0 \end{pmatrix}) = \begin{pmatrix} 2 \\ 0 \\ 1 \end{pmatrix}
+$$
+
+$$
+u_1=L(e_1) = L(\begin{pmatrix} 0 \\ 1 \end{pmatrix}) = \begin{pmatrix} 0 \\ 3 \\ -1 \end{pmatrix}
+$$
+
+-   Vi får således **standard matrix repræsentationen**
+
+$$
+A=[u_0|u_1] = \begin{pmatrix} 2&0 \\ 0&3 \\ 1&-1 \end{pmatrix}
+$$
+
+-   Reducer til echelon form
+
+$$
+\begin{pmatrix} 2&0 \\ 0&3 \\ 1&-1 \end{pmatrix} \sim \begin{pmatrix} 1&0\\0&1\\0&0 \end{pmatrix}
+$$
+
+-   Der er pivotelementer i søjle 0 og 1 og dermed vil dens pivotsøjler være søjle 0 og 1.
+
+$$
+S(A)=\begin{pmatrix} 2&0 \\ 0&3 \\ 1&-1 \end{pmatrix} , \begin{pmatrix} 1&0\\0&1\\0&0 \end{pmatrix}
+$$
+
+-   Fra side 7 i notesæt 18 fås det at $ImL=S(A)$ .
+
+-   Jeg vil se på nulrummet N(A) til A. Det består af alle løsninger til Ax=0.
+
+-   Fra den reducerd EF af A har vi ligningsystemet:
+
+$$
+x=0\\y=0
+$$
+
+-   vi få så y=0 og x=0.
+
+-   Nulvektoren (0,0) undspænder altså nulrummet for A.
+
+-   I følge notesæt 18 side 7 vil ker=N(A) så en basis for N(A) vil vær een basis for ker L.
+
+-   dermed
+
+$$
+N(A)=ImL=(0,0)
+$$
+
+#### b)
+
+-   Jeg anvender propositoin 18.13 samt eksempel 18.15
+
+$$
+u_0=L(e_0)=L(\begin{pmatrix} 1 \\ 0 \end{pmatrix}) = \begin{pmatrix} 0\\0\\0\end{pmatrix}
+$$
+
+$$
+u_1=L(e_1)=L(\begin{pmatrix} 0 \\ 1 \end{pmatrix}) = \begin{pmatrix} 0\\0\\0\end{pmatrix}
+$$
+
+vi får så SMR
+
+$$
+A=[u_0|u_1] = \begin{pmatrix} 0&0 \\ 0&0 \\ 0&0 \end{pmatrix}
+$$
+
+-   Billedemængden vil altså være (x,y)=(0,0) og nulrummet (kernen) er alle talpar (x,y) for $x,y\in R^2$ kernen vil altså være R2.
+
+#### c)
+
+$$
+u_0=L(e_0)=L(\begin{pmatrix} 1 \\ 0\\0\\0 \end{pmatrix}) = \begin{pmatrix} 1\\0\\0\end{pmatrix}
+$$
+
+$$
+u_1=L(e_1)=L(\begin{pmatrix} 0 \\ 1\\0\\0 \end{pmatrix}) = \begin{pmatrix} -1\\1\\0\end{pmatrix}
+$$
+
+$$
+u_2=L(e_2)= L(\begin{pmatrix} 0\\ 0\\1\\0 \end{pmatrix}) = \begin{pmatrix} 0\\-1\\1\end{pmatrix}
+$$
+
+$$
+u_3=L(e_3)= L(\begin{pmatrix} 0\\ 0\\0\\1 \end{pmatrix}) = \begin{pmatrix} 0\\0\\-1\end{pmatrix}
+$$
+
+-   Her får vi SMR
+
+$$
+A=[u_0|u_1|u_2|u_3] = \begin{pmatrix} 1&-1&0&0 \\ 0&1&-1&0 \\ 0&0&-1&0 \end{pmatrix}
+$$
+
+Hvor A allerede er i echolon form.
+
+-   dens pivotsøjler er søjle 0, 1 og 2. FOr enhver x er Ax lineær kombination af pivotsøjerler så
+
+$$
+\begin{pmatrix} 1\\0\\0 \end{pmatrix}, \begin{pmatrix} -1\\1\\0\end{pmatrix}, \begin{pmatrix} 0\\-1\\0\end{pmatrix}
+$$
+
+-   udspænder S(A) og dermed:
+
+$$
+S(A)=\begin{pmatrix} 1&-1&0\\0&1&-1\\0&0&1 \end{pmatrix}
+$$
+
+-   Her kan vi bruge side 7 fra 18 så vi får $ImL=S(A)$ så vil det også være en basis for im L så
+
+$$
+ImL = \begin{pmatrix} 1&-1&0\\0&1&-1\\0&0&1 \end{pmatrix}
+$$
+
+-   Jeg ønkser nu at kigge på nulrummet N(A) til A. Dette består af alle løsninger til Ax=0.
+
+-   Fra den reducerede echelonform af A har vi et ligningsystem:
+
+$$
+x_0-x_1=0 \\
+x_1-x_2 = 0 \\
+x_3-x_2 = 0
+$$
+
+-   vi får så: $x_0=x_1=x_2=x_3$
+
+-   dermed får vi vektoren som udspædener nulrummet for A:
+
+$$
+\begin{pmatrix} x_0 \\x_1 \\ x_2 \\ x_3 \end{pmatrix}, \begin{pmatrix} x_0\\x_0\\x_0\\x_0 \end{pmatrix} =x_0 \begin{pmatrix} 1\\1\\1\\1 \end{pmatrix}
+$$
+
+-   ifølge notesæt 18 side 7 vil $ker L = N(A)$ så være basis for N(A) dermed er følgende kerne som ovenstående skrevet.
+
+#### ekstra
+
+-   For at bestemme kernen og billedemængden starter vi med at reducerer A til echelonformen. S(A) er de søjler hvor der er et pivotelement.
+
+    <div>
+
+    S(A) er billedemængden
+
+    </div>
+
+-   Kollary 20.3 kernen er den vektor som ganget på giver 0 , **nulrummet**.
+
+![](na.11.2.png)
+
+#### a)
+
+-   jeg anvender definition 19.6 for at finde koordinatvektoreen.
+
+-   Vi har basis E
+
+$$
+\begin{pmatrix} 1\\0\\0\\0 \end{pmatrix}, 
+\begin{pmatrix} 1\\1\\0\\0 \end{pmatrix},
+\begin{pmatrix} 1\\1\\1\\0 \end{pmatrix},
+\begin{pmatrix} 1\\1\\1\\1 \end{pmatrix}
+$$
+
+-   Vi kan så bestemme koordinatvektoren for p:
+
+$$
+x_0 \begin{pmatrix} 1\\0\\0\\0 \end{pmatrix}+ 
+x_1 \begin{pmatrix} 1\\1\\0\\0 \end{pmatrix}+
+x_2\begin{pmatrix} 1\\1\\1\\0 \end{pmatrix}+
+x_3\begin{pmatrix} 1\\1\\1\\1 \end{pmatrix}=
+\begin{pmatrix} 1\\-1\\2\\4 \end{pmatrix}
+
+$$
+
+-   jeg anvender eksempel 19.7
+
+-   Dette svare til at løse det lineære lignignsystem:
+
+$$
+\begin{pmatrix} 1&1&1&1\\
+0&1&1&1\\
+0&0&1&1\\
+0&0&0&1
+ \end{pmatrix}
+\cdot\begin{pmatrix} x_0\\x_1\\x_2\\x_3 \end{pmatrix}
+=\begin{pmatrix} 1\\1\\1\\1 \end{pmatrix}
+$$
+
+```{python}
+import numpy as np
+```
+
+```{python}
+p = np.array([1,-1,2,4])[:, np.newaxis]
+```
+
+```{python}
+a_e = np.array([
+  [1,1,1,1],
+  [0,1,1,1],
+  [0,0,1,1],
+  [0,0,0,1]
+])
+print(f'a_e: [ndarray(4,4)]: \n {a_e}')
+```
+
+-   Nu kan vi løse for den:
+
+```{python}
+p_e = np.linalg.solve(a_e, p)
+print(f'Vores løsning \n {p_e}')
+```
+
+#### b)
+
+```{python}
+a_f = np.array([
+  [ 1/2,  1/np.sqrt(2), 0,  1/2],
+  [-1/2,  1/np.sqrt(2), 0, -1/2],
+  [ 1/2,  0,1/np.sqrt(2),  -1/2],
+  [-1/2, 0, 1/np.sqrt(2), 1/2]
+])
+p_f = np.linalg.solve(a_f, p)
+print(f'Løsning \n {p_f}')
+```
+
+```{python}
+a_f_i = np.linalg.inv(a_f)
+
+print(f'a_f: [ndarray: (4,4)] \n {a_f_i}')
+```
+
+```{python}
+e_til_f = a_f_i @ a_e
+print(f'printer e_til_f: [ndarray(4,4] \ {e_til_f}')
+```
+
+```{python}
+print(f'printer {e_til_f @ p_e}')
+```
+
+![](na.11.3.png)
+
+-   Jeg anvender eksempel 20.2 notesæt 20. Matricen A af L mht baservil E vil være:
+
+$$
+a_0=[L(x^2)]_F=[(0,1,4)]=
+\begin{pmatrix} (0,1,4) & 
+\begin{pmatrix} 1 \\ 0 \\ 0\end{pmatrix} \\
+(0,1,4) & 
+\begin{pmatrix} 0 \\ 1 \\ 0\end{pmatrix} \\
+(0,1,4) & 
+\begin{pmatrix} 0 \\ 0 \\ 1\end{pmatrix}
+\end{pmatrix}
+= \begin{pmatrix} 0 \\ 1 \\ 4\end{pmatrix}
+$$
+
+$$
+a_1=[L(x)]_F=[(0,1,2)]=
+\begin{pmatrix} (0,1,2) & 
+\begin{pmatrix} 1 \\ 0 \\ 0\end{pmatrix} \\
+(0,1,2) & 
+\begin{pmatrix} 0 \\ 1 \\ 0\end{pmatrix} \\
+(0,1,2) & 
+\begin{pmatrix} 0 \\ 0 \\ 1\end{pmatrix}
+\end{pmatrix}
+= \begin{pmatrix} 0 \\ 1 \\ 2\end{pmatrix}
+$$
+
+$$
+a_2=[L(1)]_F=[(1,1,1)]=
+\begin{pmatrix} (1,1,1) & 
+\begin{pmatrix} 1 \\ 1 \\ 1\end{pmatrix} \\
+(1,1,1) & 
+\begin{pmatrix} 0 \\ 1 \\ 0\end{pmatrix} \\
+(1,1,1) & 
+\begin{pmatrix} 0 \\ 0 \\ 1\end{pmatrix}
+\end{pmatrix}
+= \begin{pmatrix} 1 \\ 1 \\ 1\end{pmatrix}
+$$
+
+-   vi får så:
+
+$$
+A=[a_0|a_1|a_2]=\begin{pmatrix}
+0&0&1 \\
+1&1&1 \\
+4&2&1
+ \end{pmatrix}
+$$
+
+```{python}
+A = np.array([
+  [0,0,1],
+  [1,1,1],
+  [4,2,1]
+])
+A_inv = np.linalg.inv(A)
+print(f'den inverse af A \n {A_inv}')
+```
+
+-   Da A er invertibel vil nulrummet være nulvektoren - demed vil keren være nulvektoren ifølge kollary 20.3
+
+-   nulrummet er det som opfylder Ax=0
+
+-   det gælder at for en invetibel matri A vil det kun være nulvektoen som opfydler dette dermed vil
+
+$$
+ker L=N(A)=(0,0,0)
+$$
+
+-   Da A er invetibel vil den reduceren ecelonform være identitetsmatricen altså være span(A) af søjlerne med pivotelementer i udgør søjle rummet altså billedrummet dermed vil
+
+$$
+ImL=S(A)=SPAN(
+\begin{pmatrix}0\\1\\4 \end{pmatrix},
+\begin{pmatrix}0\\1\\2 \end{pmatrix},
+\begin{pmatrix}1\\1\\1 \end{pmatrix}
+= \begin{pmatrix}
+0&0&1\\
+1&1&1 \\
+4&2&1
+ \end{pmatrix}
+$$
+
+-   en kvadratisk matrix er invertibel hvis søjlerne er uafhængige gælder begge veje.
+
+![](na.11.4.png){width="756"}
+
+```{python}
+x = np.array([1.0, 0.5, -1.0, 0.1, 0.7])
+v = np.vander(x, 5)
+v_i = np.linalg.inv(v)
+print(np.allclose(v @ v_i, np.eye(5)))
+```
+
+```{python}
+vt = v.T
+vt_i = np.linalg.inv(vt)
+print(np.allclose(vt @ vt_i, np.eye(5)))
+```
+
+![](na.11.5.png)
+
+![](na.11.5.2.png)
