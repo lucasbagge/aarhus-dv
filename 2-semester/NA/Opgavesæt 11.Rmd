@@ -178,14 +178,27 @@ $$
 
 -   Vi kan så bestemme koordinatvektoren for p:
 
-$$
-x_0 \begin{pmatrix} 1\\0\\0\\0 \end{pmatrix}+ 
-x_1 \begin{pmatrix} 1\\1\\0\\0 \end{pmatrix}+
-x_2\begin{pmatrix} 1\\1\\1\\0 \end{pmatrix}+
-x_3\begin{pmatrix} 1\\1\\1\\1 \end{pmatrix}=
-\begin{pmatrix} 1\\-1\\2\\4 \end{pmatrix}
+\$\$ x_0
 
-$$
+\begin{pmatrix} 1\\0\\0\\0 \end{pmatrix}
+
+-   x_1
+
+    \begin{pmatrix} 1\\1\\0\\0 \end{pmatrix}
+
+    -   x_2
+
+        \begin{pmatrix} 1\\1\\1\\0 \end{pmatrix}
+
+        -   x_3
+
+            \begin{pmatrix} 1\\1\\1\\1 \end{pmatrix}
+
+            =
+
+            \begin{pmatrix} 1\\-1\\2\\4 \end{pmatrix}
+
+\$\$
 
 -   jeg anvender eksempel 19.7
 
