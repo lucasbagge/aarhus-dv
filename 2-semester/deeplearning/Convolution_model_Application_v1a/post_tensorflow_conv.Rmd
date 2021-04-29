@@ -1,0 +1,112 @@
+---
+title: "Untitled"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(reticulate)
+reticulate::use_python("/Users/lucasbagge/.virtualenvs/conv-proj/bin/python")
+virtualenv_create("conv-proj")
+py_install("tensorflow", envname = "conv-proj")
+py_install("matplotlib", envname = "conv-proj")
+use_virtualenv("conv-proj")
+```
+
+Remeber to set the python interpretabe to the enviroment you have created
+
+# Convolutional Neural Networks: Application
+
+Welcome to Course 4's second assignment! In this notebook, you will:
+
+- Implement helper functions that you will use when implementing a TensorFlow model
+- Implement a fully functioning ConvNet using TensorFlow 
+
+**After this assignment you will be able to:**
+
+- Build and train a ConvNet in TensorFlow for a classification problem 
+
+We assume here that you are already familiar with TensorFlow. If you are not, please refer the *TensorFlow Tutorial* of the third week of Course 2 ("*Improving deep neural networks*").
+
+### <font color='darkblue'> Updates to Assignment <font>
+
+#### If you were working on a previous version
+* The current notebook filename is version "1a". 
+* You can find your work in the file directory as version "1".
+* To view the file directory, go to the menu "File->Open", and this will open a new tab that shows the file directory.
+
+#### List of Updates
+* `initialize_parameters`: added details about tf.get_variable, `eval`. Clarified test case.
+* Added explanations for the kernel (filter) stride values, max pooling, and flatten functions.
+* Added details about softmax cross entropy with logits.
+* Added instructions for creating the Adam Optimizer.
+* Added explanation of how to evaluate tensors (optimizer and cost).
+* `forward_propagation`: clarified instructions, use "F" to store "flatten" layer.
+* Updated print statements and 'expected output' for easier visual comparisons.
+* Many thanks to Kevin P. Brown (mentor for the deep learning specialization) for his suggestions on the assignments in this course!
+
+## 1.0 - TensorFlow model
+
+In the previous assignment, you built helper functions using numpy to understand the mechanics behind convolutional neural networks. Most practical applications of deep learning today are built using programming frameworks, which have many built-in functions you can simply call. 
+
+As usual, we will start by loading in the packages. 
+
+```{python}
+# TensorFlow and tf.keras
+import tensorflow as tf
+# Helper libraries
+import numpy as np
+import matplotlib.pyplot as plt
+print(tf.__version__)
+```
+
+Run the next cell to load the "SIGNS" dataset you are going to use.
+
+```{python}
+# Loading the data (signs)
+fashion_mnist = tf.keras.datasets.fashion_mnist
+(train_images, train_labels), (test_images, test_labels) = fashion_mnist.load_data()
+```
+
+```{python}
+class_names = ['T-shirt/top', 'Trouser', 'Pullover', 'Dress', 'Coat',
+               'Sandal', 'Shirt', 'Sneaker', 'Bag', 'Ankle boot']
+```
+
+```{python}
+train_images.shape
+```
+
+```{python}
+plt.figure()
+plt.imshow(train_images[0])
+plt.colorbar()
+plt.grid(False)
+plt.show()
+```
+
+
+```{python}
+model = tf.keras.Sequential([
+    tf.keras.layers.Flatten(input_shape=(28, 28)),
+    tf.keras.layers.Dense(128, activation='relu'),
+    tf.keras.layers.Dense(10)
+])
+```
+
+```{python}
+model.compile(optimizer='adam',
+              loss=tf.keras.losses.SparseCategoricalCrossentropy(from_logits=True),
+              metrics=['accuracy'])
+```
+
+```{python}
+model.fit(train_images, train_labels, epochs=10)
+```
+
+```{python}
+test_loss, test_acc = model.evaluate(test_images,  test_labels, verbose=2)
+
+print('\nTest accuracy:', test_acc)
+```
+
