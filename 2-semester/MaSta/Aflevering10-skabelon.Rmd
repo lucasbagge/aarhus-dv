@@ -38,7 +38,7 @@ lmUD_detailhandel <-     lm(detailhandel$omsaet ~ detailhandel$vaerdi)
 lmUD_energisektoren <-   lm(energisektoren$omsaet ~ energisektoren$vaerdi)
 lmUD_industrisektoren <- lm(industrisektoren$omsaet ~ industrisektoren$vaerdi)
 
-plot(omsætningen, markedsværdien, col = sektor)
+plot(omsætningen ~ markedsværdien, col = sektor)
 abline(lmUD_detailhandel, col = "red")
 abline(lmUD_energisektoren)
 abline(lmUD_industrisektoren, col = "green")
@@ -51,7 +51,7 @@ Ovenstående viser et plt af omsætning mod markedsvædien for de tre sektor og 
 Opstil modellen:
 
 $$
-omsætning\sim N(\alpha_{sektor_i} + \beta_{sektor_i}markedsværdi{sektor_i}, \sigma^2_{sektor_i}),1,...,35
+omsaetning\sim N(\alpha_{sektor_i} + \beta_{sektor_i}markedsværdi, \sigma^2_{sektor_i}),1,...,35
 $$
 check om samme varians:
 
@@ -73,7 +73,7 @@ $$
 omsætning_{sektor_i}\sim N(\alpha_{sektor_i} + \beta_{sektor_i}lmarkedsværdi_{sektor_i}, \sigma^2)
 $$
 $$
-anova(lm(x\sim gr+t), lm(x\sim gr*t))
+\beta_{detail}=\beta_{energi}=\beta_{industri}
 $$
 
 ```{r}
@@ -90,35 +90,34 @@ $$
 
 Vi kan godt beskrive ved den additive model.
 
-Vi laver altså en reduktion fra M1 til M2 som er den model hvor skæring er den samme, og undersøger om skæringen kan komme fra den samme foreling p væriden siger det kan godt lade sig gøre. 
+Derved kan vi konkluderer de tre sektorer godt kan have fælles hælning.
 
-
-Nu vil jeg undrsøge sammde for skræing
+Nu vil jeg undrsøge samme for skæring
 
 ```{r}
-M1_til_M2_beta <- anova(lm(omsætningen ~ sektor : markedsværdien),
-                        lm(omsætningen ~ sektor * markedsværdien))
-M1_til_M2_beta
+anova(lm(omsætningen ~ sektor + markedsværdien),
+      lm(omsætningen ~ markedsværdien))
 ```
 
-samme forklaring. Modellen kan beskrives additivt.
-
-
+Her får vi en lav p værid og vi kan konkluderer de ikke har samme skæring. Det
+stemmer overens med hvad vi så i vores plot.
 
 
 ###  Vis, at det ikke kan antages, at den fælles hældning er 0.
 
 ```{r}
-confint(lm(omsætningen ~ markedsværdien))
+summary(lm(omsætningen ~ markedsværdien + sektor))
 ```
 
-Umiddelbart ud fra konfidens interval så vil jeg ikke sige at den fælles hældnign vil være nul, men derimod mellem 0.32 og 1.01.
+Ud fra ovenstående koefficienter kan det ses at den fælles hældning ikke kan være nul.
 
 
 ### Angiv et 95%-konfidensinterval for spredningen på omsætningen.
 
+Hertil kan vi bruge formlen i afsnit 4.8 vedrøende skønnet over spredningen.
+
 ```{r}
-lmSUM <- summary(lm(omsætningen ~ markedsværdien))
+lmSUM <- summary(lm(omsætningen ~ sektor + markedsværdien))
 lmSUM$sigma
 ```
 
@@ -128,8 +127,10 @@ df[2]
 ```
 
 ```{r}
-sqrt(df[2] * lmSUM$sigma^2 /
-       qchisq(c(0.975, 0.025), df[2]))
+sqrt(
+  df[2] * lmSUM$sigma^2 /
+    qchisq(c(0.975, 0.025), df[2])
+)
 ```
 
 Finder konfidensinterval for spredning på omsætning.
@@ -138,8 +139,9 @@ Finder konfidensinterval for spredning på omsætning.
 ### Angiv et 95%-konfidensinterval for den fælles hældning på de tre regressionslinjer.
 
 ```{r}
-confint(lm(omsætningen~sektor+markedsværdien))
+confint(lm(omsætningen ~ sektor + markedsværdien))
 ```
 
-Ovenstående viser konfidensinteval for den fællges hældning for de tre regressionslinjer:
+Her er det interval vi skal bruge den for markedsværdien, hvor vi ser at værdien
+er mellem 0.58 og 1.04:
 

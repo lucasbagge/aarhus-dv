@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.22 (TeX Live 2021) (preloaded format=pdflatex 2021.4.25)  25 APR 2021 22:50
+This is pdfTeX, Version 3.141592653-2.6-1.40.22 (TeX Live 2021) (preloaded format=pdflatex 2021.4.29)  2 MAY 2021 21:25
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -493,9 +493,6 @@ LaTeX Font Info:    External font `lmex10' loaded for size
 
 LaTeX Warning: Command \ae invalid in math mode on input line 225.
 
-
-LaTeX Warning: Command \ae invalid in math mode on input line 225.
-
 [2 <./Aflevering10-skabelon_files/figure-latex/unnamed-chunk-2-1.pdf>]
 
 LaTeX Warning: Command \ae invalid in math mode on input line 261.
@@ -514,7 +511,7 @@ Here is how much of TeX's memory you used:
  27739 multiletter control sequences out of 15000+600000
  440358 words of font info for 64 fonts, out of 8000000 for 9000
  14 hyphenation exceptions out of 8191
- 71i,6n,74p,759b,352s stack positions out of 5000i,500n,10000p,200000b,80000s
+ 71i,6n,74p,759b,465s stack positions out of 5000i,500n,10000p,200000b,80000s
 {/Users/lucasbagge/Library/TinyTeX/texmf-dist/fonts/enc/dvips/lm/lm-ec.enc}{/
 Users/lucasbagge/Library/TinyTeX/texmf-dist/fonts/enc/dvips/lm/lm-rm.enc}{/User
 s/lucasbagge/Library/TinyTeX/texmf-dist/fonts/enc/dvips/lm/lm-mathit.enc}{/User
@@ -530,7 +527,7 @@ asbagge/Library/TinyTeX/texmf-dist/fonts/type1/public/lm/lmr7.pfb></Users/lucas
 bagge/Library/TinyTeX/texmf-dist/fonts/type1/public/lm/lmsy10.pfb></Users/lucas
 bagge/Library/TinyTeX/texmf-dist/fonts/type1/public/lm/lmtt10.pfb></Users/lucas
 bagge/Library/TinyTeX/texmf-dist/fonts/type1/public/lm/lmtti10.pfb>
-Output written on Aflevering10-skabelon.pdf (5 pages, 187357 bytes).
+Output written on Aflevering10-skabelon.pdf (5 pages, 189884 bytes).
 PDF statistics:
  119 PDF objects out of 1000 (max. 8388607)
  98 compressed objects within 1 object stream

@@ -1,0 +1,166 @@
+---
+title: "Aflevering 11"
+subtitle: "Lucas Bagge"
+output:
+  pdf_document: default
+  html_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+![](ms-alf11-1.png)
+
+
+
+
+
+![](ms-alf11-2.png)
+
+### a)
+
+```{r}
+library(tidyverse)
+
+data <- tribble(
+  ~"Periode", ~"Stomr1", ~"Storm2", ~"Storm_3_4",
+  "1891-2920", 39, 16, 4,
+  "1921-1950", 21, 8, 8,
+  "1951-1980", 14, 12, 5,
+  "1981-2010", 18, 12, 10
+)
+data %>% 
+  summarise(across(where(is.numeric), ~ sum(.)))
+```
+
+
+$$
+A_{1j}\sim multinom(92,\pi_{1j})\\
+A_{2j}\sim multinom(48,\pi_{2j}) \\
+A_{3j}\sim multinom(27,\pi_{3j}) \\
+a_{ij} = (a_{1i},...,a_{i3})\\
+\pi_{ij} = (\pi_{i1},...,\pi_{u3})
+i =1,...,4
+j =1,..,3
+$$
+
+hvpotese om samme sandynlgíeh
+
+$$
+\pi_{ij}=\pi_j
+$$
+
+
+
+### b)
+
+Benytter af følgende kode:
+
+```{r}
+hom_test <- function(obs){
+  ex = outer(rowSums(obs), colSums(obs)) / sum(obs)
+  obs1 <- ifelse(obs == 0, 1, obs)
+  G <- 2 * sum(obs * log(obs1/ex))
+  pval = 1- pchisq(G, (dim(obs)[1] - 1) * (dim(obs)[2] - 1))
+  
+  return(list(Forvendtede = ex, G = G, Pvaerdi = pval))
+}
+
+hom_test(rbind(c(39,
+                 16,
+                 4),
+               c(21, 
+                 8,
+                 8),
+               c(14, 
+                 12,
+                 5),
+               c(18, 
+                 12,
+                 10)))
+```
+
+
+Her kan vi ikke forkaste H0. 
+Dermed tyder det på at det er perioden der er afgørende.
+
+### c)
+
+```{r}
+hom_test <- function(obs){
+  ex = outer(rowSums(obs), colSums(obs)) / sum(obs)
+  obs1 <- ifelse(obs == 0, 1, obs)
+  G <- 2 * sum(obs * log(obs1/ex))
+  pval = 1- pchisq(G, (dim(obs)[1] - 1) * (dim(obs)[2] - 1))
+  
+  return(list(Forvendtede = ex, G = G, Pvaerdi = pval))
+}
+
+hom_test(
+  rbind
+  (
+    c(617,
+      171),
+    c(508, 
+      269)
+  )
+)
+```
+
+Hermed kan vi ikke forkaste H0 og derfro må det være tidsperioden der er afgørende:
+
+### d) 
+
+Opstille modellen. 
+
+
+$$
+A_{1j}\sim multinom(85,\pi_{1j})\\
+A_{2j}\sim multinom(202,\pi_{2j}) \\
+A_{3j}\sim multinom(41,\pi_{3j}) \\
+A_{4j}\sim multinom(32,\pi_{3j}) \\
+A_{5j}\sim multinom(81,\pi_{3j}) \\
+a_{ij} = (a_{1i},...,a_{i5})\\
+\pi_{ij} = (\pi_{i1},...,\pi_{u2})
+i =1,...,4
+j =1,..,3
+$$
+```{r}
+hom_test <- function(obs){
+  ex = outer(rowSums(obs), colSums(obs)) / sum(obs)
+  obs1 <- ifelse(obs == 0, 1, obs)
+  G <- 2 * sum(obs * log(obs1/ex))
+  pval = 1- pchisq(G, (dim(obs)[1] - 1) * (dim(obs)[2] - 1))
+  
+  return(list(Forvendtede = ex, G = G, Pvaerdi = pval))
+}
+
+hom_test(
+  rbind
+  (
+    c(
+      36,
+      49
+    ),
+    c(
+      85, 
+      116
+    ),
+    c(
+      16, 
+      25
+    ),
+    c(
+      10, 
+      22
+    ),
+    c(
+      24, 
+      57
+    )
+  )
+)
+```
+
+VI forkaster H0. dermed afhænger de ikke af verdenshavene men af tidsperioden.
