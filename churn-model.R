@@ -10,8 +10,11 @@ telco <-
   select(-customerID) %>% 
   mutate(Churn = as.factor(Churn))
 
+prop.table((table(telco$Churn)))
+
+
 telco %>% 
-  skimr::skim()
+  glimpse()
 
 set.seed(seed = 1972) 
 train_test_split <-
@@ -24,6 +27,12 @@ train_test_split
 
 train_tbl <- train_test_split %>% training() 
 test_tbl  <- train_test_split %>% testing() 
+
+##
+rec <- recipe(Churn ~ ., train_tbl) %>% 
+  step_pca(all_numeric())
+
+
 
 rand_model <-
   rand_forest() %>%
