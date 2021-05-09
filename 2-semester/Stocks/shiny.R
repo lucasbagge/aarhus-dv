@@ -34,7 +34,6 @@ ui <- dashboardPage(
       box(plotOutput("plot4")),
       box(highchartOutput("plot5"))
     )
-    
   )
 )
 

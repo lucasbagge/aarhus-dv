@@ -12,7 +12,7 @@ knitr::opts_chunk$set(echo = TRUE)
 This post will explore how to predict houses prices
 
 
-read in the packages
+read in the packages where we use the package `AmesHousing` where the used data is avaialbe.
 
 ```{r}
 library(tidymodels)
@@ -20,14 +20,20 @@ library(AmesHousing)
 ames <- make_ames()
 ```
 
-We will take a very used data set in the form of AmesIA housing data.
+When starting a machine learning project you have to go though several phases which I have outlined:
 
 ![](ml-process.png)
+In this tutorial we will go thoug each of the steps so we get a clear understanding on what need to be done.
 
-and the workflow
+Another view of the process is as follow:
 
 ![](wf.png)
+
+All of this will be much clearer after this post.
+
 There are a few suffixes that we'll use for certain types of objects:
+
+We are going to introduce a few suffixes for the objects we are gonna use.
 
 - _mod for a parsnip model specification
 - _fit for a fitted model
@@ -52,66 +58,95 @@ There are a few different ways to do the split: simple random sampling, stratifi
 
 ## Ames housing data
 
+The tidymodels framework make it easy for us to make this split between the traning and testing test.
+
 ```{r}
 # resample functions
 # Make sure that you get the same random numbers
 set.seed(4595)
 data_split <- initial_split(ames, strata = "Sale_Price")
-ames_train <- training(data_split)
-ames_test  <- testing(data_split)
+ames_train <- 
+  data_split %>% 
+  training()
+ames_test  <-
+  data_split %>% 
+  testing()
 ```
+
+Let us take a look at the `data_split` object.
+
+```{r}
+data_split
+```
+
+What we see is the amount we use as traning - 2199 and the number we use for testing - 731.
 
 
 ## Modelling
 
+It is extreme easy to build model in R specially when you use the tidymodels framwork. 
+
+The process is like a cooking recipe and thease steps are gonna be introduced in the following.
 
 ### Parsnip in Action
 
-lm() isn't the only way to perform linear regression
+The package `parsnip` is the one handling the transition from model to model. IN this process it is easy to swift between models.
 
-glmnet for regularized regression
+Some of the models type aviable in parsip is the following:
 
-stan for Bayesian regression
+- lm() isn't the only way to perform linear regression
 
-keras for regression using tensorflow
+- glmnet for regularized regression
 
-spark for large data sets
+- stan for Bayesian regression
 
+- keras for regression using tensorflow
+
+- spark for large data sets
+
+When we are gonna use parsnip at build the model it can be done with 3 steps: 
 
 1) Create a specification
 
+```{r}
+spec_lin_reg <- 
+  linear_reg()
+```
+
 2) Set the engine
+
+```{r}
+spec_lin_reg <- 
+  linear_reg() %>% 
+  set_engine("stan", chains = 4, iter = 1000)
+```
 
 3) Fit the model
 
 ```{r}
-spec_lin_reg <- linear_reg()
-spec_lin_reg
-```
-
-```{r}
-spec_stan <- 
-  spec_lin_reg %>%
-  # Engine specific arguments are passed through here
-  set_engine("stan", chains = 4, iter = 1000)
-# Otherwise, looks exactly the same!
-fit_stan <- fit(
-  spec_stan,
-  log10(Sale_Price) ~ Longitude + Latitude,
-  data = ames_train
-)
+model <- 
+  linear_reg() %>% 
+  set_engine("stan", chains = 4, iter = 1000) %>%
+  fit(log10(Sale_Price) ~ Longitude + Latitude, data = ames_train)
 coef(fit_stan$fit)
 ```
 
+So with this 3 steps you can quickly build models.
+The argument regarding the engine can be shfit out quickly for another model or other specification. 
+
+Let us try to shift to another model where we replace the specificaion with `nearest_neighbor` and the engine to `kknn`.
+
 ```{r}
 fit_knn <- 
-  nearest_neighbor(mode = "regression", neighbors = 5) %>%
+  nearest_neighbor(neighbors = 5) %>%
+  set_mode("regression") %>% 
   set_engine("kknn") %>% 
   fit(log10(Sale_Price) ~ Longitude + Latitude, data = ames_train)
 fit_knn
 ```
 
-Reasons for Modifying the Data
+### Preprocessing and Feature Engineering
+
 Some models (K-NN, SVMs, PLS, neural networks) require that the predictor variables have the same units. Centering and scaling the predictors can be used for this purpose.
 
 Other models are very sensitive to correlations between the predictors and filters or PCA signal extraction can improve the model.
@@ -147,15 +182,30 @@ Recipes are an alternative method for creating the data frame of predictors for 
 
 Recall the previous part where we used the formula log10(Sale_Price) ~ Longitude + Latitude? These steps are:
 
-Assign Sale_Price to be the outcome
+- Assign Sale_Price to be the outcome
 
-Assign Longitude and Latitude as predictors
+- Assign Longitude and Latitude as predictors
 
-Log transform the outcome
+- Log transform the outcome
 
-To start using a recipe, these steps can be done using
 
-# recipes loaded by tidymodels
+#### Recipes and Categorical Predictors
+
+The featuring enginerring depend on the form of the predictors. If we have a categorical predictior we like mentioned before make it to a dummy variable.
+
+
+```{r}
+mod_rec <-
+  recipe(
+    Sale_Price ~ Longitude + Latitude + Neighborhood, 
+    data = ames_train) %>%
+  step_log(Sale_Price, base = 10) %>%
+  step_other(Neighborhood, threshold = 0.05) %>%
+  step_dummy(all_nominal())
+
+mod_rec %>% prep %>% juice() %>% View()
+```
+
 
 ```{r}
 mod_rec <-
@@ -166,9 +216,7 @@ mod_rec <-
   recipe(Sale_Price ~ Longitude + Latitude + Neighborhood, 
          data = ames_train) %>%
   step_log(Sale_Price, base = 10) %>%
-  # Lump factor levels that occur in   <= 5% of data as "other"
   step_other(Neighborhood, threshold = 0.05) %>%
-  # Create dummy variables for _any_ factor variables
   step_dummy(all_nominal())
 ```
 
@@ -180,69 +228,60 @@ This creates the recipe for data processing (but does not execute it yet)
 Now that we have a preprocessing specification, let's run it on the training set to prepare the recipe:
 
 ```{r}
-mod_rec_trained <- prep(mod_rec, training = ames_train, verbose = TRUE)
+mod_rec_trained <- 
+  mod_rec %>% 
+  prep(training = ames_train, verbose = TRUE)
 ```
 
-## oper 1 step log [training] 
-## oper 2 step other [training] 
-## oper 3 step dummy [training] 
-## The retained training set is ~ 0.19 Mb  in memory.
 Here, the "training" is to determine which levels to lump together and to enumerate the factor levels of the Neighborhood variable.
-
-```{r}
-
-```
-
 
 
 Now that the recipe has been prepared, we can extract the processed training set from it, with all of the steps applied. To do that, we use juice().
 
-# Extracts processed version of `ames_train`
 ```{r}
-juice(mod_rec_trained)
+mod_rec_trained %>% juice()
 ```
 
-After model fitting, you'll eventually want to make predictions on new data. But first, you have to reapply all of the pre-processing steps on it. To do that, use bake().
+This is what you'd pass on to `fit()` your model.
+
+After model fitting, you'll eventually want to make predictions on new data. But first, you have to reapply all of the pre-processing steps on it. To do that, use `bake()`.
 
 ```{r}
-bake(mod_rec_trained, new_data = ames_test)
+mod_rec_trained %>%  bake(new_data = ames_test)
 ```
 
-this is passed on to predict
+this is passed on to `predict()`
+
+#### Juice and bake clarification
+
+One of the things that I found confusion was the difference between juice and bake.
+So lets us make sure we are all 100% aligned. 
 
 - juice() is used to get the pre-processed training set (basically for free)
 - bake() is used to pre-process a new data set
 
-Note that we have:
+- prep() - training is the entire training set, used to estimate parameters in each step (like means or standard deviations).
 
-recipe(..., data = data_set)
-prep(...,   training = data_set)
-bake(...,   new_data = data_set)
-recipe() - data is used only to determine column names and types. A 0-row data frame could even be used.
+- bake() - new_data is data to apply the pre-processing to, using the same estimated parameters from when prep() was called on the training set.
 
-prep() - training is the entire training set, used to estimate parameters in each step (like means or standard deviations).
+### Interactions
 
-bake() - new_data is data to apply the pre-processing to, using the same estimated parameters from when prep() was called on the training set.
-
-### interactions
-
-An interaction between two predictors indicates that the relationship between the predictors and the outcome cannot be describe using only one of the variables.
+An **interaction** between two predictors indicates that the relationship between the predictors and the outcome cannot be describe using only one of the variables.
 
 For example, let's look at the relationship between the price of a house and the year in which it was built. The relationship appears to be slightly nonlinear, possibly quadratic:
 
 ```{r}
 
-price_breaks <- (1:6)*(10^5)
+#price_breaks <- (1:6)*(10^5)
 ames_train %>%
   ggplot(aes(x = Year_Built, y = Sale_Price)) + 
   geom_point(alpha = 0.4) +
   scale_y_log10() + 
-  geom_smooth(method = "loess")
+  geom_smooth(method = "loess") +
+  theme_minimal()
 ```
 
 However... what if we separate this trend based on whether the property has air conditioning or not.
-
-
 
 ```{r}
 ames_train %>%
@@ -253,13 +292,13 @@ ames_train %>%
 
 ```{r}
 # to get robust linear regression model
-library(MASS)
 ames_train %>%
   ggplot(aes(x = Year_Built, y = Sale_Price)) + 
   geom_point(alpha = 0.4) +
   scale_y_log10() + 
   facet_wrap(~ Central_Air, nrow = 2) +
-  geom_smooth(method = "rlm")
+  geom_smooth(method = "rlm") +
+  theme_minimal()
 ```
 
 It appears as though the relationship between the year built and the sale price is somewhat different for the two groups.
@@ -323,11 +362,11 @@ Our plots suggests that the coordinates can be helpful but probably require a no
 Two numeric predictors are very skewed and could use a transformation (Lot_Area and Gr_Liv_Area).
 ```{r}
 ames_rec <- recipe(
-    Sale_Price ~ Bldg_Type + Neighborhood + Year_Built + 
-                 Gr_Liv_Area + Full_Bath + Year_Sold + Lot_Area +
-                 Central_Air + Longitude + Latitude,
-    data = ames_train
-  ) %>%
+  Sale_Price ~ Bldg_Type + Neighborhood + Year_Built + 
+    Gr_Liv_Area + Full_Bath + Year_Sold + Lot_Area +
+    Central_Air + Longitude + Latitude,
+  data = ames_train
+) %>%
   step_log(Sale_Price, base = 10) %>%
   step_BoxCox(Lot_Area, Gr_Liv_Area) %>%
   step_other(Neighborhood, threshold = 0.05)  %>%
@@ -398,11 +437,11 @@ ames_train <- training(data_split)
 ames_test  <- testing(data_split)
 perf_metrics <- metric_set(rmse, rsq, ccc)
 ames_rec <- recipe(
-    Sale_Price ~ Bldg_Type + Neighborhood + Year_Built + 
-                 Gr_Liv_Area + Full_Bath + Year_Sold + Lot_Area +
-                 Central_Air + Longitude + Latitude,
-    data = ames_train
-  ) %>%
+  Sale_Price ~ Bldg_Type + Neighborhood + Year_Built + 
+    Gr_Liv_Area + Full_Bath + Year_Sold + Lot_Area +
+    Central_Air + Longitude + Latitude,
+  data = ames_train
+) %>%
   step_log(Sale_Price, base = 10) %>%
   step_BoxCox(Lot_Area, Gr_Liv_Area) %>%
   step_other(Neighborhood, threshold = 0.05)  %>%
@@ -428,7 +467,6 @@ All resampling methods repeat this process multiple times:
 The final resampling estimate is the average of all of the estimated metrics (e.g. RMSE, etc).
 
 ### v fold
-
 
 Here, we randomly split the training data into V distinct blocks of roughly equal size (AKA the "folds").
 
@@ -540,9 +578,9 @@ knn_pred <- map2_dfr(
   .id = "fold"
 )                                   
 prices <- map_dfr(
-    knn_res$splits,  
-    ~ assessment(.x) %>% select(Sale_Price)
-  )
+  knn_res$splits,  
+  ~ assessment(.x) %>% select(Sale_Price)
+)
 ```
 
 ```{r}
@@ -553,15 +591,14 @@ knn_pred <- map2_dfr(
   .id = "fold"
 )                                   
 prices <- map_dfr(
-    knn_res$splits,  
-    ~ assessment(.x) %>% select(Sale_Price)
-  ) %>% 
+  knn_res$splits,  
+  ~ assessment(.x) %>% select(Sale_Price)
+) %>% 
   mutate(Sale_Price = log10(Sale_Price))
 
 ```
 
 ```{r}
-
 knn_pred <- map2_dfr(
   knn_res$workflows, 
   knn_res$splits,     
@@ -569,9 +606,9 @@ knn_pred <- map2_dfr(
   .id = "fold"
 )                                   
 prices <- map_dfr(
-    knn_res$splits,  
-    ~ assessment(.x) %>% select(Sale_Price)
-  ) %>% 
+  knn_res$splits,  
+  ~ assessment(.x) %>% select(Sale_Price)
+) %>% 
   mutate(Sale_Price = log10(Sale_Price))
 rmse_estimates <- knn_pred %>%
   bind_cols(prices)
@@ -585,9 +622,9 @@ knn_pred <- map2_dfr(
   .id = "fold"
 )                                   
 prices <- map_dfr(
-    knn_res$splits,  
-    ~ assessment(.x) %>% select(Sale_Price)
-  ) %>% 
+  knn_res$splits,  
+  ~ assessment(.x) %>% select(Sale_Price)
+) %>% 
   mutate(Sale_Price = log10(Sale_Price))
 rmse_estimates <- knn_pred %>%
   bind_cols(prices) %>% 
@@ -678,4 +715,88 @@ glmn_grid <-
 glmn_grid %>% slice(1:4)
 ```
 
+### Tagging Tuning parameters
+
+To tune the model, the first step is to tag the parameters that will be optimized. tune::tune() can be used to do this:
+
+```{r}
+knn_mod <- 
+  nearest_neighbor(neighbors = tune(),
+                   weight_func = tune()) %>% 
+  set_engine("kknn") %>% 
+  set_mode("regression")
+
+wf <- 
+  workflow() %>% 
+  add_recipe(mod_rec) %>% 
+  add_model(knn_mod)
+```
+
+
+`parameter()` can detect these arguments:
+
+```{r}
+parameters(knn_mod)
+```
+
+We can also name the parameter:
+
+```{r}
+nearest_neighbor(neighbors = tune("K"),
+                 weight_func = tune("weights")) %>% 
+  set_engine("kknn") %>% 
+  set_mode("regression") %>% 
+  parameters()
+
+```
+
+This mainly comes in handy when the same parameter type shows up in two different places (an example is shown later).
+
+Recipe steps can also have tune() in their arguments.
+
+### Grid search
+
+Let's tune the model over a regular grid and optimize neighbors and weight_func. First we make the grid, then call tune_grid():
+
+
+```{r}
+set.seed(522)
+knn_grid <- knn_mod %>% 
+  parameters() %>% 
+  grid_regular(levels = c(15, 5))
+ctrl <- control_grid(verbose = TRUE)
+
+wf <- 
+  workflow() %>% 
+  add_model(knn_mod) %>% 
+  add_recipe(ames_rec)
+knn_tune <- tune_grid(
+  object = wf,
+  resamples = cv_splits,
+  grid = knn_grid,
+  control = ctrl
+)
+```
+A tibble is returned that looks like the rsample object with an extra list column called .metrics:
+
+
+```{r}
+knn_tune
+```
+
+
+```{r}
+knn_tune$.metrics[[1]]
+```
+
+#### Resampled Performance Estimates
+
+To get the overall resampling estimate (averaged over folds) for each parameter combination:
+
+```{r}
+show_best(knn_tune, metric = "rmse", maximize = FALSE)
+```
+
+
+150 rows = 75 models x 2 metrics
 

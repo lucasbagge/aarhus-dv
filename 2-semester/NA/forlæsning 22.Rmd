@@ -1,0 +1,32 @@
+---
+title: "Untitled"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(reticulate)
+reticulate::repl_python()
+```
+
+## Differentialligninger
+
+- Den ser ud på følgende måde.
+
+$$
+y'(t)=ay(t)
+$$
+
+- En løsning
+
+$$
+(e^{a^t})'=(at)'e^{a^t}=ae^{at}
+$$
+
+- en type løsning.
+- All løsningen har ovenstående formel.
+ 
+
+## Komplekse egenværdier
+
+## højere orden differential ligning

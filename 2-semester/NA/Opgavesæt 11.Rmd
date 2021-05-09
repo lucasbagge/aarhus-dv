@@ -9,6 +9,8 @@ knitr::opts_chunk$set(echo = TRUE)
 
 ![](na.11.1.png)
 
+### 11.1
+
 -   SMR?
 
 -   Jeg anvender proposition 18.13
@@ -59,6 +61,32 @@ $$
 
 -   I følge notesæt 18 side 7 vil ker=N(A) så en basis for N(A) vil vær een basis for ker L.
 
+$$
+ker \ L= Az=0=
+\begin{bmatrix}
+2 & 0 \\
+0 & 3 \\
+1 & -1 
+\end{bmatrix} 
+\begin{bmatrix}
+x \\
+y
+\end{bmatrix} =
+\begin{bmatrix}
+0\\0\\0
+\end{bmatrix}
+\rightarrow
+\begin{bmatrix}
+x\\y
+\end{bmatrix}
+=
+\begin{bmatrix}
+0\\0
+\end{bmatrix}
+$$
+
+-   løsningne kun når z =0 Der for er A lineær uafhængig.
+
 -   dermed
 
 $$
@@ -73,8 +101,40 @@ $$
 u_0=L(e_0)=L(\begin{pmatrix} 1 \\ 0 \end{pmatrix}) = \begin{pmatrix} 0\\0\\0\end{pmatrix}
 $$
 
+$$u_1=L(e_1)=L(\begin{pmatrix} 0 \\ 1 \end{pmatrix}) = \begin{pmatrix} 0\\0\\0\end{pmatrix}
 $$
-u_1=L(e_1)=L(\begin{pmatrix} 0 \\ 1 \end{pmatrix}) = \begin{pmatrix} 0\\0\\0\end{pmatrix}
+
+$$
+ker \ L= Az=0=
+\begin{bmatrix}
+0 & 0 \\
+0 & 0 \\
+0 & 0 
+\end{bmatrix} 
+\begin{bmatrix}
+x \\
+y
+\end{bmatrix} =
+\begin{bmatrix}
+0\\0\\0
+\end{bmatrix}
+\rightarrow
+\begin{bmatrix}
+x\\y
+\end{bmatrix}
+=
+\begin{bmatrix}
+x\\y
+\end{bmatrix}
+$$
+
+-   Billede mængden bliver er nulvektor.
+
+$$
+im \ L =S(A)=
+\begin{bmatrix}
+0\\0\\0
+\end{bmatrix}
 $$
 
 vi får så SMR
@@ -106,10 +166,30 @@ $$
 -   Her får vi SMR
 
 $$
-A=[u_0|u_1|u_2|u_3] = \begin{pmatrix} 1&-1&0&0 \\ 0&1&-1&0 \\ 0&0&-1&0 \end{pmatrix}
+A=[u_0|u_1|u_2|u_3] = \begin{pmatrix} 1&-1&0&0 \\ 0&1&-1&0 \\ 0&0&-1&-1 \end{pmatrix}
 $$
 
-Hvor A allerede er i echolon form.
+-   dens kernemængde
+
+$$
+ker \ L= Az=0=
+\begin{pmatrix} 1&-1&0&0 \\ 0&1&-1&0 \\ 0&0&1&-1 \end{pmatrix} 
+\begin{bmatrix}
+a \\
+b \\
+c\\
+d
+\end{bmatrix} =
+\begin{bmatrix}
+0\\0\\0\\0
+\end{bmatrix}
+\rightarrow
+a=b=c=d
+$$
+
+-   Vi ser at løsninge til systemeter er når de er lig hinanden.
+
+Hvor A a llerede er i echolon form.
 
 -   dens pivotsøjler er søjle 0, 1 og 2. FOr enhver x er Ax lineær kombination af pivotsøjerler så
 
@@ -165,9 +245,9 @@ $$
 
 #### a)
 
--   jeg anvender definition 19.6 for at finde koordinatvektoreen.
+-   jeg anvender definition **19.6** for at finde koordinatvektoreen.
 
--   Vi har basis E
+-   E er vores base:
 
 $$
 \begin{pmatrix} 1\\0\\0\\0 \end{pmatrix}, 
@@ -178,29 +258,13 @@ $$
 
 -   Vi kan så bestemme koordinatvektoren for p:
 
-\$\$ x_0
+-   
 
-\begin{pmatrix} 1\\0\\0\\0 \end{pmatrix}
+    x_0
 
--   x_1
-
-    \begin{pmatrix} 1\\1\\0\\0 \end{pmatrix}
-
-    -   x_2
-
-        \begin{pmatrix} 1\\1\\1\\0 \end{pmatrix}
-
-        -   x_3
-
-            \begin{pmatrix} 1\\1\\1\\1 \end{pmatrix}
-
-            =
-
-            \begin{pmatrix} 1\\-1\\2\\4 \end{pmatrix}
-
-\$\$
-
--   jeg anvender eksempel 19.7
+$$
+\begin{pmatrix} 1\\0\\0\\0 \end{pmatrix}\begin{pmatrix} 1\\1\\0\\0 \end{pmatrix}x_2\begin{pmatrix} 1\\1\\1\\0 \end{pmatrix}x_3\begin{pmatrix} 1\\1\\1\\1 \end{pmatrix}=\begin{pmatrix} 1\\-1\\2\\4 \end{pmatrix}
+$$jeg anvender eksempel 19.7
 
 -   Dette svare til at løse det lineære lignignsystem:
 
@@ -252,7 +316,10 @@ p_f = np.linalg.solve(a_f, p)
 print(f'Løsning \n {p_f}')
 ```
 
+-   VI skal have **koordinat skifte**.
+
 ```{python}
+# den inverse formel 19.2
 a_f_i = np.linalg.inv(a_f)
 
 print(f'a_f: [ndarray: (4,4)] \n {a_f_i}')
@@ -262,6 +329,8 @@ print(f'a_f: [ndarray: (4,4)] \n {a_f_i}')
 e_til_f = a_f_i @ a_e
 print(f'printer e_til_f: [ndarray(4,4] \ {e_til_f}')
 ```
+
+-   Regn koordinatvektor for P givet du har fundet x = koordinatvektor for P i E. Kan gange sammen.
 
 ```{python}
 print(f'printer {e_til_f @ p_e}')
@@ -329,6 +398,8 @@ print(f'den inverse af A \n {A_inv}')
 
 -   Da A er invertibel vil nulrummet være nulvektoren - demed vil keren være nulvektoren ifølge kollary 20.3
 
+-   For at vise A er invertible skal vi reducer til rchelor form.
+
 -   nulrummet er det som opfylder Ax=0
 
 -   det gælder at for en invetibel matri A vil det kun være nulvektoen som opfydler dette dermed vil
@@ -371,3 +442,40 @@ print(np.allclose(vt @ vt_i, np.eye(5)))
 ![](na.11.5.png)
 
 ![](na.11.5.2.png)
+
+-   vi de er egenværdier
+
+-   Brug definition 21.1, hvor det er en egenværdi hvis $Av=\lambda v$
+
+$$
+\lambda =6\\
+\begin{bmatrix}
+6&-3&2\\
+0&2&7\\
+0&0&-1
+\end{bmatrix}
+\begin{bmatrix}
+v_1\\v_2\\v_3
+\end{bmatrix} 
+=
+b
+\begin{bmatrix}
+v_1\\v_2\\v_3
+\end{bmatrix}\\
+6v_1-3v_2+2v_3=6v_1\\
+2v_2+7v_3=6v_2\\
+1v_3=6v_3
+$$
+
+-   6 er en egenværdi da ovenståend fra 21.1 er opfyldt og således er
+
+$$
+v=
+\begin{bmatrix}
+1\\0\\0
+\end{bmatrix}
+$$
+
+-   en anden vektor.
+
+#### b)
