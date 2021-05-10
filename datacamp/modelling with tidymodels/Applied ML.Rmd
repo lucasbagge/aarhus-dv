@@ -16,6 +16,7 @@ This post will explore how to predict houses prices where we read in the package
 ```{r}
 library(tidymodels)
 library(AmesHousing)
+library(tune)
 ames <- make_ames()
 ```
 
@@ -256,14 +257,15 @@ Now that we have a preprocessing specification, let's run it on the training set
 
 ```{r}
 mod_rec_trained <- 
-  mod_rec %>% 
-  prep(training = ames_train, verbose = TRUE)
+  rec %>% 
+  prep(training = ames_train)
 ```
 
 Here, the "training" is to determine which levels to lump together and to enumerate the factor levels of the Neighborhood variable.
 
-
 Now that the recipe has been prepared, we can extract the processed training set from it, with all of the steps applied. To do that, we use juice().
+
+> In prep the steps are being estimated and applied in the traning set. juice() will return the results of a recipe where all steps have been applied.
 
 ```{r}
 mod_rec_trained %>% juice()
@@ -272,6 +274,8 @@ mod_rec_trained %>% juice()
 This is what you'd pass on to `fit()` your model.
 
 After model fitting, you'll eventually want to make predictions on new data. But first, you have to reapply all of the pre-processing steps on it. To do that, use `bake()`.
+
+> bake() takes a trained recipe and applies the operations to a data set to create a design matrix.
 
 ```{r}
 mod_rec_trained %>%  bake(new_data = ames_test)
@@ -285,21 +289,19 @@ One of the things that I found confusion was the difference between juice and ba
 So lets us make sure we are all 100% aligned. 
 
 - juice() is used to get the pre-processed training set (basically for free)
-- bake() is used to pre-process a new data set
+- bake() is used to pre-process a *new* data set
 
 - prep() - training is the entire training set, used to estimate parameters in each step (like means or standard deviations).
 
 - bake() - new_data is data to apply the pre-processing to, using the same estimated parameters from when prep() was called on the training set.
 
-### Interactions
+### Interactions effects 
 
 An **interaction** between two predictors indicates that the relationship between the predictors and the outcome cannot be describe using only one of the variables.
 
 For example, let's look at the relationship between the price of a house and the year in which it was built. The relationship appears to be slightly nonlinear, possibly quadratic:
 
 ```{r}
-
-#price_breaks <- (1:6)*(10^5)
 ames_train %>%
   ggplot(aes(x = Year_Built, y = Sale_Price)) + 
   geom_point(alpha = 0.4) +
@@ -324,7 +326,7 @@ ames_train %>%
   geom_point(alpha = 0.4) +
   scale_y_log10() + 
   facet_wrap(~ Central_Air, nrow = 2) +
-  geom_smooth(method = "rlm") +
+  geom_smooth(method = "lm") +
   theme_minimal()
 ```
 
@@ -334,24 +336,34 @@ When there is no AC, the trend is perhaps flat or slightly decreasing.
 With AC, there is a linear increasing trend or is perhaps slightly quadratic with some outliers at the low end.
 
 ```{r}
-mod1 <- lm(log10(Sale_Price) ~ Year_Built + Central_Air,                          data = ames_train)
-mod2 <- lm(log10(Sale_Price) ~ Year_Built + Central_Air + Year_Built:Central_Air, data = ames_train)
+mod1 <- lm(log10(Sale_Price) ~ Year_Built + Central_Air,                          
+           data = ames_train)
+mod2 <- lm(log10(Sale_Price) ~ Year_Built + Central_Air + Year_Built:Central_Air, 
+           data = ames_train)
 anova(mod1, mod2)
 ```
 
 We first create the dummy variables for the qualitative predictor (Central_Air) then use a formula to create the interaction using the : operator in an additional step:
 
+> step_interact() creates interactions between variables. 
+
 ```{r}
-interact_rec <- recipe(Sale_Price ~ Year_Built + Central_Air, data = ames_train) %>%
+interact_rec <-
+  recipe(Sale_Price ~ Year_Built + Central_Air, data = ames_train) %>%
   step_log(Sale_Price) %>%
   step_dummy(Central_Air) %>%
   step_interact(~ starts_with("Central_Air"):Year_Built)
+
 interact_rec %>%
   prep(training = ames_train) %>%
   juice() %>%
   # select a few rows with different values
   slice(153:157)
 ```
+
+## Recipe and models
+
+Let us look at the predictor **Longitude**:
 
 ```{r}
 ggplot(ames_train, 
@@ -368,7 +380,7 @@ ggplot(ames_train,
 
 Splines add nonlinear versions of the predictor to a linear model to create smooth and flexible relationships between the predictor and outcome.
 
-This "basis expansion" technique will be seen again in the regression section of the workshop.
+Let us  have a look at the **Latitude**:
 
 ```{r}
 ggplot(ames_train, 
@@ -382,18 +394,23 @@ ggplot(ames_train,
   scale_y_log10()
 ```
 
+## Linear Models Again
+
+
+
 We'll add neighborhood in as well and a few other house features.
 
 Our plots suggests that the coordinates can be helpful but probably require a nonlinear representation. We can add these using B-splines with 5 degrees of freedom.
 
 Two numeric predictors are very skewed and could use a transformation (Lot_Area and Gr_Liv_Area).
+
 ```{r}
-ames_rec <- recipe(
-  Sale_Price ~ Bldg_Type + Neighborhood + Year_Built + 
-    Gr_Liv_Area + Full_Bath + Year_Sold + Lot_Area +
-    Central_Air + Longitude + Latitude,
-  data = ames_train
-) %>%
+ames_rec <- 
+  recipe(
+    Sale_Price ~ Bldg_Type + Neighborhood + Year_Built + 
+      Gr_Liv_Area + Full_Bath + Year_Sold + Lot_Area +
+      Central_Air + Longitude + Latitude,
+    data = ames_train) %>%
   step_log(Sale_Price, base = 10) %>%
   step_BoxCox(Lot_Area, Gr_Liv_Area) %>%
   step_other(Neighborhood, threshold = 0.05)  %>%
@@ -402,20 +419,52 @@ ames_rec <- recipe(
   step_ns(Longitude, Latitude, deg_free = 5)
 ```
 
+Now we will create the linear model:
+
 ```{r}
 lm_mod <- 
   linear_reg() %>% 
   set_engine("lm")
-ames_rec <- prep(ames_rec)
+```
+
+
+Apply the recipe:
+
+```{r}
+ames_rec_prep <- prep(ames_rec)
+
+ames_rec_prep %>% juice()
+```
+
+
+
+```{r}
 lm_fit <- 
   lm_mod %>% 
-  fit(Sale_Price ~ ., data = juice(ames_rec))   # The recipe puts Sale_Price on the log scale
+  fit(Sale_Price ~ ., 
+      data = juice(ames_rec_prep))
+
 glance(lm_fit$fit)
 ```
 
+
+Now we can apply the train recipe to our testing set.
+
 ```{r}
-ames_test_processed <- bake(ames_rec, ames_test, all_predictors())
+ames_test_processed <-
+  bake(ames_rec_prep, ames_test, all_predictors())
 ```
+
+Let us try to make some predictions:
+
+> At the same time I am gonna use `yardstick` to collect metrices to look at how well the model is performing.
+
+```{r}
+predict(lm_fit, new_data = ames_test_processed) %>% 
+  bind_cols(bake(ames_rec_prep, new_data = ames_test) %>% select(Sale_Price)) %>% 
+  metrics(Sale_Price, .pred)
+```
+
 
 The workflows package enables a handy type of object that can bundle pre-processing and models together.
 
@@ -453,7 +502,7 @@ A secondary formula can be given to add_model() that will be directly passed to 
 
 There are remove_*() and update_*() functions too.
 
-## 4 https://rstudio-conf-2020.github.io/applied-ml/Part_4.html#20 Resampling and Grid Search
+4 https://rstudio-conf-2020.github.io/applied-ml/Part_4.html#20 Resampling and Grid Search
 
 ```{r}
 library(AmesHousing)
@@ -667,7 +716,6 @@ There is a fit_resamples() function in the tune package that does all of this fo
 
 
 ```{r}
-library(tune)
 easy_eval <- fit_resamples(knn_wfl, resamples = cv_splits, control = control_resamples(save_pred = TRUE))
 ```
 
