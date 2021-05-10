@@ -5,14 +5,13 @@ output: html_document
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
+
+# https://rstudio-conf-2020.github.io/applied-ml/Part_3.html#16
 ```
 
 ## Applied Machine learning
 
-This post will explore how to predict houses prices
-
-
-read in the packages where we use the package `AmesHousing` where the used data is avaialbe.
+This post will explore how to predict houses prices where we read in the packages where we use the package `AmesHousing` where the used data is avaialbe.
 
 ```{r}
 library(tidymodels)
@@ -21,6 +20,20 @@ ames <- make_ames()
 ```
 
 When starting a machine learning project you have to go though several phases which I have outlined:
+
+## The Modeling Process
+
+Common steps during model building are:
+
+- estimating model parameters (i.e. training models)
+
+- determining the values of tuning parameters that cannot be directly calculated from the data
+
+- model selection (within a model type) and model comparison (between types)
+
+- calculating the performance of the final model that will generalize to new data
+
+Many books and courses portray predictive modeling as a short sprint. A better analogy would be a marathon or campaign (depending on how hard the problem is).
 
 ![](ml-process.png)
 In this tutorial we will go thoug each of the steps so we get a clear understanding on what need to be done.
@@ -50,7 +63,9 @@ We typically split data into training and test data sets:
 
 - Test Set: these data can be used to get an independent assessment of model efficacy. They should not be used during model training.
 
-There are a few different ways to do the split: simple random sampling, stratified sampling based on the outcome, by date, or methods that focus on the distribution of the predictors.
+There are a few different ways to do the split: 
+- simple random sampling 
+- stratified sampling based on the outcome, by date, or methods that focus on the distribution of the predictors.
 
 - Classification: This would mean sampling within the classes to preserve the distribution of the outcome in the training and test sets.
 
@@ -60,14 +75,22 @@ There are a few different ways to do the split: simple random sampling, stratifi
 
 The tidymodels framework make it easy for us to make this split between the traning and testing test.
 
+We are gonna use the function `initial_split` from rsample.
+
+> The function initial_split creates a split af the data into a traning and testing set.
+initial_split(data, prop = 3/4, strata = NULL, breaks = 4, ...)
+Here the function argument is very informativ but the strata is a variable that is used to conduct stratified sampling to create the resamples.
+
+Let us run it in R.
+
 ```{r}
-# resample functions
-# Make sure that you get the same random numbers
 set.seed(4595)
+
 data_split <- initial_split(ames, strata = "Sale_Price")
 ames_train <- 
   data_split %>% 
   training()
+
 ames_test  <-
   data_split %>% 
   testing()
@@ -81,18 +104,17 @@ data_split
 
 What we see is the amount we use as traning - 2199 and the number we use for testing - 731.
 
-
 ## Modelling
 
 It is extreme easy to build model in R specially when you use the tidymodels framwork. 
 
-The process is like a cooking recipe and thease steps are gonna be introduced in the following.
+The process is like a cooking recipe and these steps are gonna be introduced in the following.
 
 ### Parsnip in Action
 
-The package `parsnip` is the one handling the transition from model to model. IN this process it is easy to swift between models.
+The package  [parsnip](https://parsnip.tidymodels.org/) is the one handling the transition from model to model. IN this process it is easy to swift between models.
 
-Some of the models type aviable in parsip is the following:
+Some of the models type available in parsnip is the following:
 
 - lm() isn't the only way to perform linear regression
 
@@ -109,16 +131,18 @@ When we are gonna use parsnip at build the model it can be done with 3 steps:
 1) Create a specification
 
 ```{r}
-spec_lin_reg <- 
+spec <- 
   linear_reg()
 ```
 
 2) Set the engine
 
 ```{r}
-spec_lin_reg <- 
+spec <- 
   linear_reg() %>% 
-  set_engine("stan", chains = 4, iter = 1000)
+  set_engine("stan",
+             chains = 4, 
+             iter = 1000)
 ```
 
 3) Fit the model
@@ -126,15 +150,17 @@ spec_lin_reg <-
 ```{r}
 model <- 
   linear_reg() %>% 
-  set_engine("stan", chains = 4, iter = 1000) %>%
+  set_engine("stan", 
+             chains = 4, 
+             iter = 1000) %>%
   fit(log10(Sale_Price) ~ Longitude + Latitude, data = ames_train)
-coef(fit_stan$fit)
+coef(model$fit)
 ```
 
 So with this 3 steps you can quickly build models.
 The argument regarding the engine can be shfit out quickly for another model or other specification. 
 
-Let us try to shift to another model where we replace the specificaion with `nearest_neighbor` and the engine to `kknn`.
+Let us try to shift to another model where we replace the specificaion with `nearest_neighbor` and the engine to `kknn`. Here we are gonna combined the: specification, engine and model fitting into one code chunck.
 
 ```{r}
 fit_knn <- 
@@ -145,7 +171,11 @@ fit_knn <-
 fit_knn
 ```
 
-### Preprocessing and Feature Engineering
+### Preprocessing and Feature  (FE)
+
+Now we have gotten an idea of the power and process of building models in tidymodels we are now gonna touch new methodss to turn our models into more effective models. We are talking about feature engineering where it is maninly the predictors we focus on. In this process one might make operastions that transform the predictors, alternate encodings of a variable and elimination of preditcot (often used in unsipervised).
+
+There can be many reason why to do FE:
 
 Some models (K-NN, SVMs, PLS, neural networks) require that the predictor variables have the same units. Centering and scaling the predictors can be used for this purpose.
 
@@ -154,7 +184,6 @@ Other models are very sensitive to correlations between the predictors and filte
 As we'll see in an example, changing the scale of the predictors using a transformation can lead to a big improvement.
 
 In other cases, the data can be encoded in a way that maximizes its effect on the model. Representing the date as the day of the week can be very effective for modeling public transportation data.
-
 
 Many models cannot cope with missing data so imputation strategies might be necessary.
 
@@ -191,28 +220,24 @@ Recall the previous part where we used the formula log10(Sale_Price) ~ Longitude
 
 #### Recipes and Categorical Predictors
 
-The featuring enginerring depend on the form of the predictors. If we have a categorical predictior we like mentioned before make it to a dummy variable.
+The FE depend on the form of the predictors. If we have a categorical predictor we like mentioned before make it to a dummy variable.
+
+> The function recipe is in the package recipes. It is a descriptiong of waht steps should be applied to the data so it is ready for analysis
+recipe(x, ...)
 
 
 ```{r}
-mod_rec <-
-  recipe(
-    Sale_Price ~ Longitude + Latitude + Neighborhood, 
-    data = ames_train) %>%
+recipe(
+  Sale_Price ~ Longitude + Latitude + Neighborhood, 
+  data = ames_train) %>%
   step_log(Sale_Price, base = 10) %>%
   step_other(Neighborhood, threshold = 0.05) %>%
-  step_dummy(all_nominal())
-
-mod_rec %>% prep %>% juice() %>% View()
+  step_dummy(all_nominal()) %>% prep %>% juice()
 ```
 
-
+Let us build a recipe. It is normal convention in the tidymodels terminology to calle the recipe for rec.
 ```{r}
-mod_rec <-
-  recipe(Sale_Price ~ Longitude + Latitude, ames_train) %>%
-  step_log(Sale_Price, base = 10)
-
-mod_rec <-
+rec <-
   recipe(Sale_Price ~ Longitude + Latitude + Neighborhood, 
          data = ames_train) %>%
   step_log(Sale_Price, base = 10) %>%
@@ -220,10 +245,12 @@ mod_rec <-
   step_dummy(all_nominal())
 ```
 
-This creates the recipe for data processing (but does not execute it yet)
 
+In the recipes packages there are three important functions:
 
 ![](recipe.png)
+
+So each of the functions has a special focus regarding the tranings or testing set.
 
 Now that we have a preprocessing specification, let's run it on the training set to prepare the recipe:
 
@@ -408,12 +435,13 @@ ames_wfl <-
 ames_wfl
 ```
 
-# preps() `ames_train`, juice()s it, then fit()s model
+preps() `ames_train`, juice()s it, then fit()s model
+
 ```{r}
 ames_wfl_fit <- fit(ames_wfl, ames_train)
 ```
 
-# bake()s `ames_test`, then predict()s
+bake()s `ames_test`, then predict()s
 
 ```{r}
 predict(ames_wfl_fit, ames_test) %>% slice(1:5)
