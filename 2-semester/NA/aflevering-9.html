@@ -188,19 +188,90 @@ d=65 \ l/min - 15 \ l/min=50 \ l/min
 <h2>b)</h2>
 <p>For opgave b skal vi gøre rede for at saltmængderne i A og B kan opskrives gennem følgende system:</p>
 <p><span class="math display">\[
-y_0&#39;(t)=\underbrace{-0.15 y_0 (t)}_\textrm{a} + 0.15 y_1(t)\\
-y_1&#39;(t)=0.15 y_0 (t) - 0.45 y_1(t)
+y_0&#39;(t)=\underbrace{-0.15 y_0 (t)}_\textrm{a} + \underbrace{0.15 y_1 (t)}_\textrm{b}
 \]</span></p>
 <p><span class="math display">\[
-y_0&#39;(t)=-0.15 y_0 (t) + 0.15 y_1(t)\\
-f = \underbrace{x^3}_\textrm{text 1} + \underbrace{2}_\textrm{text 2}
+y_1&#39;(t)=\underbrace{0.15 y_0 (t)}_\textrm{c} - \underbrace{0.45 y_1 (t)}_\textrm{d}
+\]</span> Her kan vi løse følgende (da vi kender hvad der skal være i hver beholder)</p>
+<p><span class="math display">\[
+\frac{a \ l/min}{300 \ l }= 0.15 \ l
 \]</span></p>
+<p><span class="math display">\[
+a = 300 * 0.15 = -45
+\]</span></p>
+<p>a svarer til hvad beholder A mister af salt per minut.</p>
+<p>Vi kan bekræfte at b skal være 0.15 ved at kigge på oplysning fra opgaven da vi kan se at der tilføjes <span class="math inline">\(15(t_1(t)/100)\)</span> gram salt per minut. Derfor kan vi sige at det første system er opfyldt med ovenstående ligning.</p>
+<p>Den samme øvelse kan vi gøre med <span class="math inline">\(y&#39;_1(t)\)</span>.</p>
+<p><span class="math display">\[
+\frac{c \ l/min}{300} = 0.15
+\]</span> <span class="math display">\[
+c = 45
+\]</span></p>
+<p>Således passer det med at der skal forlade 45 l/min fra c. Når det passer vil vi have at beholder B modtager <span class="math inline">\(0.15 y_0(t)\)</span> gram salt per minut.</p>
+<p>For at beregne d så skal vi kombiner de to strømme hvor beholder B mister væske fra, nemlig b og d. Vi kender b = 15 l/min, mens vi ikke kender d. </p>
+<p><span class="math display">\[
+\frac{15 + d}{100} = 0.45
+\]</span></p>
+<p><span class="math display">\[
+15+d=45
+\]</span></p>
+<p><span class="math display">\[
+d = 30
+\]</span></p>
+<p>Altså vil det sige at der flyder 30 l/min salt ud af rør d.</p>
+<p>Når det gælder så vil saltmængderne i <span class="math inline">\(y_0\)</span> og <span class="math inline">\(y_1\)</span> være opfyldt.</p>
 </div>
 <div id="c" class="section level2">
 <h2>c)</h2>
+<p>Her skal vi forklare hvordan egenværdier og egenvektorer for koefficientmatricen kan beregnes.</p>
+<p>Vi kan starte med at opskrive systemet op i vektor notation som er vist ved ligning 22.2 i note sættet:</p>
+<p><span class="math display">\[
+A = \begin{bmatrix}
+-0.15 &amp;  0.15 \\
+ 0.15 &amp; -0.45 
+\end{bmatrix}
+\]</span></p>
+<p>Hvor begyndelseværdier er angivet ved mængden af salt:</p>
+<p><span class="math display">\[
+y(0)=
+\begin{bmatrix}
+90 \\
+30
+\end{bmatrix}
+\]</span> Egenværiderne og egenvektor kan beregnes ved at regne det karakteristik polynomium og herved check om A er diagonaliserbar.</p>
+<p>opskriv det karakteristik polynomium</p>
+<p><span class="math display">\[
+det  =
+\begin{bmatrix}
+-0.15 - \lambda &amp; 0.15 \\
+0.15 &amp; -0.45-\lambda
+\end{bmatrix}
+= \lambda^2+0.6\lambda+0.045
+\]</span> Som har rødderne:</p>
+<p><span class="math display">\[
+\frac{-0.6+-\sqrt{0.6^2-4*1*0.045}}{2*1}
+\]</span> <span class="math display">\[
+\text{med egenværdierne; } \ -0.512, \ -0.089
+\]</span></p>
+<p>Matricen er en 2 x 2 matrix og vi har to forskellig rødde så A er diagonaliserbar.</p>
+<p>Hvorefter vi kan beregne egenvektor for hver egenværdier. Her benytter jeg mig af et cas værkstøj til disse udregninger.</p>
+<p>Her får jeg en egenvektor til <span class="math inline">\(v_0=(2.41,1)\)</span> og <span class="math inline">\(v_1=(-0.4142,1)\)</span></p>
+<p>Hermed har jeg udfra det karakteristiske polynomium og det faktum at A er diagonaliserbar fundet frem til egenværdierne og egenvektorerne.</p>
 </div>
 <div id="d" class="section level2">
 <h2>d)</h2>
+<p>Her skal vi nu bestemme en løsning.</p>
+<p>Løsnigen kan beregnes ved at opsætte et ligning system som følger proposition 22.2.</p>
+<p>Den manuelle beregning vil jeg foretage her og i opgave e skal de regnes i python.</p>
+<p>For en løsning benytter vi os af proposition 22.2:</p>
+<p><span class="math display">\[
+y(t) = c_0 \begin{bmatrix} 2.41 \\ 1\end{bmatrix}e^{-0.512 t} +c_1
+\begin{bmatrix} -0.4141 \\ 1\end{bmatrix}e^{-0.089 t}
+\]</span> Her kan vi bestemme konstanterne c0 go c1 ud fra begyndelsesdata. Ved t =0 har vi</p>
+<p><span class="math display">\[
+y(0)=c_0 \begin{bmatrix} 2.41\\ 1\end{bmatrix}+c_1 \begin{bmatrix} -0.4141\\1 \end{bmatrix}=\begin{bmatrix} 90\\30\end{bmatrix}
+\]</span></p>
+<p>Som har løsningen <span class="math inline">\(c_1=36.267\)</span> og <span class="math inline">\(c_2=-6.267\)</span></p>
 </div>
 <div id="e" class="section level2">
 <h2>e)</h2>
