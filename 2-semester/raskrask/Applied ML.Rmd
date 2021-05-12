@@ -1,5 +1,5 @@
 ---
-title: "Untitled"
+title: "Tidymodels framework"
 output:
   html_document:
     toc: true
@@ -11,7 +11,6 @@ knitr::opts_chunk$set(echo = TRUE)
 # https://rstudio-conf-2020.github.io/applied-ml/Part_3.html#16
 library(tidymodels)
 library(AmesHousing)
-library(tune)
 ```
 
 ## Applied Machine learning

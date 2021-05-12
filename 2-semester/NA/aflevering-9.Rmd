@@ -2,14 +2,15 @@
 title: "Aflevering 9"
 subtitle: Lucas Bagge
 output:
-  html_document: default
   pdf_document: default
+  html_document: default
 ---
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 library(reticulate)
 virtualenv_create("na-aflevering-9")
+py_install("matplotlib", envname = 'na-aflevering-9')
 use_virtualenv("na-aflevering-9")
 reticulate::repl_python()
 ```
@@ -197,16 +198,13 @@ Som er vores løsnign som jeg også løste til slut i d.
 Skrevet på formel har vi 
 
 $$
-
 y(t)= \begin{bmatrix} y_0(t)\\y_1(t)\end{bmatrix}=
-36.27 \begin{bmatrix} 2.41\\1 \end{bmatrix}e^{-0.512t}
--
+36.27 \begin{bmatrix} 2.41\\1 \end{bmatrix}e^{-0.512t}-
 6.27\begin{bmatrix}  -0.41 \\ 1\end{bmatrix}e^{-0.089t}
-
 $$
 
 ```{python}
-import matplotlib.pyplot as plt
+#import matplotlib.pyplot as plt
 import numpy as np
 v0 = np.array([2.41, 1.0])[:, np.newaxis]
 v1 = np.array([-0.41, 1.0])[:, np.newaxis]
@@ -214,14 +212,16 @@ lambda0 = -0.512
 lambda1 = -0.089
 t = np.linspace(0, 100, 100)
 løsning = (36.27 * v0 * np.exp(lambda0 * t) - 6.27 * v1 * np.exp(lambda1 * t))
-fig, ax = plt.subplots()
 
-ax.set_aspect('equal')
-ax.plot(*løsning,marker='o', markevery=10, markersize=4)
-plt.show()
+#fig, ax = plt.subplots()
+#ax.set_aspect('equal')
+#ax.plot(*løsning,marker='o', markevery=10, markersize=4)
+#plt.show()
 ```
 
-SOm er vores plot af løsningen. 
+![](na-alf9-plot.png)
+
+Som er vores plot af løsningen. 
 
 Til slut skal vi kommenter på hvad der når grænseværiden gå mod uendelig.
 I eksemplet vi så på timen gik den mod nul. Ud fra mit plot ser det umiddelbart ud til

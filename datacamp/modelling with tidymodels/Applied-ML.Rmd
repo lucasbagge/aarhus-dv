@@ -1,9 +1,6 @@
 ---
 title: "Untitled"
-output:
-  html_document:
-    toc: true
-    toc_depth: 2
+output: html_document
 ---
 
 ```{r setup, include=FALSE}
@@ -22,7 +19,7 @@ This post will explore how to predict houses prices where we read in the package
 ames <- make_ames()
 ```
 
-
+When starting a machine learning project you have to go though several phases which I have outlined:
 
 ## The Modeling Process
 
@@ -74,9 +71,10 @@ There are a few different ways to do the split:
 
 - Regression: Determine the quartiles of the data set and sample within those artificial groups.
 
+
 The tidymodels framework make it easy for us to make this split between the traning and testing test.
 
-We are gonna use the function `initial_split` from `rsample`.
+We are gonna use the function `initial_split` from rsample.
 
 > The function initial_split creates a split af the data into a traning and testing set.
 initial_split(data, prop = 3/4, strata = NULL, breaks = 4, ...)
@@ -88,7 +86,6 @@ Let us run it in R.
 set.seed(4595)
 
 data_split <- initial_split(ames, strata = "Sale_Price")
-
 ames_train <- 
   data_split %>% 
   training()
@@ -114,8 +111,7 @@ The process is like a cooking recipe and these steps are gonna be introduced in 
 
 ### Parsnip in Action
 
-The package  [parsnip](https://parsnip.tidymodels.org/) is the one handling the 
-transition from model to model. In this process it is easy to swift between models.
+The package  [parsnip](https://parsnip.tidymodels.org/) is the one handling the transition from model to model. IN this process it is easy to swift between models.
 
 Some of the models type available in parsnip is the following:
 
