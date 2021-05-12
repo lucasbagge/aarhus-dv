@@ -1,0 +1,183 @@
+---
+title: "IP lektioner noter"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(reticulate)
+virtualenv_create("IP-lektioner")
+use_virtualenv("IP-lektioner")
+reticulate::repl_python()
+```
+
+## Regular expressions
+
+- Ser på strenge: https://www.youtube.com/watch?v=EAxKSZ5mta0
+
+```{python}
+text = 'this is a stirng'
+
+pattern = 'is'
+
+idx = text.find(pattern)
+idx
+
+while idx > 0:
+  print(idx, end = ' ')
+  idx = text.find(pattern, idx + 1) # leder efter alle mulige tilfælde. 
+```
+
+```{python}
+import re
+
+re.findall(r'i\w*', text)
+```
+
+```{python}
+for m in re.finditer(r'a[^at]*t', text):
+  print('text[%s, %s] = %s' % (m.start(), m.end(), m.group()))
+```
+
+
+```{python, sub}
+re.sub(r'\w*i\w*', 'X', text)
+
+re.split(r'[^\w]+a[^\w]+', text)
+```
+
+## Fun with strings: Lindenmeyer Systems
+
+
+
+```{python}
+S = 'A'
+
+rules = {'A': 'AB', 'B': 'A'}
+
+for i in range(8):
+  S = ''.join(rules.get(c, c) for c in S)
+  print(S)
+```
+
+
+
+## SQLite
+
+```{python}
+import sqlite3 as sq
+import pandas as pd
+```
+
+```{python}
+connenction = sq.connect('example.sqlite')
+c = connenction.cursor()
+
+# får en forbindelse hvor vi så kan lave tabelelr.
+```
+
+
+## pandas
+
+- bibliotek til datarækker.      
+
+```{python}
+connenction = sq.connect("example.sqlite")
+
+country = pd.read_sql_query('SELECT * FROM country', connenction)
+```
+
+```{python}
+import numpy as np
+
+A = np.random.random((3,4))
+A
+```
+
+```{python}
+pd.DataFrame(A)
+```
+
+```{python}
+R = pd.DataFrame(A, columns = list('ABCD'), index = list('xyz'))
+R
+```
+
+```{python}
+R.loc['x':'z', ['B','C']]
+```
+
+```{python}
+R.iloc[:2, :2]
+```
+
+## Clustering, k-means
+
+- k means findes også i scipy og vi kigger bunden.
+
+- Ser på to dimensioner.  
+
+```{python}
+from random import random
+from math import pi, cos, sin
+
+def random_point(x, y, radius):
+  angle = 2 * pi * random()
+  r = radius * random() ** 2
+  return x + r * cos(angle), y + r * sin(angle)
+
+def random_points(n, x, y, radius):
+  for __ in range(n):
+    yield random_point(x, y, radius)
+```
+
+```{python}
+def k_means(points, k):
+  centorid = sample(points, k)
+  centorids [ centorid ]
+  
+  while True:
+    clusters = [[] for _ in centorid]
+    for p in points:
+      i = argmin([dist(p,c) for c in centorid])
+      clusters[i].append(p)
+      
+    centorid = [tuple(map(mean, zip(*c))) for c in clusters]
+    
+    if centorid == centorids[-1]:
+      break
+    
+    centorids.append(centorid)
+    if min(len(c) for c in clusters) == 0:
+      print('Not good - empty')
+      break
+  return clusters
+```
+
+## DBSCAN
+
+- populær cluster
+
+## Neural network
+
+- INput lag er det første. Ud fra dem beregner vi nyge værdier indtil vi når output lag. 
+- Skjulte lag (hidden layers).
+-  Hvor mange lag? 
+
+Aktivering
+
+$$
+a_i^{(l)}
+$$
+Den afhænger af alle knuder i forig lag ganget med koefficient som også er en vægt
+
+Skal tilføje en bias vektor
+
+og man kan tilfælde en aktiverings funktioner; sigmoid, tanh og ReLU
+
+$$
+f^{(l)}(\sum_j a_j^{(l-1)} A_{ji}^{(l)} + b_i^{(l)})
+$$
+
+
+

@@ -5,7 +5,6 @@ output: html_document
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
-
 # https://rstudio-conf-2020.github.io/applied-ml/Part_3.html#16
 ```
 
@@ -468,41 +467,9 @@ predict(lm_fit, new_data = ames_test_processed) %>%
 
 The workflows package enables a handy type of object that can bundle pre-processing and models together.
 
-You don’t have to keep track of separate objects in your workspace.
 
-The recipe prepping and model fitting can be executed using a single call to fit() instead of prep()-juice()-fit().
+## Resampling 
 
-The recipe baking and model predictions are handled with a single call to predict() instead of bake()-predict().
-
-Workflows will be able to add post-processing operations in upcoming versions. An example of post-processing would be to modify (and tune) the probability cutoff for two-class models.
-
-```{r}
-ames_wfl <-
-  workflow() %>% 
-  add_recipe(ames_rec) %>% 
-  add_model(lm_mod)
-ames_wfl
-```
-
-preps() `ames_train`, juice()s it, then fit()s model
-
-```{r}
-ames_wfl_fit <- fit(ames_wfl, ames_train)
-```
-
-bake()s `ames_test`, then predict()s
-
-```{r}
-predict(ames_wfl_fit, ames_test) %>% slice(1:5)
-```
-
-add_formula() can be used as a simple alternative to add_recipe().
-
-A secondary formula can be given to add_model() that will be directly passed to the model. This is helpful when recipes are used with GAMs or mixed-models.
-
-There are remove_*() and update_*() functions too.
-
-4 https://rstudio-conf-2020.github.io/applied-ml/Part_4.html#20 Resampling and Grid Search
 
 ```{r}
 library(AmesHousing)
@@ -543,6 +510,14 @@ All resampling methods repeat this process multiple times:
 
 The final resampling estimate is the average of all of the estimated metrics (e.g. RMSE, etc).
 
+### Resampling results
+
+The goal of resampling is to produce a single estimate of performance for a model.
+
+Even though we end up estimating V models (for V-fold CV), these models are discarded after we have our performance estimate.
+
+Resampling is basically an emprical simulation system used to understand how well the model would work on new data.
+
 ### v fold
 
 Here, we randomly split the training data into V distinct blocks of roughly equal size (AKA the "folds").
@@ -578,15 +553,13 @@ cv_splits
 
 Each individual split object is similar to the initial_split() example.
 
-Use analysis() to extract the resample's data used for the fitting process.
+Use **analysis()** to extract the resample's data used for the fitting process.
 
-Use assessment() to extract the resample's data used for the performance process.
+Use **assessment()** to extract the resample's data used for the performance process.
 
 ```{r}
 cv_splits$splits[[1]]
 ```
-
-## <1979/220/2199>
 
 ```{r}
 cv_splits$splits[[1]] %>% 
@@ -626,8 +599,15 @@ knn_wfl <-
 fit(knn_wfl, data = ames_train)
 ```
 
+### Resampling a 5-NN model
+
+Let's repeat that but using each of the 10 analysis sets:
+
+
+
 ```{r}
-knn_res <- cv_splits %>%
+knn_res <- 
+  cv_splits %>%
   mutate(
     workflows = map(
       splits, 
@@ -637,73 +617,27 @@ knn_res <- cv_splits %>%
 knn_res
 ```
 
-```{r}
-knn_pred <- map2_dfr(
-  knn_res$workflows, 
-  knn_res$splits,     
-  ~ predict(.x, assessment(.y)),         
-  .id = "fold"
-)
-knn_pred
-```
+Let us  look at the predictions for each model. 
+
+> map2_dfr is path of the purrr familiy over loop functions.
 
 ```{r}
-knn_pred <- map2_dfr(
-  knn_res$workflows, 
-  knn_res$splits,     
-  ~ predict(.x, assessment(.y)),         
-  .id = "fold"
-)                                   
-prices <- map_dfr(
-  knn_res$splits,  
-  ~ assessment(.x) %>% select(Sale_Price)
-)
-```
-
-```{r}
-knn_pred <- map2_dfr(
-  knn_res$workflows, 
-  knn_res$splits,     
-  ~ predict(.x, assessment(.y)),         
-  .id = "fold"
-)                                   
-prices <- map_dfr(
-  knn_res$splits,  
-  ~ assessment(.x) %>% select(Sale_Price)
-) %>% 
+knn_pred <- 
+  map2_dfr(
+    knn_res$workflows, 
+    knn_res$splits,     
+    ~ predict(.x, assessment(.y)),         
+    .id = "fold"
+  )                                   
+prices <- 
+  map_dfr(
+    knn_res$splits,  
+    ~ assessment(.x) %>% select(Sale_Price)
+  ) %>% 
   mutate(Sale_Price = log10(Sale_Price))
 
-```
-
-```{r}
-knn_pred <- map2_dfr(
-  knn_res$workflows, 
-  knn_res$splits,     
-  ~ predict(.x, assessment(.y)),         
-  .id = "fold"
-)                                   
-prices <- map_dfr(
-  knn_res$splits,  
-  ~ assessment(.x) %>% select(Sale_Price)
-) %>% 
-  mutate(Sale_Price = log10(Sale_Price))
-rmse_estimates <- knn_pred %>%
-  bind_cols(prices)
-```
-
-```{r}
-knn_pred <- map2_dfr(
-  knn_res$workflows, 
-  knn_res$splits,     
-  ~ predict(.x, assessment(.y)),         
-  .id = "fold"
-)                                   
-prices <- map_dfr(
-  knn_res$splits,  
-  ~ assessment(.x) %>% select(Sale_Price)
-) %>% 
-  mutate(Sale_Price = log10(Sale_Price))
-rmse_estimates <- knn_pred %>%
+rmse_estimates <-
+  knn_pred %>%
   bind_cols(prices) %>% 
   group_by(fold) %>% 
   do(rmse = rmse(., Sale_Price, .pred)) %>% 
@@ -713,10 +647,13 @@ mean(rmse_estimates$.estimate)
 
 There is a fit_resamples() function in the tune package that does all of this for you.
 
-
+> fit_resamples computes a set of metrices across samples.
 
 ```{r}
-easy_eval <- fit_resamples(knn_wfl, resamples = cv_splits, control = control_resamples(save_pred = TRUE))
+easy_eval <-
+  fit_resamples(knn_wfl, 
+                resamples = cv_splits, 
+                control = control_resamples(save_pred = TRUE))
 ```
 
 ```{r}
@@ -728,9 +665,11 @@ collect_metrics(easy_eval, summarize = FALSE) %>%
   slice(1:10)
 ```
 
-### Model Tuning
 
-Tuning Parameters
+## Model Tuning
+
+### Tuning Parameters
+
 There are some models with parameters that cannot be directly estimated from the data.
 
 For example:
@@ -743,7 +682,7 @@ The link function in a generalized linear model (e.g. logit, probit, etc).
 
 The covariance structure in a linear mixed model.
 
-#### Tuning Parameters and Overfitting
+### Tuning Parameters and Overfitting
 
 Overfitting occurs when a model inappropriately picks up on trends in the training set that do not generalize to new samples.
 
@@ -781,8 +720,25 @@ Thought to be really inefficient but not in all cases (see the sub-model trick a
 
 Bad when performance plateaus over a range of one or more parameters.
 
+### About Regular Grids
+
+Usually combinatorial representation of vectors of tuning parameter values. Note that:
+
+The number of values don't have to be the same per parameter.
+
+The values can be regular on a transformed scale (e.g. log-10 for penalty).
+
+Quantitative and qualitative parameters can be combined.
+
+As the number of parameters increase, the curse of dimensionality kicks in.
+
+Thought to be really inefficient but not in all cases (see the sub-model trick and multi_predict()).
+
+Bad when performance plateaus over a range of one or more parameters.
+
 ```{r}
-glmn_param <- parameters(penalty(), mixture())
+glmn_param <-
+  parameters(penalty(), mixture())
 ```
 
 ```{r}
@@ -823,7 +779,6 @@ nearest_neighbor(neighbors = tune("K"),
   set_engine("kknn") %>% 
   set_mode("regression") %>% 
   parameters()
-
 ```
 
 This mainly comes in handy when the same parameter type shows up in two different places (an example is shown later).
@@ -846,23 +801,13 @@ wf <-
   workflow() %>% 
   add_model(knn_mod) %>% 
   add_recipe(ames_rec)
+
 knn_tune <- tune_grid(
   object = wf,
   resamples = cv_splits,
   grid = knn_grid,
   control = ctrl
 )
-```
-A tibble is returned that looks like the rsample object with an extra list column called .metrics:
-
-
-```{r}
-knn_tune
-```
-
-
-```{r}
-knn_tune$.metrics[[1]]
 ```
 
 #### Resampled Performance Estimates
@@ -873,6 +818,35 @@ To get the overall resampling estimate (averaged over folds) for each parameter 
 show_best(knn_tune, metric = "rmse", maximize = FALSE)
 ```
 
+```{r}
+best <-
+  select_best(knn_tune, metric = "rmse", maximize = FALSE)
+best
+```
 
-150 rows = 75 models x 2 metrics
+```{r}
+ames_rec_final <- prep(ames_rec)
+knn_mod_final <-
+  finalize_model(knn_mod, best)
+knn_mod_final
+```
+
+We can now create a final workflow with the best model and here we can use the function `last_fit`.
+
+> the function last_fit, takes the splits and emulate the process on the whole data but evalutate the results on the test set. 
+
+```{r}
+final_wf <- 
+  workflow() %>%
+  add_recipe(ames_rec_final) %>%
+  add_model(knn_mod_final)
+
+final_res <- 
+  final_wf %>%
+  last_fit(data_split)
+
+final_res %>%
+  collect_metrics()
+```
+
 
