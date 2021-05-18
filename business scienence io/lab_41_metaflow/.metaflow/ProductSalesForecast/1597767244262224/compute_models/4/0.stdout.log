@@ -1,0 +1,9 @@
+[1] "Category_007"
+  Product_Category                          Date Order_Demand
+1     Category_005 <environment: 0x7f9154a1b638>       385765
+2     Category_005 <environment: 0x7f9154a38678>       720685
+3     Category_005 <environment: 0x7f9154a625e0>       901025
+4     Category_005 <environment: 0x7f9154a6b4d0>       685745
+5     Category_005 <environment: 0x7f9154a73230>       727900
+6     Category_005 <environment: 0x7f9154ac3c58>       785800
+Evaluation error: Only strings can be converted to symbols.

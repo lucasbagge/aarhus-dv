@@ -1,0 +1,14 @@
+  Product_Category .model_id .model_desc   .key        .index .value .conf_lo
+1     Category_005        NA      ACTUAL actual <environment> 385765       NA
+2     Category_005        NA      ACTUAL actual <environment> 720685       NA
+3     Category_005        NA      ACTUAL actual <environment> 901025       NA
+4     Category_005        NA      ACTUAL actual <environment> 685745       NA
+5     Category_005        NA      ACTUAL actual <environment> 727900       NA
+6     Category_005        NA      ACTUAL actual <environment> 785800       NA
+  .conf_hi
+1       NA
+2       NA
+3       NA
+4       NA
+5       NA
+6       NA

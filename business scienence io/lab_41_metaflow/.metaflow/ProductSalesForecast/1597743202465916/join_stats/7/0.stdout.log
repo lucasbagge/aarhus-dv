@@ -1,0 +1,16 @@
+[[1]]
+<flow ProductSalesForecast step compute_stats[0] (input: Category_005)>
+
+[[2]]
+<flow ProductSalesForecast step compute_stats[1] (input: Category_006)>
+
+[[3]]
+<flow ProductSalesForecast step compute_stats[2] (input: Category_007)>
+
+[[4]]
+<flow ProductSalesForecast step compute_stats[3] (input: Category_019)>
+
+[[5]]
+<flow ProductSalesForecast step compute_stats[4] (input: Category_028)>
+
+Evaluation error: Result 1 must be a single double, not NULL of length 0.

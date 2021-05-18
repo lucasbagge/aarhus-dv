@@ -1,0 +1,1 @@
+{"run_number": "1597859286066526", "step_name": "compute_models", "task_id": "5", "flow_id": "ProductSalesForecast", "user_name": "mdancho", "tags": [], "system_tags": ["user:mdancho", "runtime:dev", "python_version:3.7.3", "date:2020-08-19", "metaflow_version:2.2.0", "metaflow_r_version:2.2.0", "r_version:4.0.2"], "ts_epoch": 1597859292737}
