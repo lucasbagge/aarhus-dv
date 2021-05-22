@@ -127,17 +127,18 @@ x <- setdiff(names(data_prepared_tbl), y)
 ### Random Forest
 
 ```{r}
-model_rf_h2o <- h2o.randomForest(
-    x = x, 
-    y = y, 
-    training_frame = as.h2o(data_prepared_tbl), 
-    
-    ntrees    = 50,
-    max_depth = 10, 
-    
-    nfolds    = 5,
-    seed      = 123
-)
+model_rf_h2o <-
+    h2o.randomForest(
+        x = x, 
+        y = y, 
+        training_frame = as.h2o(data_prepared_tbl), 
+        
+        ntrees    = 50,
+        max_depth = 10, 
+        
+        nfolds    = 5,
+        seed      = 123
+    )
 ```
 
 ```{r, paged.print = F}
@@ -155,7 +156,8 @@ h2o.varimp_plot(model_rf_h2o)
 ## Making Predictions
 
 ```{r}
-sample_tbl <- data_prepared_tbl %>%
+sample_tbl <- 
+    data_prepared_tbl %>%
     filter(class == "1") %>%
     slice(1) 
 
@@ -202,7 +204,7 @@ mlflow_ui()
 
 ```{r}
 # Variable Parameters to Log Models for
-n_trees   <- 25
+n_trees   <- 100
 max_depth <- 10
 ```
 
@@ -233,7 +235,7 @@ with(mlflow_start_run(), {
     auc     <- h2o.auc(model, xval = TRUE)
     aucpr   <- h2o.aucpr(model, xval = TRUE)
     logloss <- h2o.logloss(model, xval = TRUE)
-
+    
     # LOGS
     mlflow_log_param("n_trees", n_trees)
     mlflow_log_param("max_depth", max_depth)
@@ -241,7 +243,7 @@ with(mlflow_start_run(), {
     mlflow_log_metric("auc", auc)
     mlflow_log_metric("aucpr", aucpr)
     mlflow_log_metric("logloss", logloss)
-
+    
     mlflow_log_model(model = predictor_crate, artifact_path = "predictor")
     mlflow_log_artifact(path = full_path, artifact_path = "h2o")
     
@@ -269,9 +271,9 @@ source("llpro_bonus_swagger_api.R")
 
 ```{r}
 serve_model(
-    uri_name      = "lab-39",
+    uri_name      = "lab-39/",
     experiment_id = "1",
-    run_id        = "18deb3e3bdc44506bf3f77a94ba4872d"
+    run_id        = "efa57bf0baf14aa3bad0e433dd8c8c85"
 )
 ```
 
