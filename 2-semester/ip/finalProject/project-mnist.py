@@ -6,7 +6,6 @@ import gzip
 import json
 from random import randint
 import functools as ft
-import struct
 from collections import Iterable
 from functools import reduce
 
@@ -20,11 +19,13 @@ def read_labels(filename):
             raise ValueError('Invalid magic number %d' % (magic))
         label_count = int.from_bytes(f.read(4), 'big')
         labels = f.read()
-        return [b for b in labels]
+        return [l for l in labels]
+print("Tester om vi får en error: \n", \
+      read_labels('2-semester/ip/finalProject/t10k-images-idx3-ubyte.gz'))
 
-read_labels('2-semester/ip/finalProject/t10k-images-idx3-ubyte.gz')
-
-test_read_labels = read_labels('2-semester/ip/finalProject/t10k-labels-idx1-ubyte.gz')
+test_read_labels = read_labels('2-semester/ip/finalProject/\
+                               t10k-labels-idx1-ubyte.gz')
+                               
 print(f'De første elementer: \n {test_read_labels[:5]}')
 
 ## c) lav read images
@@ -68,18 +69,18 @@ def plot_images(images, labels):
     num_row = 3
     num_col = 4
     fig, axes = plt.subplots(num_row, num_col, figsize=(1.5*num_col,2*num_row))
-    fig.suptitle("Plot af de første 10 billeder og labels", \
+    fig.suptitle("Plot af de første 12 billeder og labels", \
                  fontsize = 20, \
                  horizontalalignment = "right")
     for i in range(num):
         ax = axes[i//num_col, i%num_col]
         ax.imshow(images[i], cmap='gray')
         ax.set_title('Label: {}'.format(labels[i]))
-    plt.tight_layout(pad=0.4, w_pad=0.5, h_pad=-0.5)
+    plt.tight_layout(pad=0.8, w_pad=0.5, h_pad=2.4)
     plt.show()
     
 plot_images(images_t10k, labels_t10k)
-#plt.savefig('2-semester/ip/finalProject/plot_images.png')
+plt.savefig('2-semester/ip/finalProject/plot_images.png')
 
 ## f) linear load og save
 
@@ -97,9 +98,9 @@ def linear_save(file_name, network):
         json.dump(network[0], json_file)
     with open('%s-b.json' % file_name, 'w') as json_file:
         json.dump(network[1], json_file)
-    #
 
 linear_save("file_test_name", test_linear_load)
+
 ## g) image to vector        
 def image_to_vector(image):
     
@@ -115,13 +116,14 @@ image_to_vector_test_divide = divide_255(image_to_vector(images_t10k[0]))
 
 print(f' tester om funktionen virker \n {image_to_vector_test_divide}')
 
-print(f'Test om alle elementer i listen er floats: \n {all(isinstance(x, float)\
-        for x in image_to_vector_test_divide)}')
+print(f'Test om alle elementer i listen er floats: \n \
+      {all(isinstance(x, float) for x in image_to_vector_test_divide)}')
 
 ## h help function
 V = [1,2,3]
 U = [1,2,1]
 M = [[1,2,3], [1,2,6], [1,2,1]]
+
 def add(U, V): 
     assert len(U) == len(V), 'Dimension is different'
     adding = []
@@ -232,29 +234,38 @@ def evaluate(network,image, labels):
 test_eval = evaluate(linear_load('2-semester/ip/finalProject/mnist_linear (4).weights'),\
           images_t10k[0:10000],\
           labels_t10k[0:10000])
-print(test_eval)
+print(f'Tester om funktion virker: \n ({test_eval[0][0:10]},{test_eval[1]}, {test_eval[2]})')
 
 ## n)
 
 def plot_images(images_t10k, labels_t10k, prediction):
-    num = 10
+    num = 12
     labels = labels_t10k[:num]
     images = images_t10k[:num]
+    num_row = 3
+    num_col = 4
     prediction = prediction[0][0:num]
-    num_row = 2
-    num_col = 5
+    is_it_equal_list = [i==j for i, j in zip(labels, prediction)]
+    colors = [ 'gray_r' if x == True else x for x in is_it_equal_list]
+    colors_final = [ 'pink' if x == False else x for x in colors]
     fig, axes = plt.subplots(num_row, num_col, figsize=(1.5*num_col,2*num_row))
+    fig.suptitle("Plot med predictions", \
+                 fontsize = 20, \
+                 horizontalalignment = "right")
     for i in range(num):
         ax = axes[i//num_col, i%num_col]
-            ax.imshow(images[i], cmap='pink')
+        ax.imshow(images[i], cmap = colors_final[i])
         ax.set_title(f'Pred: {prediction[i]}, Actual: {labels[i]}')
-    plt.tight_layout()
+    plt.tight_layout(pad=0.8, w_pad=0.5, h_pad=2.4)
     plt.show()
-
+    
 plot_images(read_images('2-semester/ip/finalProject/t10k-images-idx3-ubyte.gz'), \
             read_labels('2-semester/ip/finalProject/t10k-labels-idx1-ubyte.gz'),\
             test_eval)
-            
+
+#plt.savefig('2-semester/ip/finalProject/plot_images_predictions.png')
+
+
 ## o) visualize column
 
 A, b = linear_load('2-semester/ip/finalProject/mnist_linear (4).weights')
@@ -279,12 +290,16 @@ num = 10
 num_row = 2
 num_col = 5
 fig, axes = plt.subplots(num_row, num_col, figsize=(1.5*num_col,2*num_row))
+fig.suptitle("Plot af vægtene", \
+                 fontsize = 20, \
+                 horizontalalignment = "right")
 for i in range(num):
   ax = axes[i//num_col, i%num_col]
   ax.imshow(new_shape_of_A[i], plt.get_cmap('seismic'))
   ax.set_title('Shape of weights')
-plt.tight_layout()
+plt.tight_layout(pad=0.8, w_pad=0.5, h_pad=2.4)
 plt.show()
+plt.savefig('2-semester/ip/finalProject/plot_images_weights.png')
 
 ## p batch sizes
 
