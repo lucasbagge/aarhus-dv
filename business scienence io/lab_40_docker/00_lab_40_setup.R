@@ -52,7 +52,7 @@ source("00_scripts/BONUS_move_h2o_model_to_production.R")
 
 # Copy model to production folder
 move_h2o_model_to_production(
-    path = "CHANGE THIS TO THE H2O MODEL BEGINNING WITH DRF IN YOUR MLFLOW ARTIFACTS FOLDER. "
+    path = "mlflow/1/1d50ae78d91c4502ba7c65b07d5f5909/artifacts/h2o/DRF_model_R_1621720317454_1353"
 )
 
 

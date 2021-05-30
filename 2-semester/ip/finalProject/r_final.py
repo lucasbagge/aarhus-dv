@@ -129,7 +129,26 @@ def mean_square_error(U, V):
         difference = U[i] - V[i]  
         squared_difference = difference ** 2  
         summation = summation + squared_difference  
-    return (summation / 10 )
+    return (summation / n )
+  
+def sub(U, V):
+    difference = []
+    zip_object = zip(U, V)
+    for U_i, V_i in zip_object:
+        difference.append(U_i - V_i)
+    return difference
+  
+def mse(U,V):
+  n = len(U)
+  cost = (1/n) * sum([val ** 2 for val in (U - V)])
+  return cost
+
+
+
+[val ** 2 for val in sum(sub([1,2,3,4],  [3,1,3,2]))]
+
+sub([1,2,3,4], [3,1,3,2])
+mse([1,2,3,4], [3,1,3,2])
 # Create a function evaluate(network, images, labels) that given a list of image
 # vectors and corresponding labels, returns the tuple (predictions, cost, accuracy),
 # where predictions is a list of the predicted labels for the images, cost is the
@@ -201,25 +220,22 @@ plot_images(read_images('2-semester/ip/finalProject/t10k-images-idx3-ubyte.gz'),
 
 A, b = linear_load('2-semester/ip/finalProject/mnist_linear (4).weights')
 
-People_List = A
+A_list = A
 
-df = DataFrame(People_List,columns=['col0','col1','col2','col3','col4','col5',\
+df = DataFrame(A_list,columns=['col0','col1','col2','col3','col4','col5',\
                 'col6','col7','col8','col9'])
-
 
 def reshape_list(list_to):
   S = 28, 28
   test_reshape = list(ft.reduce(lambda x, y: map(list, zip(*y*(x,))), (iter(list_to), *S[:0:-1])))
   return test_reshape
 
-look_if = reshape_list(col_one_list)
-
 #def pandas_list(df):
 save_object = []
 for i in df:
   save_object.append(df[i].tolist())
 
-new_shape_of = list(map(reshape_list, save_object))
+new_shape_of_A = list(map(reshape_list, save_object))
 
 num = 10
 num_row = 2
@@ -227,7 +243,49 @@ num_col = 5
 fig, axes = plt.subplots(num_row, num_col, figsize=(1.5*num_col,2*num_row))
 for i in range(num):
   ax = axes[i//num_col, i%num_col]
-  ax.imshow(new_shape_of[i], cmap='gray')
+  ax.imshow(new_shape_of_A[i], cmap = plt.get_cmap('seismic'))
   ax.set_title('Shape of weights')
 plt.tight_layout()
 plt.show()
+
+
+## p)
+
+#Create function create_batches(values, batch_size) that partitions a list of
+# values into batches of size batch_size, except for the last batch, that can be smaller. 
+# The list should be permuted before being cut into batches.
+# Example: create_batches(list(range(7)), 3) should return [[3, 0, 1], [2, 5, 4], [6]].
+
+def create_batches(values, batch_size):
+  return [values[i:i + batch_size] for i in range(0, len(values), batch_size)]
+
+print(f'Check if functin works:\n {create_batches(list(range(7)), 3)}')
+
+
+## q
+
+def categorical(label, classes = 10):
+    """Convert an iterable of indices to one-hot encoded labels."""
+    lst = [0] * classes
+    lst[label] = 1
+    return lst
+
+a = predict(network = \
+            linear_load('2-semester/ip/finalProject/mnist_linear (4).weights'),\
+            image = images_t10k[0])
+print(a)
+create_batches(a, 2)
+x = divide_255(image_to_vector(image=images_t10k[0]))
+argmax(a)            
+y = categorical(label=labels_t10k[0])
+
+test_tuple = (x, a, y)
+type(test_tuple)
+
+create_batches(a, 3)
+
+def b_update(sigma = 0.1):
+  return sigma * (1/n) * sum(x, a, y) ** (2 * (a - y) / 10)
+
+def A_update(sigma = 0.1):
+  return sigma * (1/n) * sum(x, a, y) **  (x * 2*(a - y) / 10)

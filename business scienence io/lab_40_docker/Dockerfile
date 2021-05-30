@@ -1,4 +1,4 @@
-FROM rocker/verse:latest
+ FROM rocker/verse:latest
 
 ## Install debian packages
 RUN apt-get update -qq && apt-get -y --no-install-recommends install \
