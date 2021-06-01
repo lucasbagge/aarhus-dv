@@ -171,3 +171,50 @@ class Triangle(Shape):
         A3 = Triangle(self.x0, self.y0, self.x1, self.y1, x, y).area()
 
         return A == A1 + A2 + A3
+
+# live session
+
+class MinEx(Exception):
+    pass
+
+def create_pairs(X,Y):
+    L = []
+    for i in range(len(X)):
+        L.append((X[i], Y[i]))
+    return L
+
+def create_pairss(X,Y):
+    if len(X) != len(Y):
+        raise  MinEx ('Stop')
+    return list(zip(X,Y))
+
+print(create_pairss([1,2,3], [4,5]))
+
+try: 
+    print(create_pairss([1,2,3], [4,5]))
+except Exception:
+    print('Jeg er dum')
+    
+filename = '2-semester/ip/cano.txt'
+
+file = open(filename)
+lines = file.readlines()
+file.close()
+
+for line in lines:
+    if 'mathematical' in line.lower():
+        print(line, end = '')
+        
+with open(filename) as file:
+    for line in lines:
+        if 'mathematical' in line.lower():
+            print(line, end = '')
+savename = "2-semester/ip/selected_line.txt"
+
+with open(filename) as file:
+    with open(savename, 'w') as savefile:
+            for line in lines:
+                if 'mathematical' in line.lower():
+                    #print(line, file = savefile, end = '')
+                    savefile.write(line)
+

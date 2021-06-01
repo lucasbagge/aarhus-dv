@@ -38,45 +38,7 @@ def cases(s):
     Case = [hoved.lower(), hoved.upper()]  #
     return [case + hale for case in Case for hale in haler]
 
-
-# Exercise 8.2 (list subsets)
-def subsets(L):
-    if L == []:  # Base Case
-        return [[]]
-    else:
-        T = subsets(L[1:])
-        return T + [[L[0]] + t for t in T]
-
-
-def subsets_stjerne(L):
-    if L == []:  # Base Case
-        return [[]]
-    else:
-        T = subsets(L[1:])
-        return [*T, *[[L[0], *t] for t in T]]  # fun stuff
-
-
-# Exercise 8.3 (tree relabeling)
-def relabel(tree, new_names):  # lidt fancy
-
-    if isinstance(tree, str):  # Base Case
-        return new_names.get(tree, tree)
-    else:
-        return tuple([relabel(child, new_names) for child in tree])
-
-
-def relabel2(tree, new_names):  # ikke så fancy
-
-    if isinstance(tree, str):  # Base Case
-        if tree in new_names:
-            return new_names[tree]
-        else:
-            return tree
-    res = []
-    for child in tree:
-        res.append(relabel2(child, new_names))
-    return tuple(res)
-
+#%%
 
 # Exercise 8.4* (validate leaf-labeled binary trees)
 
@@ -115,6 +77,59 @@ def valid_binary_tree(t):
     return valid_binary_tree_recursion(t)
 
 
+# Exercise 8.2 (list subsets)
+#%%
+def subsets(L):
+    if L == []:  # Base Case
+        return [[]]
+    else:
+        T = subsets(L[1:])
+        return T + [[L[0]] + t for t in T]
+
+print(subsets([1, 2]))
+#
+
+# %%
+
+# %%
+# Exercise 8.3 (tree relabeling)
+def relabel(tree, new_names):  # lidt fancy
+
+    if isinstance(tree, str):  # Base Case
+        return new_names.get(tree, tree)
+    else:
+        return tuple([relabel(child, new_names) for child in tree])
+
+relabel(('a', ('b', 'c')), {'a': 'x', 'c': 'y'})
+
+
+#%%
+def relabel2(tree, new_names):  # ikke så fancy
+
+    if isinstance(tree, str):  # Base Case
+        if tree in new_names:
+            return new_names[tree]
+        else:
+            return tree
+    res = []
+    for child in tree:
+        res.append(relabel2(child, new_names))
+    return tuple(res)
+#%%
+def subsets(L, k, indent = 0):
+    print('.' * indent + f'subsets({L}, {k}')
+# %%
+def power(a, b):
+    return a ** b
+print(power(5, 11))
+# %%
+def power(a, b):
+    print(f'power({a}, {b})')
+    if b == 0:
+        return 1
+    return a * power(a, b - 1)
+print(power(5, 11))
+# %%
 # Exercise 8.5* (subtree extraction)
 
 def extract(tree, leaves):
@@ -133,3 +148,9 @@ def extract(tree, leaves):
         return children[0]
 
     return tuple(children)
+treee = ((('a','b'),'c'),((('d','e'),'f'),'g'))
+lee = {'a','c','d','f','g'}
+extract(treee, lee)
+# %%
+
+# %%

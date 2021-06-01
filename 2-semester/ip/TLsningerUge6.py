@@ -110,6 +110,8 @@ else:
 # Exercise 9.4* (deepcopy)
 import copy
 
+from numpy.core.fromnumeric import sort
+
 
 def deepcopy(L):
     new_copy = {}  # map of old list ids to new lists
@@ -138,6 +140,16 @@ foldl = functools.reduce
 def foldr1(f, L):
     return L[0] if len(L) == 1 else f(L[0], foldr1(f, L[1:]))
 
+L = [2, 2, 2, 2]
+
+for i in L:
+    if len(L) == 1:
+        L(0)
+    else:
+        L[1:]
+    
+
+print(foldl(lambda x,y: x**y, [2,2,2,2]))
 
 def foldr1_(f, L):
     if len(L) == 1:
@@ -167,6 +179,7 @@ def foldr4(f, L):
 #a
 def my_map(f, L):
     return [f(l) for l in L]
+my_map(lambda x: x **3, L)
 
 #b
 def my_map_k(f, *Ls):
@@ -176,6 +189,17 @@ my_map_k(lambda x, y, z: x*y*z, [3, 2, 5], [2, 7, 9], [1, 2])
 #Exercise 10.3 (string sorting)
 def str_sort(L):
     return sorted(L, key=lambda x: (len(set([c for c in x.lower() if c.isalpha()])), x))
+
+L = [(5, 3), (2, 5), (1, 9), (2, 2), (3, 4)]
+sorted(L)
+def length_sq(l):
+    x, y = l
+    return x**2 + y**2
+list(map(length_sq, L))
+sorted(L, key = length_sq)
+list(filter(lambda x: x > 2, range(10)))
+f = lambda x, y: x + y
+
 
 #Exercise 10.4 (binary search)
 #a
@@ -187,8 +211,26 @@ def binary_search(f, low, high):
     if f(mid) == False:
          return binary_search(f, mid, high)
     return binary_search(f, low, mid)
+
 #b
 def local_min(f, low, high):
     return binary_search(lambda x: f(x) < f(x+1), low, high)
 print(local_min(lambda x: (x - 3.5) ** 2 - 7 * x, -1000, 1000))
 
+#%%
+# 5.2 sort list
+texts = ['hocus pocus', 'bibbidi bobbidi boo',\
+        'alakzam', 'presto chango']
+sorted(text)
+# %%
+def distinct(text):
+    return len(set(text))
+for text in text:
+    print(distinct(text), text)
+
+L = [(distinct(text), text) for text in texts]
+L_sorted = sorted(L)
+L_ = [text for (d, text) in L_sorted]
+print(L_)
+#print(distinct(text[0]))
+# %%

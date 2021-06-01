@@ -101,7 +101,7 @@ def plot_images(images, labels):
     plt.show()
     
 plot_images(images_t10k, labels_t10k)
-plt.savefig('plot_images.png')
+#plt.savefig('plot_images.png')
 
 # f) linear load og save
 
@@ -355,7 +355,7 @@ plot_images(read_images('t10k-images-idx3-ubyte.gz'), \
             read_labels('t10k-labels-idx1-ubyte.gz'),\
             test_eval)
 
-plt.savefig('plot_images_predictions.png')
+#plt.savefig('plot_images_predictions.png')
 
 
 ## o) visualize column
@@ -396,7 +396,7 @@ for i in range(num):
   ax.set_title('Label: {}'.format(labels[i]))
 plt.tight_layout(pad=0.8, w_pad=0.5, h_pad=2.4)
 plt.show()
-plt.savefig('plot_images_weights.png')
+#plt.savefig('plot_images_weights.png')
 
 ## p batch sizes
 

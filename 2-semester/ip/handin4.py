@@ -20,11 +20,12 @@ Reflection upon solution:
     har jeg brugt meget af den metode Gerth bruger i sin forlæsning om lists.
     >
 """
-
+#%%
 from random import randint
 from time import time
 from matplotlib import pyplot as plt
 
+#%%
 # a)
 def generate_tree(L):
     # base case
@@ -33,12 +34,11 @@ def generate_tree(L):
     split = randint(1, len(L)-1)
     left = L[:split]
     right = L[split:]
-    # recursion
     return (generate_tree(left), generate_tree(right))
 
 L = ['A', 'B', 'C', 'D', 'E', 'F']
 print("a) Træer: " ,generate_tree(L))
-
+#%%
 # b)
 
 # canonical_triplets er fra sidste afleverin
@@ -70,7 +70,7 @@ def generate_triplets(T):
   return labels, triplets + anchored_triplet
 
 print("b) output: " ,generate_triplets(((('A','F'),'B'),('D',('C','E')))) )
-
+#%%
 # c) 
 def triplet_distance(T1, T2):
   gen_T1 = generate_triplets(T1)
@@ -85,7 +85,7 @@ def triplet_distance(T1, T2):
   return (n * (n - 1) * (n - 2)) // 6 - intersec
 
 print("c) distance between trees: ",triplet_distance(((('A','F'),'B'),('D',('C','E'))), (((('D','A'),'B'),'F'),('C','E'))) )
-
+#%%
 # d) 
 
 def generate_labels(n):
@@ -117,3 +117,5 @@ print("Afstanden mellem: ", i, "og det tog", round(slut_tid, 4), "sek." )
 #triplet_distance(test[0], test[1])
 
 ...
+
+# %%
