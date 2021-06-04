@@ -1,0 +1,2 @@
+lambda x: len(str(x ** 5)) if x > 0 else 0
+-1 50 -1 10

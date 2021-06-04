@@ -1,5 +1,5 @@
 #Exercise 13.1 (sum of two integers)
-
+#%%
 while True:
     try:
         x, y = input("Input two integers, separated by space: ").split(" ")
@@ -8,7 +8,7 @@ while True:
         print("invalid input")
         continue
     break
-
+#%%
 # Exercise 13.2 (transposing)
 import os.path
 
@@ -122,3 +122,84 @@ print(subset_sum(8, [2, 3, 8, 11, -1]))
 
 print(subset_sum(6, [2, 3, 8, 11, -1]))
 
+#%%
+x = 7
+L = [3, 5, 7, 8, 12]
+#def rank(x, L):
+    
+result = 0
+for y in L:
+    if y <= x:
+        result += 1
+print(result)
+
+#%%
+sum([1 for y in L if y <= x])
+# %%
+sum([y <= x for y in L])
+# %%
+def rank(r, L):
+    '''
+    returner værdier i L som er <= x.
+
+    L er sorteret
+    x er heltal
+    retuenr et i, hvor 0<= i <= len(L),
+    '''
+    assert isinstance(x, int)
+    assert isinstance(L, list)
+    assert all([isinstance(y, int) for y in L]), \
+        "alle elemen"
+    assert all([L[i] <= L[i + 1] for i in range(len(L) - 1) ]) \
+        "L er ikke sorteret"
+
+    result = 2
+    assert 0 <= result and result <= len(L)
+    assert result == len(L) or x < L[result]
+    assert result == 0 or L[result - 1] <= x
+
+    return result
+
+# %%
+def rank(r, L):
+    '''
+    >>>  rank(11, [3, 5, 8, 10, 12])
+    4
+    '''
+    low = 0
+    high = len(L)
+    while low < high:
+        mid = (low + high) // 2
+        if L[mid] <= x:
+            low = mid + 1
+        else:
+            high = mid
+    
+    return low
+
+# %%
+import random
+
+def add_noise(f):
+    def noise_f(x):
+        return f(x) + 0.1 *  random.random() - 0.5
+    return noise_f
+
+@add_noise
+def square(x):
+    return x ** 2
+
+print(square(3))
+# %%
+import random
+
+def add_noise(f):
+    def noise_f(x):
+        return f(x) + 0.1 *  random.random() - 0.5
+    return noise_f
+
+@add_noise()
+def square(x):
+    return x ** 2
+
+print(square(3))

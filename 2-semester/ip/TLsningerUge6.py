@@ -234,3 +234,12 @@ L_ = [text for (d, text) in L_sorted]
 print(L_)
 #print(distinct(text[0]))
 # %%
+filename = 'cano.txt'
+file = open(filename)
+line = file.readline()
+while line != '':
+    if 'mathematical' in line:
+        print(line, end = '')
+file.close()
+
+# %%

@@ -218,3 +218,12 @@ with open(filename) as file:
                     #print(line, file = savefile, end = '')
                     savefile.write(line)
 
+test_lambda = lambda x: x ** 2
+
+test_lambda(2)
+
+numbers_list = [2, 6, 8, 10, 11, 4, 12, 7, 13, 17, 0, 3, 21]
+
+
+list(map(lambda num: num ** 2, numbers_list))
+

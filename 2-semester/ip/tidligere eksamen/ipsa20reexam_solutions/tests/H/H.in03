@@ -1,0 +1,2 @@
+lambda x: 40 // x if x > 0 else -1
+-1 50 -1 10

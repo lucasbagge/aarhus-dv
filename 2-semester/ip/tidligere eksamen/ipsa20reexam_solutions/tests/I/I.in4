@@ -1,0 +1,1 @@
+[x for c in [Calculator()] for x in [c.add(2), c.mult(3), c.mult(4), c.mult(5), c.mult(6)]]

@@ -17,7 +17,7 @@ Reflection upon solution:
     En ulempe er at løsningen er langsom.
     >
 """
-
+# %%
 import numpy as np
 
 N = int(input("Antal dronninger der skal løses: \n"))
@@ -56,4 +56,7 @@ def solve(chessboard):
 
 print(np.matrix(solve(chessboard)))
 ...
+# %%
 
+    
+# %%

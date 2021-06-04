@@ -1,0 +1,1 @@
+[x for A, B, C in [(Calculator(), Calculator(), Calculator())] for x in [A.add(2), B.add(3), C.add(7), A.add(2), B.add(4), C.reset(), A.mult(3), B.mult(7), C.add(8), A.add(5), B.mult(4), C.add(3)]]

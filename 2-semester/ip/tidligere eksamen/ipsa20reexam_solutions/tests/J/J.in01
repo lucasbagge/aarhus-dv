@@ -1,0 +1,1 @@
+[x for x, _ in zip(Count(4), range(10))]

@@ -1,0 +1,1 @@
+[x for c in [Calculator()] for x in [c.reset(), c.add(6), c.add(4)]]

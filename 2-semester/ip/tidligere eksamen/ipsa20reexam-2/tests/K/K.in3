@@ -1,0 +1,2 @@
+smooth(lambda x: 7 if x % 2 == 0 else 3)
+[-3, -2, -1, 0, 1, 2, 3]
