@@ -29,10 +29,15 @@
       You only need to implement the function squares.
 '''
 
+import math
 
 def squares(numbers):
-    pass  # insert code here
-
+    return [r for n, r in zip(numbers, map(int, map(math.sqrt, numbers))) if r * r == n]
 
 numbers = eval(input())
+
+assert numbers == sorted(numbers) and len(numbers) == len(set(numbers))
+assert 1 <= len(numbers) <= 100
+assert all(1 <= x <= 10 ** 6 for x in numbers)
+
 print(squares(numbers))

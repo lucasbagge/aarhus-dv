@@ -8,7 +8,7 @@
 
      (2) Command line:
 
-          > run_tests.py A B C
+          > run_tests.py A B C
 
          or 
 

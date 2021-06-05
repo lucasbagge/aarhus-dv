@@ -33,21 +33,13 @@
 
 
 def divisible(L, x):
-    pass  # insert code here
+    return [y // x for y in L if y % x == 0]
 
 
 L, x = eval(input())
-print(divisible(L, x))
 
-#%%
-L_test = ([3, 5, 7, 9, 11, 13, 15, 21, 24, 26], 3)
-L_test
-# %%
-[x for x in L_test[0] * L_test[1]]
-# %%
-[y // L_test[1] for y in L_test[0] if y % L_test[1] == 0]
-# %%
-[y // L_test[1] for y in L_test[0]]
-# %%
-[y ** L_test[1] for y in L_test[0]]
-# %%
+assert isinstance(x, int) and 1 <= x <= 10 ** 6
+assert 1 <= len(L) <= 100 and L == sorted(L) and len(L) == len(set(L))
+assert all(isinstance(y, int) and 1 <= y <= 10 ** 6 for y in L)
+
+print(divisible(L, x))

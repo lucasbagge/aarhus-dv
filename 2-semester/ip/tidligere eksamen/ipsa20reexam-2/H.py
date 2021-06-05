@@ -62,7 +62,26 @@
 
 
 def plot_function(f, x1, x2, y1, y2):
-    pass  # insert code here
+    for y in range(y2, y1 - 1, -1):
+        for x in range(x1, x2 + 1):
+            char = '.'
+            if y == f(x):
+                char = 'X'
+            elif (x, y) == (0, 0):
+                char = '+'
+            elif x == 0:
+                char = '|'
+            elif y == 0:
+                char = '-'
+            print(char, end='')
+        print()
+
+f = eval(input())
+x1, x2, y1, y2 = map(int, input().split())
+
+assert -100 <= x1 < 0 < x2 <= 100 and -100 <= y1 < 0 < y2 <= 100
+        
+plot_function(f, x1, x2, y1, y2)
 
 
 f = eval(input())

@@ -230,3 +230,48 @@ def solve(text, strings):
         answers[i] = answer
 
     return answers[n]
+
+#%%
+def ct(n):
+    print(n)
+    if n == 0:
+        return 0
+    else:
+        ct(n - 1)
+    return n
+
+ct(5)
+# %%
+def ct_non(n):
+    while n >= 0:
+        print(n)
+        n -= 1
+ct_non(5)
+# %%
+names = ["Adam",["Bob",["Chet","Cat",],"Barb","Bert"], "Alex", ["Bea", "Bill"], "Ann"]
+# %%
+names
+# %%
+for index, item in enumerate(names):
+    print(index, item)
+#%%
+[(x, y) for x, y in enumerate(names)]
+# %%
+isinstance(names[0], list)
+# %%
+def ct_l(l):
+    #print(f'list: {[(x, y) for x, y in enumerate(l)]}')
+    #print(f'list: {l}')
+    count = 0
+    for iten in l:
+        if isinstance(iten, list):
+            count += ct_l(iten)
+        else:
+            print(f' Another list: \n {iten}')
+            count += 1
+    return count
+ct_l(names)
+# %%
+teste_pa = 'racecar12121212'
+teste_pa[::-1]
+# %%

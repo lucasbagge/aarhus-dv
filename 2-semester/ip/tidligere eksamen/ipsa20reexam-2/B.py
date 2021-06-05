@@ -20,14 +20,10 @@
 
 pass  # insert code here
 
-#%%
-numebrs = '5 10'
-# %%
+a, b = input().split()
+a = int(a)
+b = int(b)
 
-a, b = numebrs.split()
-test_a = int(a)
-test_b = int(b)
+assert 1 <= a <= b <= 1_000_000
 
-# %%
-print(sum(x for x in range(test_a, test_b + 1)))
- # %% 
+print(sum(x for x in range(a, b + 1)))

@@ -1,0 +1,2 @@
+lambda x, y: -(x - 7) ** 2 + -(y - 42) ** 2
+[(x, y) for x in range(-100, 101) for y in range(-100, 101)]

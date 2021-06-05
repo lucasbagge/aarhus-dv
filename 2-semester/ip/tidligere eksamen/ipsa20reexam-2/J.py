@@ -60,11 +60,18 @@
 
 
 class Count:
+
+    """Iterator that counts upward forever."""
+
     def __init__(self, n):
-        pass  # insert code
+        self.n = n
 
     def __iter__(self):
-        pass  # insert code
+        x = 1
+        while True:
+            for y in range(1, self.n + 1):
+                yield(x, y)
+            x += 1
 
 
 expression = input()

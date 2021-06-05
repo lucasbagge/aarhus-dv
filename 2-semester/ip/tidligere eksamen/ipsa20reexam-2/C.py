@@ -32,20 +32,8 @@
               1
 '''
 
-while True:
-    line = input()
-    if line == '.':
-        break
+for line in iter(input, '.'):
+    assert 1 <= len(line) <= 100
+    assert line == '.' or all('A' <= char <= 'Z' for char in line)
+    
     print(len(line))
-
-#%%
-test_a = 'A', 'AB', 'ABC', '.'
-test_a
-# %%
-for i in iter(test_a):  
-  print(len(i))
-# %%
-for i in test_a:
-  print(len(i))
-  
-# %%

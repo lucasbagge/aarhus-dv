@@ -48,12 +48,17 @@
 '''
 
 
+weight = {-2: 0.1, -1: 0.25, 0: 0.3, 1: 0.25, 2: 0.1}
 def smooth(f):
-    pass  # insert code here
+  def wrapper(x):
+    return sum(w * f(x + d) for d, w in weight.items())
 
+  return wrapper
 
 smoothed_function = eval(input())
 L = eval(input())
+assert 1 <= len(L) <= 100
+assert all(isinstance(x, int) for x in L)
 for x in L:
     y = smoothed_function(x)
     print(x, f'{y:.3f}')

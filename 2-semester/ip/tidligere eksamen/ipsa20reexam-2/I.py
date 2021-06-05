@@ -60,6 +60,23 @@
 class Calculator:
     pass  # insert code here
 
+class Calculator:
+    def __init__(self):
+        self.value = 0
+
+    def reset(self):
+        self.value = 0
+        return self.value
+
+    def add(self, x):
+        self.value += x
+        return self.value
+
+    def mult(self, x):
+        self.value *= x
+        return self.value
+
+
 
 expression = input()
 print(eval(expression))

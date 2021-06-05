@@ -43,3 +43,16 @@
 
 
 pass  # insert code here
+vowels = set('AEIOUY')
+
+n = int(input())
+
+assert 1 <= n <= 100
+
+lines = [input() for _ in range(n)]
+
+assert all(1 <= len(line) <= 25 for line in lines)
+assert all('A' <= char <= 'Z' for line in lines for char in line)
+
+for line in sorted(lines, key=lambda line: (len(set(line) & vowels), line)):
+    print(line)

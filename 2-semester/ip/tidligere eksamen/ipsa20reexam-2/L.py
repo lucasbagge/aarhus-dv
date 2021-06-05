@@ -35,3 +35,32 @@
 
 
 pass  # insert code here
+height, width = map(int, input().split())
+maze = [input() for _ in range(height)]
+
+assert 1 <= width <= 25
+assert 1 <= height <=25
+assert all(len(row) == width for row in maze)
+assert all(char in '#Sx.' for row in maze for char in row)
+
+start, = [(i, j)
+          for i, row in enumerate(maze)
+          for j, char in enumerate(row)
+          if char == 'S']
+
+coins = 0
+seen = {start}
+visit = {start}
+while visit:
+    r, c = visit.pop()
+    if maze[r][c] == 'x':
+        coins += 1
+    for dr, dc in [(-1, 0), (1, 0), (0, -1), (0, 1)]:
+        cell = (r_, c_) = (r + dr, c + dc)
+        if (0 <= r_ < height and 0 <= c_ < width
+            and maze[r_][c_] != '#' and cell not in seen):
+            
+            seen.add(cell)
+            visit.add(cell)
+
+print(coins)

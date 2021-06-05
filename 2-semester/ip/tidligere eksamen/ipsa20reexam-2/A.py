@@ -27,11 +27,11 @@
 
 pass  # insert code here
 
-#%%
-string = 'ABCDEFG'
+# solution
+line = input()
 
+assert 2 <= len(line) <= 100
+assert all('A' <= char <= 'Z' for char in line)
 
-print(string[0::2])
-print(string[1::2])
-
-# %%
+print(line[0::2])
+print(line[1::2])

@@ -42,7 +42,7 @@ def safe_evaluation(f, x):
     
 
 # solution
-def safe_evaluation(f, x):
+def safe_evaluation(f, x):< 
     try:
         return f(x)
     except:
