@@ -9,10 +9,10 @@ library(magrittr)
 library(tidyverse)
 ```
 
-![opgave 2.4](2.4.png)
+![opgave 2.4](billeder/2.4.png)
 
 ```{r}
-data <- read.csv2("MatStat-R/data/FlightDelays.csv", sep = ",")
+data <- read.csv2("../MatStat-R/data/FlightDelays.csv", sep = ",")
 ```
 
 ```{r}
@@ -36,10 +36,10 @@ boxplot(data$FlightLength ~ data$Delayed30)
 
 ### 2.6
 
-![opgave 2.4](2.6.png)
+![opgave 2.4](billeder/2.6.png)
 
 ```{r}
-data <- read.csv("MatStat-R/data/Recidivism.csv")
+data <- read.csv("../MatStat-R/data/Recidivism.csv")
 ```
 
 ### a)
@@ -84,20 +84,20 @@ plot.ecdf(age_under_25, col = "blue", pch = 2, add = TRUE)
 
 ## 2.10
 
-![opgave 2.4](2.10.png)
+![opgave 2.4](billeder/2.10.png)
 
 
 Svar er ud fra billede og jeg skal lave det selv i R.
 
-![](2.10svar-a.png)
+![](billeder/2.10svar-a.png)
 
 Det lader til at ovenstående ikke er korret, men følgende er rigtig
 
-![](2.10svar-rigitg.png)
+![](billeder/2.10svar-rigitg.png)
 
 ## 2.A
 
-![](2.A.png)
+![](billeder/2.A.png)
 
 Hvis man finder den inverse funktion til normal fordeling og indsætter 0.25 og 0.75
 finder man Q1 og Q3.
@@ -138,7 +138,7 @@ eller uden for. Fordelingen
 
 ## Den praktiske del
 
-![](2.A-praktisk.png)
+![](billeder/2.A-praktisk.png)
 
 ### a)
 
@@ -188,7 +188,7 @@ E100/100
 E1000/1000
 ```
 
-![](2.B.png)
+![](billeder/2.B.png)
 ```{r}
 x <- rnorm(15)
 
