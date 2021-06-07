@@ -131,21 +131,24 @@ def power(a, b):
 print(power(5, 11))
 # %%
 # Exercise 8.5* (subtree extraction)
-
+#%%
 def extract(tree, leaves):
     if isinstance(tree, str):
         if tree in leaves:  # leaves that are allowed to survive
             return tree
         else:  # leaves that aren't
             return None
+        
 
     children = [extract(child, leaves) for child in tree]
     children = [child for child in children if child]  # Eliminates Nones
+    
 
     if len(children) == 0:
         return None
     if len(children) == 1:
         return children[0]
+        print(children)
 
     return tuple(children)
 treee = ((('a','b'),'c'),((('d','e'),'f'),'g'))

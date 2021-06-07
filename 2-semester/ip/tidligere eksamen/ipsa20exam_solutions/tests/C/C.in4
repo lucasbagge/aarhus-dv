@@ -1,0 +1,2 @@
+lambda i, j: i * j
+9 9

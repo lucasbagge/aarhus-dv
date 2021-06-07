@@ -1,0 +1,2 @@
+lambda i, j: i - j
+10 10

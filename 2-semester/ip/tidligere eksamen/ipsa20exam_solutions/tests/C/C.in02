@@ -1,0 +1,2 @@
+lambda i, j: j + j
+11 9

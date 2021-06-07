@@ -7,7 +7,7 @@
 # low          mid            high
 #
 #return mid
-
+#%%
 def bitonic_min(L):
     high, low = len(L) - 1, 0
     while True:
@@ -18,7 +18,7 @@ def bitonic_min(L):
             high = mid
         else: # den er over mid
             low = mid
-
+#%%
 def bitonic_min_rec(L):
     if len(L) == 1:
         return L[0]
@@ -26,9 +26,11 @@ def bitonic_min_rec(L):
     if L[mid] > L[mid - 1]:
         return bitonic_min_rec(L[:mid])
     return bitonic_min_rec(L[mid:])
-
+l = [10,7,4,2,3,5,9,11]
+print(bitonic_min_rec(l))
+#%%
 #Exercise 9.2 (print tree)
-
+#%%
 def print_tree(tree, depth=1):
     for branch in tree:
         if isinstance(branch, str):
@@ -36,13 +38,13 @@ def print_tree(tree, depth=1):
         else:
             print('  |' * depth, end="")
             print_tree(branch, depth + 1)
-
+#%%
 def print_tree2(tree, prefix=''):
     name, *children = tree
     print(f'{prefix}--{name}')
     for subtree in children:
         print_tree2(subtree, prefix + '  |')
-
+#%%
 def print_tree3(tree):
     stack = [(tree,0)]
     while len(stack) > 0:
@@ -51,7 +53,8 @@ def print_tree3(tree):
         print("  |"*depth, "--", name, sep="")
         for child in children[::-1]:
             stack.append((child, depth + 1))
-
+print(print_tree3(('root', ('node 1',), ('node 2', ('node 2.1',), ('node 2.2',)), ('node 3',))))
+#%%
 # Exercise 9.3 (maze path)
 maze_test = ['#######A###########',
              '#.......#.....#...#',

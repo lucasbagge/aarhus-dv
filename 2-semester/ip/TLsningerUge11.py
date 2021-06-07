@@ -1,3 +1,4 @@
+#%%
 #Exercise 19.1 (linear program)
 from scipy.optimize import linprog
 import numpy as np
@@ -19,7 +20,7 @@ result = linprog(-c,
                          b_ub=b_ub)
 
 print(result)
-
+#%%
 
 # Exercise 20.2 (Fibonacci numbers - generator and iterator)
 
@@ -56,7 +57,7 @@ class Fibonacci:
 
     def __iter__(self):
         return FibonacciIteratior(self.n)
-
+#%%
 #Exercise 20.3 (subsets generator)
 def subsets_generator(L):
     if len(L) == 0:  # Base Case
@@ -65,13 +66,13 @@ def subsets_generator(L):
         for s in subsets_generator(L[1:]):
             yield s
             yield [L[0]] + s
-
+#%%
 #Exercise 20.4 (subset sum generator)
 def subset_sum(x, L):
     for s in subsets_generator(L):
         if sum(s) == x:
             yield s
-
+#%%
 #Exercise 20.5 (permutations generator)
 def permutations(L):
     if len(L) == 0:
@@ -80,11 +81,12 @@ def permutations(L):
         for p in permutations(L[1:]):
             for i in range(len(L)):
                 yield p[:i] + L[0:1] + p[i:]
-
+list(permutations([1, 2, 3]))
+#%%
 def permutations2(L):
     yield from ((s,) + p for i, s in enumerate(L) for p in permutations2(L[:i] + L[i + 1:])) if L else [()]
 
-
+#%%
 # Exercise 20.6* (linked list)
 class LinkedList:
     class Node:
@@ -146,3 +148,49 @@ class LinkedList:
     def __repr__(self):
         return self.__class__.__name__ + '(' + ', '.join(
             repr(e) for e in self) + ')'
+
+#%%
+L = ['a', 'b', 'c']
+
+for i in iter(L):
+    print(i, end = ' ')
+# %%
+def odds(start, stop):
+    for odd in range(start, stop + 1, 2):
+        yield odd # returner første værdi og pauser med
+# %%
+g = odds(3, 15)
+# %%
+next(g)
+# %%
+for x in g:
+    print(x)
+# %%
+def odds(start, stop):
+    for odd in range(start, stop + 1, 2):
+        yield odd # returner første værdi og pauser med
+
+def main():
+    odd_values = [odd for odd in odds(3, 15)]
+    print(odd_values)
+
+if __name__ == '__main__':
+    main()
+
+# %%
+def odds(start, stop):
+    for odd in range(start, stop + 1, 2):
+        yield odd # returner første værdi og pauser med
+
+def main():
+    odd_values = [odd for odd in odds(3, 15)]
+    odds2 = tuple(odds(21, 29))
+    print(odd_values)
+    print(odds2)
+
+if __name__ == '__main__':
+    main()
+# %%
+# Eksamen
+
+#%%

@@ -1,0 +1,2 @@
+lambda i, j: 2*i + j
+4 6

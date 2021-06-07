@@ -1,20 +1,21 @@
 #Exercise 15.1 (decorator returns int)
+#%%
 def enforce_integer_return(f):
     def wrapper(*args, **kwargs):
         result = f(*args, **kwargs)
         assert isinstance(result, int), "result must be int"
         return result
     return wrapper
-
+#%%
 @enforce_integer_return
 def my_sum(x, y):
     return x + y
-
+#%%
 print(my_sum(19,23))
 print(my_sum(x=13,y=56))
 print(my_sum(287.84, 132.85))
 my_sum(1, 2.5)
-
+#%%
 #Exercise 15.2 (box it)
 def BoxIt(f):
     def wrapper(*args, **kwargs):

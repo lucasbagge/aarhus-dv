@@ -1,0 +1,2 @@
+interpolate(lambda x: x + x ** 2 if isinstance(x, int) else None)
+[3.0, 3.2, 3.4, 3.6, 3.8, 4.0, 4.2, 4.4, 4.6, 4.8, 5.0]

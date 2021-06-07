@@ -1,9 +1,9 @@
 #Exercise 17.3 (Jupyter plotting)
-
+#%%
 import math
 import matplotlib.pyplot as plt
 import numpy as np
-
+#%%
 def f(x):
     return 100*(x - 3)**2 + math.e**x
 
@@ -11,7 +11,7 @@ x = np.linspace(0, 10, 1000)
 plt.plot(x, [f(xv) for xv in x])
 plt.gca().set_yscale('log') #logaritmisk y-akse
 plt.show()
-
+#%%
 #Exercise 17.4 (Jupyter function minimization)
 from scipy.optimize import minimize
 
@@ -24,7 +24,7 @@ plt.plot(x, [f(xv) for xv in x], color="cornflowerblue")
 plt.axhline(f(x_min), color="red")
 plt.plot([x_min], [f(x_min)], 'gx')
 plt.show()
-
+#%%
 #Exercise 18.1 (numpy)
 
 # a)Generate two 5x5 matrices with entries drawn from a standard normal distribution (mean 0, variance 1).
@@ -58,7 +58,7 @@ print("row sums >= 55:", row_sum[row_sum >= 55]) #__getitem__ er lidt vild i np
 #der returners indeksene hvor bool er True
 print("in rows", np.where(row_sum >= 55)[0].tolist()) #[0] for at få fat i array'et
 print(f"{np.where(row_sum >= 55)=}")
-
+#%%
 #Exercise 18.2 (computing π using sampling)
 # a)
 def approx_pi(n):
@@ -94,7 +94,7 @@ mask = x**2 + y**2 <= 1
 plt.plot(x[mask], y[mask], '.r')
 plt.plot(x[~mask], y[~mask], '.b')
 plt.show()
-
+#%%
 # Exercise 18.3 (polynomial fit)
 import numpy as np
 import matplotlib.pyplot as plt
@@ -118,3 +118,4 @@ for degree in range(1, 10):
 plt.plot(x, y, 'ro')
 plt.legend()
 plt.show()
+# %%
