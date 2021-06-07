@@ -1,0 +1,69 @@
+---
+title: "Aflevering 3"
+author: "Lucas Bagge"
+date: "2021-03-06"
+output:
+  pdf_document: default
+  word_document: default
+  html_document: default
+documentclass: article
+classoption: a4paper
+---
+
+## Opgave 6.18
+
+> *Nobody likes to stand in line to order a hamburger or buy groceries, so understanding how to model service times (time to be served) is one area of research in queuing theory. Four students collected data on cus- tomers waiting in line at a college snack bar (B. Haynor et al., private communication (2010)). The data set Service contains service times (in minutes) for 174 customers. We will model the distribution of service times using the gamma distribution. Vink: I R kaldes parameter l for rate og r for shape.*
+
+Til at starte med skal vi indlæse vores data
+
+```{r}
+library(glue)
+#setwd("MatStat-R/data/")
+data <- read.csv("MatStat-R/data/Service.csv")
+
+head(data)
+```
+
+
+### a) Use the method of moments to estimate the parameters of the gamma distribution.
+
+Vi bruger følgende MME til at beregne gamma fordelingen:
+
+**Sample mean**:
+
+$$
+\bar \theta_{MME} = \frac{s^2}{ \bar X} 
+$$
+
+**Sample variance**
+
+
+$$
+\bar \alpha_{MME} = \frac{\bar X^2}{s^2}
+$$
+
+```{r}
+x = data$Times
+
+theta <- sd(x)^2 / mean(x)
+alpha <- mean(x) ^ 2 / sd(x) ^ 2
+
+paste0("Theta parameter: ",round(theta, 2))
+paste0("Alpha parameter: ",round(alpha, 2))
+```
+
+
+
+### c) Provide a histogram and ecdf of the data with the gamma distribution superimposed.
+
+Forneden plotter jeg histogrammet og ecdf. 
+
+```{r}
+hist(data$Times,
+     freq = FALSE)
+curve(dgamma(x, shape = alpha, scale = theta), add = TRUE, col = 'red')
+```
+
+Vi ser at vi har her modelleret vores service af burger og det følger meget 
+godt vores estimation. 
+
