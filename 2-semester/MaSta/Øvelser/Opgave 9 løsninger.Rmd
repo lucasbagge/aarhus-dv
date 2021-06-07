@@ -1,0 +1,443 @@
+---
+title: "Untitled"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## webbog opgave 3.1
+
+Et mål for udviklingen af kompleksiteten af computerchips er antallet af transistorer på en chip.
+På adressen Transistor count kan man finde en tabel med antallet af transistorer for 108 chips
+produceret i perioden 1971-2016. Moore’s lov siger, at antallet af transitorer på en chip fordobles
+94 Kapitel 3. Lineær regression
+cirka hvert andet år. Dette blev formuleret af Gordon Moore, som var medstifter af Intel (Moore’s
+udsagn går helt tilbage til 1965 og 1975).
+
+I skal nedenfor undersøge dette udsagn ved at se på de log2
+transformerede antal transistorers
+afhængighed af produktionsår. Ved at bruge to-talslogaritmen opnår vi, at en fordobling af antal
+transistorer svarer til en stigning på 1.
+Filen Moore.csv indeholder data. Filen har to søjler, hvor første søjle er produktionsår regnet
+med udgangspunkt i 1950 (en værdi på 24 svarer således til 1974), og anden søjle er antal transistorer på chippen.
+
+### a) Indlæs data, og dan variablene Aar og Antal med indholdet af de to søjler. Dan endvidere
+variablen log2Antal=log2(Antal) med de log2
+transformerede antal transistorer. Lav en
+figur, hvor log2Antal tegnes op mod Aar (Aar langs førsteaksen og log2Antal langs andenaksen). Er det rimeligt at sige, at der er en lineær sammenhæng mellem de to variable?
+
+```{r}
+moore <- read.csv("MatStat-R/data/JLJfiler/Moore.csv")
+```
+
+```{r}
+library(tidyverse)
+moore2 <- moore %>% 
+  rename(Antal = Transistorer) %>% 
+  mutate(log2Antal = log2(Antal))
+
+plot(moore2$Aar, moore2$log2Antal)
+```
+
+Jeps.
+
+
+
+### (b) Opskriv den lineære regressionsmodel for data. Estimer parametrene i modellen, og lav figurer til modelkontrol. I residualplottet skal du indtegne to vandrette linjer, der skærer andenaksen i punkterne ±2sr
+, hvor sr er skønnet over spredningen i regressionsmodellen.
+
+$$
+log2Antal_i\sim N(\alpha+\beta Aar_i,\sigma^2 )
+$$
+
+
+```{r}
+alpha_hat <- summary(lm(log2Antal~ Aar , data = moore2))$coefficients[1]
+beta_hat <- summary(lm(log2Antal~ Aar , data = moore2))$coefficients[2]
+sigma <- summary(lm(log2Antal~ Aar , data = moore2))$sigma
+
+alpha_hat
+beta_hat
+sigma
+```
+
+har estimerede parameterne. 
+
+```{r}
+plot(moore2$Aar, moore2$log2Antal, xlab = "Aar", ylab = "lo2")
+abline(v = 30, col = 2)
+abline(h = 15, col = 2)
+abline(v = 60, col = 3)
+abline(h = 30, col = 3)
+abline(alpha_hat, beta_hat, col = 4)
+```
+
+Blå er den estimerede linje. 
+
+```{r}
+r = moore2$log2Antal - (alpha_hat + beta_hat * moore2$Aar)
+par(mfrow = c(1,2))
+plot(moore2$Aar, r, xlab = "Aar")
+abline(h = 2 * sigma, col = 2)
+abline(h = -(2 * sigma), col = 2)
+abline(0,0)
+qqnorm(r)
+qqline(r)
+```
+
+modelt kontrol er residual plot og qqplot. Kipur kode fra slides. 
+
+Til venstre ser vi om der er noget systematisk ændring i varians. 
+Ser på hvordan den klumper sammen. De røde er +- skøn over spredning.
+
+QQ viser at den ikke er normal fordelt. Men i midten er den ok bare ikke i enderne.
+
+
+
+
+### c) Beregn 95%-konfidensintervaller for henholdsvis skæring og hældning i den lineære sammenhæng mellem middelværdien af log2Antal og Aar. Eftervis, at konfidensintervallet for
+hældningen, fundet gennem et kald til confint, er korrekt ved at bruge oplysninger i output
+fra summary.
+
+konfidens udregning laver vi med hældning gange kvantilen.
+
+```{r}
+confint(lm(moore2$log2Antal ~ moore2$Aar))
+```
+
+Vi har 108 observation og 106 frihedsgrader og estimer skæring og hældning
+
+```{r}
+attach(moore2)
+model = lm(log2Antal ~ Aar)
+hældning <- summary(model)$coefficients[2]
+sdafvig <- summary(model)$coefficients[4]
+hældning + c(-1,1) * qt(0.975, 106) * sdafvig
+```
+
+
+
+### d) Overvej, om data er i overensstemmelse med en teori, der siger, at antallet af transitorer på
+en chip fordobles hvert andet år ?
+
+vi kan se at det ligger ret centralt indenfor vores konfidensinterval, hvorfor data ikke struder imdo denne hypotese.
+
+
+## webbog opgave 3.2
+
+I denne opgave skal I se på muligheden for at prædiktere den tid, der skal bruges til at teste et
+program ud fra oplysning om, hvor lang tid der er brugt på at kode programmet. Data i filen
+Testtid.csv indeholder oplysninger for 95 programmer. Filen har to søjler, hvor første søjle er tid
+3.9. Opgaver til kapitel 3 95
+brugt på at kode, og anden søjle er tid brugt på at teste programmet (begge tider er i timer). Data
+er simulerede ud fra oplysningerne i figur 3 i artiklen Software effort estimation with multiple
+linear regression: review and practical application.
+I opgaven her skal I etablere en lineær sammenhæng mellem middelværdien af logaritmen til
+testtiden og logaritmen til kodningstiden og bruge denne sammenhæng til at prædiktere testtiden
+ved forskellige givne værdier af kodningstiden.
+
+### (a) 
+Lad logKode være en vektor med logaritmen til kodningstiderne, og lad logTest være en vektor med logaritmen til testtiderne. Lav en figur, hvor logTest afsættes mod logKode. Er det
+rimeligt at sige, at der er en lineær sammenhæng mellem de to variable ?
+Opskriv den lineære regressionsmodel for data, og estimer parametrene i denne via lm og
+summary. Indtegn den fundne linje i figuren med data.
+Prøv i ord at beskrive sammenhængen i data, ud fra hvad du ser i figuren.
+
+```{r}
+testtid <- read.csv("MatStat-R/data/JLJfiler/Testtid.csv")
+```
+
+```{r}
+logkode <- log(testtid$KodningsTid)
+logtest <- log(testtid$TestTid)
+lmUD <- lm(logtest ~ logkode)
+plot(logkode, logtest)
+abline(lmUD)
+```
+
+
+
+### (b) 
+Lav et test, for hypotesen at hældningen er nul. Hvad bliver konklusionen af dit test ? Lav
+dernæst et 95%-konfidensinterval for hældningen. Kommenter på betydningen af, at hældningen ser ud til at være væsentlig mindre end 1.
+Lav et skøn over ændringen i middelværdi af logTest mellem en værdi af logKode på 2 og
+4, og sammenhold denne med spredningen omkring regressionslinjen (jævnfør din egen
+beskrivelse af sammenhængen i data sidst i foregående spørgsmål).
+
+```{r}
+confint(lmUD)
+```
+
+konfident interval er en god.
+
+Test skal vi køre
+
+```{r}
+summary(lmUD)
+```
+
+se p værdi om den kan være lig med nul. 
+
+
+```{r}
+ny_data <- data.frame(logkode = log(c(2,4)))
+predict(lmUD, ny_data, interval = "confidence")
+```
+
+
+
+### (c) Lav et 95%-konfidensinterval for middelværdien af logTest, når logKode er 6.
+Lav dernæst et prædiktionsinterval for en kommende måling, når logKode er 6.
+Prøv at forklare, hvorfor prædiktionsintervallet er noget bredere end konfidensintervallet.
+
+```{r}
+ny_data <- data.frame(logkode = log(c(6)))
+predict(lmUD, ny_data, interval = "confidence")
+```
+
+```{r}
+ny_data <- data.frame(logkode = log(c(6)))
+predict(lmUD, ny_data, interval = "prediction")
+```
+
+konfidens er de steder en potentiel middelværdi kan være. ens predicion er de mulige værdier den kan tage. 
+
+> konfidentinterval omtaler i dette tilfælde mean af potentialle observation inden for prediction intervallet, som er de funktiosnværdier det punkt man prøver at predicte med 05% sikkerhed.
+
+
+> i preiction bruger man en større standard afvigelse. se 3.5 
+
+### (d) I dette spørgsmål skal du beregne konfidensintervallet og prædiktionsintervallet i mange
+punkter og indtegne disse som en kurve i figuren fra spørgsmål (a). Du kan finde inspiration
+til konstruktion af figuren i afsnit 3.5 i det skjulte punkt "Test dig selv". Til beregningen kan
+du kalde predict med nye datapunkter givet ved data.frame(logKode=c(0:100)*0.07).
+
+```{r}
+plot(logkode, logtest)
+abline(lmUD)
+
+pktlogColi= c(0:100) * 0.07
+
+nyData <- data.frame(logkode=pktlogColi)
+
+pred_conf_UD <- predict(lmUD, nyData, interval = "confidence")
+pred_pred_UD <- predict(lmUD, nyData, interval = "predict")
+
+lines(pktlogColi, pred_conf_UD[, 2], lty = 3, col = 2)
+lines(pktlogColi, pred_conf_UD[, 3], lty = 3, col = 2)
+
+lines(pktlogColi, pred_pred_UD[, 2], lty = 3, col = 2)
+lines(pktlogColi, pred_pred_UD[, 3], lty = 3, col = 2)
+```
+
+Det store er prediction mens det mindre er konfidens intervallet. 
+
+
+ 
+
+## webbog opgave 3.4 (Desværre hedder datafilen "LambertBeer.txt" og ikke "LambertBeer.csv". Indlæs med kommandoen ## read.table("../Data/LambertBeer.txt"))
+
+Denne opgave omhandler måden, hvorpå absorption af lys i en væske afhænger af koncentrationen af et absorberende molekyle i væsken, og hvordan vi kan bruge dette til at estimere koncentrationen ud fra en målt lysintensitet. Man måler lysintensiteten I ved forskellige kendte koncentrationer af det absorberende molekyle. På denne måde får man etableret en kalibreringkurve, der
+3.9. Opgaver til kapitel 3 97
+efterfølgende kan benyttes til at finde koncentrationen af molekylet i en prøve ud fra en måling
+af lysintensiteten efter lysets passage gennem prøven.
+Absorption af denne type beskrives typisk via Lambert-Beers lov:
+
+$$
+I=I_0 exp{-\epsilon vc}
+$$
+
+Her er ε absorptionskoefficienten for det absorberende molekyle, v er vejlængden gennem materialet, c er koncentrationen af molekylet og I0 er lysintensiteten når koncentrationen er nul.
+I denne opgave betragter vi en serie målinger af lysintensiteten I som funktion af koncentrationen for en opløsning af Rhodamine 6G i ethanol. Den benyttede vejlængde gennem opløsningen er v = 1.00cm. Egentligt burde man i modelleringen af data også tage hensyn til, at
+koncentrationen af opløsningsmidlet ethanol ændrer sig, når koncentrationen af Rhodamine ændres, men denne effekt er så lille, at vi kan se bort fra den. Tager vi logartimen på begge sider i
+Lambert-Beers lov (3.2), får vi
+
+$$
+H=\alpha - \epsilon vc
+$$
+
+hvor α = log(I0) og H = log(I).
+Data i filen LambertBeer.csv giver den målte værdi af lysintensiteten I for 16 forskellige valg af
+koncentrationen. Filen har to søjler, hvor første søjle er koncentration, og anden søjle er lysintensiteten
+
+```{r}
+lambertbeer <- read.table("MatStat-R/data/JLJfiler/LambertBeer.txt")
+```
+
+
+### 1. Dan en variabel logLys med logaritmen til de målte lysintensiteter og en variabel konc med
+koncentrationerne af Rhodamine 6G. Lav en figur, hvor logLys afsættes mod koncentrationen konc. Synes I, at der er en lineær sammenhæng i data ? Synes I, at sammenhængen er
+god, med henblik på at estimere koncentration ud fra lysintensiteten ?
+
+```{r}
+logLys <- log(lambertbeer[, 2])
+konc <- lambertbeer[,1]
+```
+
+afsæt loglys mod konc, ser om der er en lineæ sammenhæng
+
+```{r}
+plot(konc, logLys)
+abline(lm(logLys ~ konc)) 
+```
+
+danner variablen loglys med logaritmen. 
+
+afsætter loglys mod konc og se om der er en sammenhæng. Den er lineær. 
+
+Det er en god måde at estimer koncentrationen. 
+
+### 2. Opskriv den lineære regressionsmodel, hvor respons er logaritmen til lysintensiteten, og
+den forklarende variabel er koncentration. Forklar, at regressionskoefficienten β i denne
+model er β = −εv. Estimer modellen og indtegn den estimerede linje i figuren ovenfor.
+
+```{r}
+summary(lm(logLys ~ konc))
+```
+
+Da:
+$$
+\alpha = I_0
+$$
+$$
+\beta = -\epsilon v
+$$
+Den bliver også ganget på den forklarende variabel,hvilket beta altid gør i lineære regression
+
+$$
+logLys \sim 9.25 - 0.118 * konc
+$$
+
+```{r}
+source("MatStat-R/source/Rfunktioner.R")
+inversReg(lm(logLys ~ konc), log(2654))
+inversReg(lm(logLys ~ konc), log(4512))
+inversReg(lm(logLys ~ konc), log(7688))
+```
+
+
+
+
+### 3. Beregn et 95%-konfidensinterval for den ukendte koncentration af Rhodamine 6G i tre tilfælde med en enkelt ny måling af lysintensiteten Lys. Hertil kan du bruge funktionen inversReg omtalt i underafsnit 3.5.1. Funktionen findes i filen Rfunktioner.txt. De tre tilfælde er
+Lys = 2654, Lys = 4512 og Lys = 7688. Lav en tabel med resultaterne.
+
+## webbog opgave 3.6
+
+![](J3.6.png)
+
+## webbog opgave 2.3
+
+```{r}
+goegen <- read.csv("MatStat-R/data/JLJfiler/Goegen.csv")
+
+goegen %>% head()
+```
+
+
+![](J2.31.png)
+
+![](J2.32.png)
+
+### a)
+
+dan Art og form
+
+```{r}
+attach(goegen)
+
+art <- factor(Art)
+form <- Form
+```
+
+Dan formEng og formVip
+
+```{r}
+formEng <- goegen$Form[goegen$Art == "Engpibe"]
+formVip <- goegen$Form[goegen$Art == "Vipstjert"]
+```
+
+Lav en figur med qqplot:
+
+```{r}
+par(mfrow = c(1,2))
+qqnorm(formEng, ylim = range(formEng, formVip))
+qqline(formEng)
+points(qqnorm(formVip, plo = FALSE), col = 2, pch = 20)
+qqline(formVip, col = 2)
+legend("topleft", legend = c("Eng", "Vip"), col = c(1,2), pch = c(1,20))
+
+boxplot(form ~ art, las = 2)
+```
+
+den for eng ser merre normal fordelt ud end vip. Den røde ser ud i ender er der en del afvigelser. 
+
+I boxplot når vi samme konklusion.
+
+
+
+
+### b)
+
+$$
+form_{i_g}  \sim N(\alpha_g,\sigma_g^2), g={Eng,Vip}
+$$
+```{r}
+confint(lm(form~ art - 1))
+```
+
+-1 gør vi at fælles hældning.
+
+vi ser på forskel i hældning, fordi de to grupper intercept kommer til at være hældning.
+
+```{r}
+table <- matrix(c(length(formEng), round(mean(formEng), 2), round(sd(formEng), 2),
+                  0.7422, 0.7617,
+                  length(formVip), round(mean(formVip), 2),
+                  round(sd(formVip), 2), 0.7422 - 0.0491, 0.7617 - 0.010),
+                nrow = 2, byrow = TRUE)
+rownames(table) <- c("Eng", "Vip")
+colnames(table) <- c("Observatoin", "Gennemsnit", "Spredning", "Nedre", "Øvre")
+table
+```
+
+
+### c)
+
+```{r}
+var.test(formEng, formVip)
+```
+
+0.38 godkedn H0, høj p værdi betyder vi ikke forkaster H0. 
+
+
+### d)
+
+kan middelværid være ens. 
+
+```{r}
+t.test(formEng, formVip, var.equal = TRUE)
+```
+
+vi forkaster H0.
+
+De to middelværdier er ikke ens. 
+
+```{r}
+confint(lm(form ~ art))
+```
+
+forskel ligger mellem konfident
+
+
+### e)
+
+
+## webbog opgave 3.7
+
+
+![](J3.7.png)
+
+
+

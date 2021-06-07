@@ -3,9 +3,9 @@ title: "Aflevering 1"
 author: "Lucas Bagge"
 date: "2021-02-09"
 output:
-  pdf_document: default
-  word_document: default
   html_document: default
+  word_document: default
+  pdf_document: default
 documentclass: article
 classoption: a4paper
 ---
@@ -43,7 +43,7 @@ at undersøge hvad der påvirker væksten af nåletræer.
 Data indlæses som følger med funktionen `read_csv()`:
 
 ```{r}
-df <- read.csv(file = "MatStat-R/data/Spruce.csv")
+df <- read.csv(file = "../MatStat-R/data/Spruce.csv")
 ```
 
 Herhefter bruger jeg `glimse()` til at få et overblik over data.

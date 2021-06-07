@@ -1,0 +1,299 @@
+---
+title: "Untitled"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+```
+
+## 1)
+
+### a)
+
+> Antal ventetid
+
+X er en tilfældig ventetid. Den forventede antal af værdier mellem 2 og 4
+er
+
+$$
+n * P(2 < X \le 4)
+$$
+
+X er eksponential fordel, og vi estimer lambda til:
+
+$$
+\hat \lambda = \frac{1}{\hat \mu} = \frac{1}{12.2}
+$$
+Det gælder:
+
+$$
+P(2 < X \le 4) = F_X(4) -F_X(2)\\
+= (1-e^{-\lambda * 4}) - (1-e^{-\lambda * 2}) \\
+= e^{-\lambda * 2} -e^{-\lambda * 4}
+$$
+
+Her kan vi så indlæste lambda
+
+$$
+e^{-\lambda * 2} -e^{-\lambda * 4} \\
+= e^{-1/12.2 * 2} -e^{-1/12.2 * 4}\\
+=0.1283
+$$
+eller i r
+
+```{r}
+49 * (pexp(4, rate = 1/12.2) - pexp(2, rate = 1/12.2))
+```
+
+### b) 
+
+> C test men hvor vi ska bruge G test
+
+
+
+```{r}
+observ <- c(6, 9, 7, 9, 6, 7, 5)
+expect <- c(7.4, 6.3, 5.3, 8.4, 7.3, 8.0, 6.3)
+C <- sum((observ - expect)^2/expect)
+C
+```
+
+```{r}
+1- pchisq(C, 5)
+```
+Vi får en stor p værdi såledea forkaster vi ikke H0 og vi kan godt 
+beskrives data ud fra en eksponentialfordeling
+
+G- test
+
+```{r}
+observ <- c(6, 9, 7, 9, 6, 7, 5)
+expect <- c(7.4, 6.3, 5.3, 8.4, 7.3, 8.0, 6.3)
+G <- 2 * sum(observ * log(observ / expect))
+G
+1- pchisq(G, 5)
+```
+
+## 2)
+
+### a)
+
+> opskriv model
+
+
+Modellen er
+
+$$
+X\sim N(\mu,\sigma^2), \ \mu=1000
+$$
+Vi skal undersøge hypoteserne:
+
+$$
+H_0:\sigma^2 \le 20^2 \\
+H_1: \sigma^2 > 20^2
+$$
+> Angiv teststørrelsens fordeling
+
+Det er stikprøvevariansen s2, taget på en i.i.d stikprøve på n = 100 pakker. Den
+har en skaleret chi 2 fordeling med df = 99.
+
+$$
+s^2\cdot \frac{99}{\sigma^2}\sim \chi^2(99), \ hvor \ \sigma^2=20^2
+$$
+
+### b) 
+
+> type 1 fejl
+
+$$
+P(S^2>500)=1 - P(S^2*99/400 \le500*99/400) \\
+= 1-F_{\chi^2(99)}(500*99/400) \\
+= 1-0.9532 \\
+= 0.0467
+$$
+
+```{r}
+1 - pchisq(500 / 400 * 99, df = 99)
+```
+
+## 3
+
+### a)
+
+```{r}
+beans <- read.csv("MatStat-R/data/beans.csv")
+beans %>% 
+  glimpse()
+```
+
+H0 er at vækst under rødt og grønt lys har samme fordeling.
+Bruger absolutværdier til en to sidet test.
+
+```{r}
+set.seed(123)
+roedt <- beans$growth[beans$color == "red"]
+groen <- beans$growth[beans$color == "green"]
+rogro <- beans$growth
+
+observed <- abs(median(roedt) - median(groen))
+nsim <- 9999
+simulated <- numeric(nsim)
+for (i in 1:nsim){
+  index <- sample(18, 9, replace = FALSE)
+  simulated[i] <- abs(median(rogro[index]) - median(rogro[-index]))
+}
+pval <- (sum(simulated >= observed) + 1) / (nsim + 1)
+pval
+```
+
+Vi forkaster ikke H0. Derfor tyder det på at lysfarven ikke påvirker plantevækst.
+
+Hvis ikke man bruger absolutværdien brurde der laves to sidet test:
+
+```{r}
+set.seed(123)
+roedt <- beans$growth[beans$color == "red"]
+groen <- beans$growth[beans$color == "green"]
+rogro <- beans$growth
+observed <- median(roedt) - median(groen)
+nsim <- 9999
+simulated <- numeric(nsim)
+for (i in 1:nsim){
+  index <- sample(18, 9, replace = FALSE)
+  simulated[i] <- median(rogro[index]) - median(rogro[-index])
+}
+p1 <- (sum(simulated >= observed) + 1) / (nsim + 1)
+p2 <- (sum(simulated <= observed) + 1) / (nsim + 1)
+pval <- min(p1, p2) * 2
+pval
+```
+
+## 4
+
+### a)
+
+Se på redsidualer
+
+```{r}
+roads <- read.csv("MatStat-R/data/FloridaRoads.csv")
+roads %>% glimpse()
+```
+
+
+```{r}
+tildeM1 <- lm(cost ~ DOTestimate, data = roads)
+resi <- residuals(tildeM1)
+
+par(mfrow = c(1, 2))
+
+qqnorm(resi)
+qqline(resi)
+plot(roads$DOTestimate, resi)
+```
+
+Normalfraktilet viser tunge haler og at residualer er hyppigere end man ville formode under 
+normalfordeling. 
+
+Ud fra residual plottet ses det at variansen stiger med x. Modellens 
+antagelse vurderes ikke at være opfyldt.
+
+Se på log:
+
+```{r}
+M1 <- lm(logcost ~ bid * logDOTestimate, data = roads)
+resi <- residuals(M1)
+par(mfrow = c(1,2))
+qqnorm(resi)
+qqline(resi)
+plot(roads$logDOTestimate, resi)
+```
+
+Her ses det at det afviger mindre fra normalfordeling end før. 
+Der er nu ingen sammenhæng mellem x og variansen.
+Her har vi normalfordelte residuer og homoskedasticitet.
+
+### b)
+
+> Opstil M2
+
+Samme hældning for manipulerede og ikke manipulered priser
+
+$$
+M2:log(Y_{gj}) \sim N(\alpha_g + \gamma log(x_{gj}), \sigma^2)
+$$
+
+> se om den kan reduceres
+
+```{r}
+M2 <- lm(logcost ~ bid + logDOTestimate, data = roads)
+anova(M2, M1)
+```
+
+Vi forkaster ikke H0. Vi kan reducer modellen til M2.
+
+> Fit modellen
+
+```{r}
+summary(M2)
+```
+Her får vi
+
+alpha = -0.147
+alpha2 = -0.147 + 0.216 = 0.07
+gamma = 1.005
+sigma2 = 0.1548^2=0.024
+
+### c) 
+
+> Eftervis den ikke kan reduceres mere
+
+En ting er at kigge op outputtet foroven og se alt er signifikant.
+Og af den grund kan modellen ikke reduceres mere.
+Dog skal man gøre følgende:
+
+```{r}
+M3a <- lm(logcost ~ bid, data = roads)
+anova(M3a, M2)
+```
+
+Denne anova viser at data strider imod hypotesen H0:gamma = 0.
+
+```{r}
+M3b <- lm(logcost ~ logDOTestimate, data = roads)
+anova(M3b, M2)
+```
+
+Denne viser også at data strider mod H0.
+
+### d)
+
+> konfidensbånd. 
+
+```{r}
+confint(M2, parm = 'logDOTestimate')
+```
+
+Vi ser at 1 e mellem konfidensbåndet og vi kan derfor ikke forkaste H0
+at gamma = 1.
+
+### e)
+
+Her skal vi transformere med eksponential funktionen
+
+```{r}
+loginterval <- predict(M2, 
+                       newdata = 
+                         data.frame(
+                           logDOTestimate = log(3000),
+                           bid = "competitive"),
+                       interval = "predict", 
+                       level = 0.9)
+exp(loginterval)
+```
+
+
+
+Vi ser at under M2 vil vi forvente at 90% af priserne ligger mellem det øvre
+og nedre bånd foroven.

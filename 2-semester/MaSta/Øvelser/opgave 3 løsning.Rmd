@@ -1,0 +1,399 @@
+---
+title: "Opgave 3 løsning"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+Se først på siden [test](https://math.au.dk/~ute/matstat/RNotes/for-l%C3%B8kker-og-tuborg-parenteserne-i-r.html)
+
+## Øvelse 4.1
+
+```{r}
+for (i in 1:3)
+  cat("Hurrah!")
+```
+
+```{r}
+for (ugedag in c("Mandag", "Tirsdag", "Onsdag", "Torsdag", "Fredag")) 
+  print(ugedag)
+```
+
+Modifier for eksempel 
+
+```{r}
+for (i in 1:3)
+  cat(i, "? ")
+```
+
+
+## Øvelse 4.2
+
+
+```{r}
+kvadratsum <- 0
+
+for(x in 3:5) {
+  xkvadrat <- x^3
+  kvadratsum <- kvadratsum + xkvadrat
+  cat("x =", x, "x^3 =", xkvadrat, "og kvadratsum =", kvadratsum,"\n")
+}
+```
+
+
+test om løkken gør det korrekte.
+
+```{r}
+sum((3:5)^3)
+```
+Vi får det samme resultat. 
+
+
+## 3.6
+
+In the flight delays case study in Section 1.1, the data contains flight delays for two airlines, American and United
+
+#### a) 
+Compute the proportion of times that each carrier’s flights was delayed more than 20 min.
+Conduct a two-sided test to see if the difference in these proportions 
+is statistically significant (see the R Note in Example 3.6).
+
+```{r}
+data <- read.csv("MatStat-R/data/FlightDelays.csv")
+```
+
+```{r}
+library(dplyr)
+data %>% glimpse()
+```
+
+```{r}
+data_a_table <- data %>%
+  group_by(Carrier) %>%
+  summarize(Mean = mean(Delay>20)) %>% 
+  mutate(diff = diff(Mean))
+  
+```
+
+```{r}
+MEAN <- tapply(data$Delay > 20, data$Carrier, mean)
+MEAN
+
+ObsMeanDiff <-   MEAN[2] - MEAN[1]
+names(ObsMeanDiff) <- NULL
+ObsMeanDiff
+```
+
+```{r}
+DAA <- subset(data, select = Delay, subset = Carrier == "AA", drop = TRUE)
+DUA <- subset(data, select = Delay, subset = Carrier == "UA", drop = TRUE)
+DA <- c(DAA, DUA)
+m <- length(DAA)
+n <- length(DUA)
+N <- 10^4 - 1
+Diff <- numeric(N)
+for (i in 1:N) {
+    index <- sample(m + n, m, replace = FALSE)
+    Diff[i] <- mean(DA[index]) - mean(DA[-index])
+}
+pvalue <- ((sum(Diff <= ObsMeanDiff + 1)/N + 1) * 2)
+pvalue
+```
+
+P værdien er højere end 0.05 så vi kan ikke forkaste h0.
+Der er ingen bevis for at delay time for AA ikke er den samme som
+for UA.
+
+### b)
+
+Compute the variance in the flight delay lengths for each carrier.
+Conduct a test to see if the variance for United Airlines is greater 
+than that of American Airlines.
+
+Vores hypotese er
+
+$$
+H0: \theta^2_{AA}-\theta_{UA}^2=0
+$$
+
+$$
+H_A:\theta_{AA}^2-\theta_{UA}^2 \neq0
+$$
+
+
+```{r}
+data %>% 
+group_by(Carrier) %>%
+  summarize(Variance = var(Delay))
+```
+
+```{r}
+VAR <- tapply(data$Delay, data$Carrier, var)
+VAR
+```
+
+```{r}
+ObsVarDiff <- VAR[1] - VAR[2]
+names(ObsVarDiff) <- NULL
+ObsVarDiff
+```
+
+```{r}
+DAA <- subset(data, select = Delay, subset = Carrier == "AA", drop = TRUE)
+DUA <- subset(data, select = Delay, subset = Carrier == "UA", drop = TRUE)
+DA <- c(DAA, DUA)
+m <- length(DAA)
+n <- length(DUA)
+N <- 10^4 - 1
+Diff <- numeric(N)
+for (i in 1:N) {
+    index <- sample(m + n, m, replace = FALSE)
+    Diff[i] <- mean(DA[index]) - mean(DA[-index])
+}
+pvalue <- ((sum(Diff <= ObsVarDiff) + 1)/N + 1) * 2
+pvalue
+```
+
+> skal tage forhold med varians men differenc med mean.
+Der er ikke en god forklaring på det. 
+
+P værdien er større end 0.05 så vi kan ikke forkaste H0.
+Der er altså ikke noget der tyder på at variansn for UA
+er større end AA.
+
+## 3.8 
+
+#### a)
+
+Find the trimmed mean of the delay times for United Airlines and
+American Airlines.
+
+```{r}
+ANS <- with(data = data, tapply(Delay, Carrier, mean, trim = 0.25))
+ANS
+```
+
+```{r}
+
+ANS <- with(data = data, tapply(Delay, Carrier, mean, trim = 0.25))
+ANS
+obsMeanDiffCarrier <- ANS[2] - ANS[1]
+obsMeanDiffCarrier
+```
+
+```{r}
+with(data = data, table(Carrier))
+```
+
+#### b)
+
+Conduct a two-sided test to see if the difference in trimmed means is statistically significant
+
+
+```{r}
+N <- 10^4 - 1
+MeanDiffCarrier <- numeric(N)
+for (i in 1:N) {
+    # sample of size 1123 # of UA flights from the 4029 total
+    index <- sample(4029, size = 1123, replace = FALSE)
+    MeanDiffCarrier[i] <- mean(data$Delay[index], trim = 0.25) - mean(data$Delay[-index], 
+        trim = 0.25)
+}
+hist(MeanDiffCarrier, col = "blue", breaks = "Scott", xlab = "", xlim = c(-1, 
+    2), main = "Mean Delay Difference Between Carriers")
+abline(v = obsMeanDiffCarrier, col = "red")
+```
+
+```{r}
+pvalue <- ((min(sum(MeanDiffCarrier >= obsMeanDiffCarrier), sum(MeanDiffCarrier <= 
+    obsMeanDiffCarrier)) + 1)/(N + 1)) * 2
+pvalue
+```
+
+
+## 3.14
+
+#### a) Inspect the data set, then explain why this is an example of matched pairs data.
+
+```{r}
+data <- read.csv("MatStat-R/data/IceCream.csv")
+```
+
+```{r}
+data %>% glimpse()
+```
+
+```{r}
+data %>% 
+  head(10)
+```
+
+Et matched eksperiment er hvor vi har et par med samme karakteristike, men
+hvor der er en enelt karaktistika er anderledes.
+
+I dette tilfælde er det smagen på om deter vanille eller chokolade man vil
+se på.
+
+> de er ikke independent. 
+
+#### b) Compute summary statistics of the number of calories for the two flavors
+
+```{r}
+means <- data %>% 
+  summarise(mean_val_cal = mean(VanillaCalories),
+            mean_cho_cal = mean(ChocolateCalories)) %>% 
+  mutate(diff = mean_cho_cal - mean_val_cal)
+```
+
+#### c) Conduct a permutation test to determine whether or not chocolate ice cream has, 
+on average, more calories than vanilla ice cream
+
+```{r}
+val_cal <- subset(data, select = VanillaCalories, drop = TRUE)
+cho_cal <- subset(data, select = ChocolateCalories, drop = TRUE) 
+diff <- val_cal - cho_cal
+observed <- mean(diff)
+DA <- c(val_cal, cho_cal)
+m <- length(val_cal)
+n <- length(cho_cal)
+N <- 10^4 - 1
+result <- numeric(N)
+for (i in 1:N) {
+    sign <- sample(nrow(data)*2, 39, replace = TRUE)
+    result[i] <- mean(val_cal[index]) - mean(cho_cal[index])
+}
+pvalue <- (sum(result <= observed) + 1)/(N + 1)
+pvalue
+```
+
+
+> enten tag den positive værdi eller brug `abs()`.
+
+
+```{r}
+t.test(data$VanillaCalories, data$ChocolateCalories)
+```
+
+Vi kan ikke forkaste H0 så det tyder ikke på der er flere kalorier i vanille end
+chokolade. 
+
+## 3.16 a)
+
+In the sampling version of permutation testing, the one-sided P-value is P̂ = (X + 1)∕(N + 1), where X is the number of permutation test statis- tics that are as large or larger than the observed test statistic. Suppose the true P-value (for the exhaustive test, conditional on the observed data) is p.
+
+What is the variance of P̂?
+
+> se her [denne side](https://online.stat.psu.edu/stat415/lesson/12/12.1)
+
+
+
+
+## 4.7 The data set FlightDelays contains the population of all flight departures by United Airlines and American Airlines out of LGA during May and June of 2009 (Case Study in Section 1.1.)
+
+#### a) Create a histogram of Delay and describe the distribution. Compute
+the mean and standard deviation.
+
+```{r}
+data <- read.csv("MatStat-R/data/FlightDelays.csv")
+library(dplyr)
+glimpse(data)
+```
+
+
+```{r}
+hist(data$Delay)
+```
+
+```{r}
+library(glue)
+
+glue(
+  "Vi har med fly data.
+     Der er en gennemsnitlig forsinkelse på
+     {round(mean(data$Delay), 2)} mens standard afvigelsen er på
+     {round(sd(data$Delay), 2)}."
+  )
+```
+
+
+#### b)
+Simulate the sampling distribution of x, the sample mean of the
+length of the flight delays (Delay), for samples of size 25. Create a histogram and describe the simulated sampling distribution of x. Estimate the mean and standard error.
+
+```{r}
+n = length(data$ID)
+m = 25
+N = 10^4
+result = numeric(N)
+for (i in 1:N) {
+  index <- sample(n, m, replace = FALSE)
+  result[i] <- mean(data$Delay[index])
+}
+
+hist(result)
+mean(result)
+sd(result)
+```
+
+
+#### c)
+Compare your estimate of the standard error with the theoretical standard error (Corollary A.4.1)
+
+```{r}
+mean(data$Delay)
+sd(data$Delay) / sqrt(25)
+```
+
+```{r}
+m = 250
+result = numeric(N)
+
+for (i in 1:N) {
+  index = sample(n, m, replace = FALSE)
+  result[i] = mean(data$Delay[index])
+}
+
+hist(result)
+mean(result)
+sd(result)
+```
+
+
+#### d)
+Repeat the above using samples of size 250 and compare with the 
+n = 25 scenario.
+
+
+## 3.A Meyer
+
+![](3A.png)
+#### a) 
+
+Sandsynligheden for meyer er
+
+$$
+\frac{2}{36} = 0.0556
+$$
+
+For at få et par 6 har samme sandsynlighed. 
+
+
+
+## 3.B Summen af uniform fordelte stokastiske variable
+
+
+
+```{r}
+hist(result, xlab = "xbar1-xbar2",
+      main = "Permutation distribution for Verizon times")
+abline(v = observed, ,lty = 2, col = "blue")
+(sum(result <= observed) + 1)/(N + 1)
+```
+
+
+> variansen ændre sig i 3b, snad for du ser -2
+
+### d) 
+

@@ -1,0 +1,308 @@
+---
+title: "Masta-Eksamen-F2020-egenbesvarelse"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+```
+
+```{r data}
+honning <- read.csv("honning.csv") 
+musling <- read.csv("Musling.csv")
+```
+
+```{r}
+honning %>% 
+  as_tibble() %>% 
+  head()
+```
+
+> Lave passende permutationstest for H0, som er at HMF ikke ændrer sig.
+
+H0: Der er ingen forskel i HMF koncentratoinen efter 2 måneder. 
+H1: HMF indholdet er højere efter 2 måender.
+
+Det drejer sig ikke om uafhængige stikprøver, men om en forbundet stikprøve og
+derfor bruger vi en **matched paris permutationstest**. 
+
+```{r}
+set.seed(1234)
+
+col_1_test <- honning$HMFstart
+col_2_test <- honning$HMFend
+
+matched_paris_permutationstest <- function(data,col_1, col_2) {
+  
+  Diff <- col_2 - col_1
+  observed <- mean(Diff)
+  N = 10^5-1
+  result <- numeric(N)
+  
+  for(i in 1:N){
+    Sign <- sample(c(-1, 1), nrow(data), replace = TRUE)
+    Diff2 <- Sign * Diff
+    result[i] <- mean(Diff2)
+  }
+  
+  pval <- (sum(result >= observed) + 1) / (N + 1)
+  pval
+}
+
+Diff <- honning$HMFend - honning$HMFstart
+observed <- mean(Diff)
+N = 10^5-1
+result <- numeric(N)
+
+for(i in 1:N){
+  Sign <- sample(c(-1, 1), 14, replace = TRUE)
+  Diff2 <- Sign * Diff
+  result[i] <- mean(Diff2)
+}
+
+pval <- (sum(result >= observed) + 1) / (N + 1)
+
+glue::glue("From manuel {pval}")
+
+pval_function <- matched_paris_permutationstest(honning, col_1_test, col_2_test)
+glue::glue("From function {pval_function}")
+```
+
+P værdien er under 0,05 ( 0.00012 < 0.05). Derfor forkaster vi H0. Det betyder 
+altså at der er noget som tyder på at koncentrationen af hmf er højerer efter 2 
+måender.
+
+## opgave 2
+
+### a)
+
+> OPskriv M0, hvor proteinindholdet er normaltfordelt og hver gruppe har sin egen
+middelværdi og varians.
+
+Lad Yi være den ite måling, i =1,..,25, Lad Tidi være den ite tid og lad Ti være den it værdi af en faktor dannet ud fra tid.
+
+$$
+M_0:=Y_i\sim N(\mu_T,\sigma_T^2)
+$$
+
+
+> Undersøg om variansen er ens. 
+
+```{r}
+y <- musling$Protein
+tid <- musling$Tid
+t <- as.factor(tid)
+
+bartlett.test(y ~ t)
+```
+
+Vi ser at p værdien ud fra en $\chi^2(4)$ fordeling er 0.71. Derfor forkaster
+vi ikke H0. Af den grund tyder det på at de har samme varians. 
+
+
+### b)
+
+> Lav grafisk undersøgelse
+
+Boxplot mellem de 5 grupper:
+
+```{r}
+boxplot(y ~ t)
+```
+
+Gruppe 1 ser ud til at ligge under de andre. Ellers ser de andre meget ens ud.
+
+I dett tilfælde er der kun 5 obs i hver gruppe så vi kan se på data direkte.
+
+```{r}
+plot(tid, y)
+```
+
+Det er svært at sige om de har en stigende tendens eller om de har
+samme middelværdi.
+
+Til sidst laver jeg et normalt qqplot. 
+
+```{r}
+r <- lm(y ~ t)$residuals
+qqnorm(r)
+qqline(r)
+```
+
+Fraktilsammenligningen giver ikke anledning til tvivl om normalitetsantagelsen.
+
+### c)
+
+> OPskriv M1, med egen middelværdi mens ens varians.
+
+Modellen opskrives således:
+
+$$
+M_1: Y_i \sim N(\mu_T, \sigma^2)
+$$
+
+
+> Konfidensinterval for gruppe 1 og 5.
+
+```{r}
+confint(lm(y ~ t))
+```
+
+Forskellen mellem den femte og første $\mu_{65} - \mu_0$ aflæses 
+konfidensintervallet til [19.9, 107.1].
+
+
+### d)
+
+> OPskriv M2 hvor det er ens middelværdi.
+
+$$
+M_2:Y_i\sim N(\alpha+\beta\cdot tid_i,\sigma^2)
+$$
+
+> Lav F test for reduktion fra model M1 til M2
+
+```{r}
+anova(
+  lm(y ~ tid),
+  lm(y ~ t)
+)
+```
+
+Vi ser at F=1.15 som skal vurderes i en F(3, 20) fordeling. P værdien er 0.36.
+Vi forkaster ikke H0 således er der en lineær sammenhæng.
+
+### e) 
+
+> Lav konfidens bånd.
+
+I model M2 er middelværdi alpha + beta * tid og og forskellen mellem to 
+tidspunkter er 65 derfor får vi beta * 65. Vi skal derfor lave et konfidens
+or 65 beta, hvis fås som 65 ganget med konfidensintervalelt for beta. 
+
+```{r}
+test1 <- confint(lm(y~ tid))
+test1 %>% 
+  as_tibble() %>% 
+  slice(2) %>% 
+  mutate_if(is.numeric, ~ . * 65)
+```
+
+Vi ser det ønskede konfidensinterval. Det er meget bredt interval, men nul 
+ligger indenfor det. 
+
+I forhold til c er værdien blevet lavere og en andelse kortere. 
+
+## 3
+
+### a)
+
+> OPskriv model.
+
+Data kan opfattes som en **multinon(200(pi...))** fordeling.
+
+Model M0 er modellen (pi_i) kan varier frit:
+
+$$
+\pi_j \geq 0, \pi_1 + \pi_2+\pi_3 + \pi_4=1
+$$
+
+### b) 
+
+> Fast rate hypotesen. OPstil likelihoodfunktionen og find et udtryk for theta.
+
+Likelihoodfunktionen r
+
+$$
+L(\theta;c_1,c_2,c_3,c_4) = 
+\begin{bmatrix}
+200 \\ x
+\end{bmatrix}
+\theta^{x_!}((1-\theta)\theta)^{x_2}((1-\theta)^2\theta)^{x_3}(1-\theta)^{3 x_4}
+$$
+$$
+L(\theta;c_1,c_2,c_3,c_4) = 
+\begin{bmatrix}
+200 \\ x
+\end{bmatrix}
+\theta^{x_1+x_2+x_3}(1-\theta)^{x_2+2x_3+3x_4}
+$$
+Det ligner en binomialfordeling og fra side 152 i MSRR får vi
+
+$$
+\hat \theta = \frac{x_1+x_2+x_3}{x_1+2x_2+3x_3+3x_4}
+$$
+
+```{r}
+x <-c(29, 21, 21, 129)
+thetahat <- (x[1]+x[2]+x[3])/(x[1]+2*x[2]+3*x[3]+3*x[4])
+thetahat
+```
+
+### c) 
+
+> Lav test
+
+
+Vi har 200 kvinder.
+
+Vi tester
+
+$$
+\pi_1=\theta, \pi_2=(1-\theta)\theta,\pi_3=(1-\theta)^2\theta,\pi_3=(1-\theta)^3
+$$
+
+UNder model M0.
+
+```{r}
+ex = 200 * c(
+  thetahat, (1 - thetahat) * thetahat, (1 - thetahat)^2 * thetahat,
+  (1 - thetahat)^3
+)
+ex
+```
+
+Her ser vi de forventede antal. 
+
+Alle de forvnetede er større end 5. Derfor bruger vi en xhi approximation til 
+fordeling af G størrelsen 
+
+$$
+G=2\cdot \sum_j x_j \cdot log(x_j/e_j)
+$$
+
+```{r}
+G = 2 * sum(x * log(x / ex))
+c(G,1 - pchisq(G, 4 - 1 - 1))
+```
+
+
+Antal af frihedsgrader 4-1-1=2 og store værdier for G er kritiske. Da p værdien er over 0.05 (0.81)
+
+Derfor forkaster vi ikke H0. 
+
+## 4
+
+### a)
+
+> angiv variansen.
+
+Hældning af qqline i qqplot af en normalfordelt stikprøve er cirka ens med sd
+af den tilbundsliggende normalfordeling.  Fra tegningen aflæses hælding til
+0.7.
+
+Derfor svare svar C bedst $\sigma^2 = 0.5$
+
+### b)
+
+```{r}
+type1fejl <-sum(T0<=crit)/Nsim
+type2fejl <-sum(T1>crit)/Nsim
+```
+
+
+
+
+
+
