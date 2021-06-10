@@ -1,6 +1,8 @@
 ---
 title: "Untitled"
-output: pdf_document
+output:
+  html_document:
+    df_print: paged
 ---
 
 ```{r setup, include=FALSE}
@@ -8,8 +10,8 @@ knitr::opts_chunk$set(echo = TRUE)
 ```
 
 ## MSRR 6.44
+![](../Øvelser/billeder/6.44.png)
 
-![](6.44.png)
 
 Vi har ud fra den er en normal fordel at middelværdien og variansen er:
 

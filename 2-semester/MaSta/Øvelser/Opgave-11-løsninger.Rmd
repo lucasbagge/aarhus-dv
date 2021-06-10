@@ -13,7 +13,7 @@ library(tidyverse)
 
 ### 6.1
 
-![](6.1.png)
+![](../Øvelser/billeder/6.1.png)
 
 ### 5.1
 
@@ -30,7 +30,7 @@ søjle indeholder længden og den tredje søjle bredden af sprækkerne,
 begge målt i meter.
 
 ```{r}
-spraekker <- read.csv("MatStat-R/data/JLJfiler/Spraekker.csv")
+spraekker <- read.csv("../MatStat-R/data/JLJfiler/Spraekker.csv")
 head(spraekker)
 ```
 
@@ -185,10 +185,10 @@ Ovenstående forvirrende.
 
 ### 4.3
 
-![](ms4.3-1.png)
+![](../Øvelser/billeder/ms4.3-1.png)
 
 ```{r}
-darcy <- read.csv("MatStat-R/data/JLJfiler/Darcy.csv")
+darcy <- read.csv("../MatStat-R/data/JLJfiler/Darcy.csv")
 logTryk <- log(darcy$Trykforskel)
 logVand <- log(darcy$Vandfoering)
 ```
@@ -211,7 +211,12 @@ lines(tapply(logTryk, fakTryk, mean), tapply(logVand, fakTryk, mean), col = 2,
       type = 'b', pch = 16)
 ```
 
-![](ms4.3-2.png)
+```{r}
+tapply(logTryk, fakTryk, mean)
+```
+
+
+![](../Øvelser/billeder/ms4.3-2.png)
 
 #### b)
 
@@ -263,14 +268,14 @@ finder konfidents interval for spredning.
 
 ### 3.3
 
-![](ms4.4-1.png)
+![](../Øvelser/billeder/ms4.4-1.png)
 
 ### a)
 
 lav figur
 
 ```{r}
-rhodes <- read.csv("MatStat-R/data/JLJfiler/RhodesiaHighveld.csv")
+rhodes <- read.csv("../MatStat-R/data/JLJfiler/RhodesiaHighveld.csv")
 reghigh <- rhodes$Nedboer
 erosionhigh <- rhodes$Erosion
 ```
@@ -344,7 +349,7 @@ predict(lmUD2, data.frame(reghigh = 500), interval = "confidence")
 
 samller konfidence.
 
-![](ms4.4-2.png)
+![](../Øvelser/billeder/ms4.4-2.png)
 
 ### 4.7
 
@@ -385,4 +390,4 @@ pværdi <- 1 - pchisq(Ba, k - 1)
 
 ### 6.2
 
-![](ms6.2.png)
+![](../Øvelser/billeder/ms6.2.png)

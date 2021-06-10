@@ -1,7 +1,9 @@
 ---
 title: "Aflevering 7"
-subtitle: "Lucas Bagge"
-output: pdf_document
+subtitle: Lucas Bagge
+output:
+  html_document:
+    df_print: paged
 ---
 
 ```{r setup, include=FALSE}
@@ -12,7 +14,7 @@ knitr::opts_chunk$set(echo = TRUE)
 
 ## 8.42
 
-![](8.42.png)
+![](../Øvelser/billeder/8.42.png)
 
 derive the most powerful test using alpha = 0.05
 

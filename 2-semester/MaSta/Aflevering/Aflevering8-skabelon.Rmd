@@ -2,8 +2,8 @@
 title: "Aflevering 8"
 subtitle: Lucas Bagge
 output:
-  pdf_document: default
   html_document: default
+  pdf_document: default
 ---
 
 ```{r setup, include=FALSE}
@@ -22,7 +22,7 @@ Data for 32 hanløver fra Serengeti og Ngorongoro nationalparkerne ligger i file
 Indlæs data:
 
 ```{r}
-data <- read.csv("MatStat-R/data/JLJfiler/Loeve.csv") %>% 
+data <- read.csv("../MatStat-R/data/JLJfiler/Loeve.csv") %>% 
   janitor::clean_names() 
 head(data)
 ```
@@ -108,7 +108,7 @@ Nu skal vi altså forudsige hvad alderen på den nye løve er når den har en so
 
 
 ```{r}
-source("MatStat-R/source/Rfunktioner.R")
+source("../MatStat-R/source/Rfunktioner.R")
 inversReg(model, new_data$sortfraktion)
 ```
 

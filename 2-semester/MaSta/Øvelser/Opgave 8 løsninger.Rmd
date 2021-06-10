@@ -1,6 +1,8 @@
 ---
 title: "Untitled"
-output: pdf_document
+output:
+  html_document:
+    df_print: paged
 ---
 
 ```{r setup, include=FALSE}
@@ -9,27 +11,27 @@ knitr::opts_chunk$set(echo = TRUE)
 
 
 ## 8.25
-![](8.25.1.png)
+![](../Øvelser/billeder/8.25.1.png)
 
-![](8.25.2.png)
+![](../Øvelser/billeder/8.25.2.png)
 
 
 
 ## 8.28
 
-![](8.28.png)
+![](../Øvelser/billeder/8.28.png)
 
 
 ## 8.12
 
-![](8.12.png)
+![](../Øvelser/billeder/8.12.png)
 
 bruger formel ved eksempel 7.22.
 
 
 
 ```{r}
-data <- read.csv("MatStat-R/data/Salaries.csv")
+data <- read.csv("../MatStat-R/data/Salaries.csv")
 
 year_1985 <- subset(data$Salary, data$Year == "1985")
 year_2015 <- subset(data$Salary, data$Year == "2015")
@@ -75,7 +77,7 @@ med bootstrap  er det ikke nødvendig at data er normalt fordelt. Den er lidt h�
 
 ## 8.30
 
-![](8.30.png)
+![](../Øvelser/billeder/8.30.png)
 
 ### a)
 
@@ -116,7 +118,7 @@ Sand for type II.
 
 ## 8.33
 
-![](8.33rigtig.png)
+![](../Øvelser/billeder/8.33rigtig.png)
 ### a)
 
 f_min er test statistik
@@ -163,7 +165,7 @@ $$
 
 ## 8.48
 
-![](8.48.png)
+![](../Øvelser/billeder/8.48.png)
 
 
 
@@ -206,7 +208,7 @@ $$
 Vi afviser H0 T < c. Alternativt afviser vi H0 hivs $X_{max}<k$. (da (1/5)^n blot er en konstant)
 pdf for Xmax kender vi fra korollar 4.2.2. 
 
-![](collary 4.2.2.png)
+![](../Øvelser/billeder/collary 4.2.2.png)
 
 
 Vi antager H0 er sand
@@ -238,7 +240,7 @@ Husk at hvis den alternative er mindre end så skal vi bruge maximum likelihood 
 
 ### a)
 
-![](8.A.a.png)
+![](../Øvelser/billeder/8.A.a.png)
 Lad:
 $$
 P(W \le q) = P(T\le q) \text{ Hvor vi T=} F_T(t_{obs})\\
@@ -252,7 +254,7 @@ Den inverse af en funktion går de ud med hinanden.
 
 ### b)
 
-![](8.A.b.png)
+![](../Øvelser/billeder/8.A.b.png)
 
 ```{r}
 nsim <- 10000
@@ -271,7 +273,7 @@ Tag vores test, og da H0 er sand så ses denne hist.
 
 ### c)
 
-![](8.Ac.png)
+![](../Øvelser/billeder/8.Ac.png)
 
 mu = 4
 
@@ -309,7 +311,7 @@ H1 ikke sand.
 
 ### d)
 
-![](8.Ad.png)
+![](../Øvelser/billeder/8.Ad.png)
 
 ```{r}
 nsim <- 10000
@@ -328,14 +330,14 @@ som betyder vi oftere vil acceptere en falsk H0.
 
 ## 8.4
 
-![](8.4.png)
+![](../Øvelser/billeder/8.4.png)
 
-![](8.4.opg.png)
+![](../Øvelser/billeder/8.4.opg.png)
 
 ### a)
 
 ```{r}
-data <- read.csv("MatStat-R/data/Nasdaq.csv")
+data <- read.csv("../MatStat-R/data/Nasdaq.csv")
 head(data)
 
 hist(data$Open)
@@ -377,4 +379,4 @@ For t testen kræver det at vores data ernormal fordelt.
 
 ## 8.34
 
-![](8.34.png)
+![](../Øvelser/billeder/8.34.png)

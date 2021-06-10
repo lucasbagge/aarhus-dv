@@ -22,7 +22,7 @@ b) Prove or give a counterexample: mx + my is the median of w1,w2,...,wn.
 In the black spruce case study in Section 1.10, seedlings were planted in plots that were either subject to competition (from other plants) or not. Use the data set Spruce to conduct a test to see if the mean difference in how much the seedlings grew (in height) over the course of the study under these two treatments is statistically significant.
 
 ```{r}
-data <- read.csv("MatStat-R/data/Spruce.csv")
+data <- read.csv("../MatStat-R/data/Spruce.csv")
 ```
 
 ```{r}
@@ -100,19 +100,19 @@ varx <- 800*0.286 *(1-0.286)
 
 ### a) 
 
-![svar a](4.A.a.png)
+![svar a](../Øvelser/billeder/4.A.a.png)
 
 ### b) noget med varians
 
-![b svar](4.A.b.png)
+![b svar](../Øvelser/billeder/4.A.b.png)
 
 ### c)
 
-![svar c](4.Ac.png)
+![svar c](../Øvelser/billeder/4.Ac.png)
 
 ### d) 
 
-![](4.Ad.png)
+![](../Øvelser/billeder/4.Ad.png)
 
 
 
@@ -127,7 +127,7 @@ Suppose we have continuous random variables X1, X2, ... , Xn that are i.i.d. wit
 
 Uniform fordeling?
 
-![4.26](4.26.png)
+![4.26](../Øvelser/billeder/4.26.png)
 
 
 ## MSRR 4.24
@@ -201,7 +201,7 @@ i.i.d. −𝜆x LetX1,X2,...,Xn ∼ Exp(𝜆)withpdff(x)=𝜆e ,𝜆>0,x>0.
 
 ### a) Find the pdf fmin(x) for the sample minimum Xmin. Recognize this as the pdf of a known distribution.
 
-![4.30 TA svar](4.30.png)
+![4.30 TA svar](../Øvelser/billeder/4.30.png)
 
 Vores pdf er
 
@@ -377,12 +377,6 @@ Hvor:
 $$
 E[] = 19 = var[]
 $$
-
-
-
-
-
-
 
 ### b) Use R to simulate the sampling distribution of W and plot your results. Check that the simulated mean and standard error are close to the theoretical mean and standard error.
 

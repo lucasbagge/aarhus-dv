@@ -1,0 +1,16 @@
+---
+title: "Eksamens opgave"
+subtitle: "Studienr.: 202004972"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## R Markdown
+
+```{r}
+
+```
+

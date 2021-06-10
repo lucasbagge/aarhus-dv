@@ -29,7 +29,7 @@ transformerede antal transistorer. Lav en
 figur, hvor log2Antal tegnes op mod Aar (Aar langs førsteaksen og log2Antal langs andenaksen). Er det rimeligt at sige, at der er en lineær sammenhæng mellem de to variable?
 
 ```{r}
-moore <- read.csv("MatStat-R/data/JLJfiler/Moore.csv")
+moore <- read.csv("../MatStat-R/data/JLJfiler/Moore.csv")
 ```
 
 ```{r}
@@ -146,7 +146,7 @@ summary. Indtegn den fundne linje i figuren med data.
 Prøv i ord at beskrive sammenhængen i data, ud fra hvad du ser i figuren.
 
 ```{r}
-testtid <- read.csv("MatStat-R/data/JLJfiler/Testtid.csv")
+testtid <- read.csv("../MatStat-R/data/JLJfiler/Testtid.csv")
 ```
 
 ```{r}
@@ -263,7 +263,7 @@ Data i filen LambertBeer.csv giver den målte værdi af lysintensiteten I for 16
 koncentrationen. Filen har to søjler, hvor første søjle er koncentration, og anden søjle er lysintensiteten
 
 ```{r}
-lambertbeer <- read.table("MatStat-R/data/JLJfiler/LambertBeer.txt")
+lambertbeer <- read.table("../MatStat-R/data/JLJfiler/LambertBeer.txt")
 ```
 
 
@@ -311,7 +311,7 @@ logLys \sim 9.25 - 0.118 * konc
 $$
 
 ```{r}
-source("MatStat-R/source/Rfunktioner.R")
+source("../MatStat-R/source/Rfunktioner.R")
 inversReg(lm(logLys ~ konc), log(2654))
 inversReg(lm(logLys ~ konc), log(4512))
 inversReg(lm(logLys ~ konc), log(7688))
@@ -325,20 +325,20 @@ Lys = 2654, Lys = 4512 og Lys = 7688. Lav en tabel med resultaterne.
 
 ## webbog opgave 3.6
 
-![](J3.6.png)
+![](../Øvelser/billeder/J3.6.png)
 
 ## webbog opgave 2.3
 
 ```{r}
-goegen <- read.csv("MatStat-R/data/JLJfiler/Goegen.csv")
+goegen <- read.csv("../MatStat-R/data/JLJfiler/Goegen.csv")
 
 goegen %>% head()
 ```
 
 
-![](J2.31.png)
+![](../Øvelser/billeder/J2.31.png)
 
-![](J2.32.png)
+![](../Øvelser/billeder/J2.32.png)
 
 ### a)
 
@@ -374,9 +374,6 @@ boxplot(form ~ art, las = 2)
 den for eng ser merre normal fordelt ud end vip. Den røde ser ud i ender er der en del afvigelser. 
 
 I boxplot når vi samme konklusion.
-
-
-
 
 ### b)
 
@@ -437,7 +434,7 @@ forskel ligger mellem konfident
 ## webbog opgave 3.7
 
 
-![](J3.7.png)
+![](../Øvelser/billeder/J3.7.png)
 
 
 

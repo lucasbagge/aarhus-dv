@@ -2,9 +2,9 @@
 title: "Aflevering 9"
 subtitle: Lucas Bagge
 output:
-  pdf_document: default
   html_document:
     df_print: paged
+  pdf_document: default
 ---
 
 ```{r setup, include=FALSE}
@@ -15,7 +15,7 @@ I artiklen Effects of user age on smartphone and tablet use, measured with an ey
 
 ```{r}
 library(tidyverse)
-data <- read.csv("MatStat-R/data/JLJfiler/Smartphone.csv")
+data <- read.csv("../MatStat-R/data/JLJfiler/Smartphone.csv")
 head(data)
 ```
 
@@ -23,7 +23,7 @@ head(data)
 #### a)  Lav en figur med 3 delplots med qqplots af SPD for de tre aldersgrupper for eksperiment 1.Kommenter på figuren.Opskriv den statistiske model, hvor hver gruppe bestemt af aldersgruppe og eksperimenthar sin egen middelværdi og sin egen varians afSPD, og data er normalfordelt. Lav et testfor hypotesen, at der er samme varians i de 6 grupper.
 
 ```{r}
-source("MatStat-R/source/Rfunktioner.R")
+source("../MatStat-R/source/Rfunktioner.R")
 data_eksperiment_1 <- data %>% 
   filter(Eksperiment == "Ex1")
 eksperiment <- as.factor(data_eksperiment_1$Eksperiment)

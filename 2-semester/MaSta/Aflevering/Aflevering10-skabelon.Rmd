@@ -2,8 +2,8 @@
 title: "Aflevering 10"
 subtitle: Lucas Bagge
 output:
-  pdf_document: default
   html_document: default
+  pdf_document: default
 ---
 
 ```{r setup, include=FALSE}
@@ -15,7 +15,7 @@ I denne opgave skal I studere sammenhængen mellem amerikanske firmaers markedsv
 I skal beskrive data med en model, hvor der for hver sektor er en lineær sammenhæng mellem markedsværdien og omsætningen. Data findes i filen Firmaer.csv der har fire søjler: observationsnummer, sektor angiver sektoren, vaerdi angiver firmaets markedsværdi, og omsaet firmaets omsætning. Husk i spørgsmålene nedenfor at opskrive den statistiske model.
 
 ```{r}
-data <- read.csv("MatStat-R/data/AmFirma.csv")
+data <- read.csv("../MatStat-R/data/AmFirma.csv")
 head(data)
 library(tidyverse)
 distinct(data, sektor)

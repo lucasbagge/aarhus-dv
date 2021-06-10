@@ -9,11 +9,11 @@ knitr::opts_chunk$set(echo = TRUE)
 
 ## OMS 6.A
 
-![](6.A.png)
+![](../Øvelser/billeder/6.A.png)
 
 ### d) Vis
 
-![](6A ud 3.png)
+![](../Øvelser/billeder/6A ud 3.png)
 
 Vi får det vi gerne vil have. 
 
@@ -45,7 +45,7 @@ vi kan substituere $t=\frac{x-\mu}{\sqrt(2\sigma)}$
 
 Da bliver $dt/dx=\frac{1}{\sqrt(2\sigma)}$ som er det same som $dx=\sqrt(2\sigma dt)$ og t evalueret i mu giver blot 0. Regner vi da vider kan vi omskrive oventående:
 
-![](6Aud.png)
+![](../Øvelser/billeder/6Aud.png)
 
 Vi må gerne lave transformationen fra normal til lognormal på denne måde med medianen, da en positiv monoton transofrmation ikke ændrer medianen, da denne kun intersserer sig for rækkefølgen på observationerne - hvorimod fx middelværiden vil se forksel om vi tager E[X^2] eller E[X]^2.
 
@@ -89,7 +89,7 @@ Jo større middelværdi desto større differens mellem teoretisk og estimerede v
 - Når vi kigger på uligheder og grænser så skal vi bruge markov og chebyshevs uligheder.
 - Begge fortæller os at random variabler oftes ikke får usædvanlige værdier.
 
-![](6.Ba.png)
+![](../Øvelser/billeder/6.Ba.png)
 
 Vi har givet en binomial variable. 
 
@@ -114,7 +114,7 @@ $$
  
 
 
-![](6.Bb.png)
+![](../Øvelser/billeder/6.Bb.png)
 
 - se formlen og fremgangsmåde på siden: https://www.probabilitycourse.com/chapter6/6_2_2_markov_chebyshev_inequalities.php
 
@@ -133,7 +133,7 @@ Hvornår er det relevant om hvilkene r bedre end den anden. Ikke til at sige.
 
 ## 6.36, unbiased estimator, efficiency
 
-![](6.36.png)
+![](../Øvelser/billeder/6.36.png)
 ### a) 
 
 Brug side 165 og corollary 4.2.2 til at bregne $f_{min}$.
@@ -186,7 +186,7 @@ $$
 var(\hat \beta_2)=var((\frac{n+1}{n})X_{max})
 $$
 
-![](6.36 ud.png)
+![](../Øvelser/billeder/6.36 ud.png)
  Deler de med hinanden
  
 $$
@@ -197,7 +197,7 @@ beta 1 er højest og vi skal vælge beta2. Da de har ens middelværdi vil den me
 
 ## 6.43, consistent
 
-![](6.43.png)
+![](../Øvelser/billeder/6.43.png)
 
 Når man snakker om en estimator er konsistent, så betyder det at desto større
 ens data bliver, desto bedre skal ens resultater blive. Desuden burde en MSE
@@ -208,33 +208,33 @@ $$
 E[X_{min}] = \frac{\beta}{n+1}
 $$
 
-![](6.43 ud.png)
+![](../Øvelser/billeder/6.43 ud.png)
  Den er konsisten da vores varians eksplodere og dermed vil den gå mod nul. 
 
  ## 7.42 
 
-![](7.42.png)
+![](../Øvelser/billeder/7.42.png)
 
 
 
 ## 6.32
 
-![](6.32.png)
+![](../Øvelser/billeder/6.32.png)
 
 
 
 
 ## 7.4
 
-![](7.4.png)
+![](../Øvelser/billeder/7.4.png)
 
 
 
 ## 7.5, margin of error
 
-![](7.5.png)
+![](../Øvelser/billeder/7.5.png)
 
-![](7.8.png)
+![](../Øvelser/billeder/7.8.png)
 
 
 
@@ -243,7 +243,9 @@ $$
 Her skal vi bruge:
 
 ```{r}
-tooLow <- tooHigh <- logical(N)
+N <- 9999
+tooLow <- logical(N)
+tooHigh <- logical(N)
 # reserver plads til resultater: denne linje laver to vektorer ad gangen
 n <- 20 # sample size
 q <- qt(0.975, n-1) # quantile

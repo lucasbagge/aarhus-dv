@@ -9,16 +9,16 @@ knitr::opts_chunk$set(echo = TRUE)
 
 
 ## 3.8
-![](3.8.png)
+![](../Øvelser/billeder/3.8.png)
 
 ## 5.3 
-![](5.3.png)
+![](../Øvelser/billeder/5.3.png)
 
 ### a) dan variabler og dan to datasæt
 
 ```{r}
 library(tidyverse)
-dat0 <- read.csv2("MatStat-R/data/JLJfiler/Tampere.csv", sep = ',') %>% 
+dat0 <- read.csv2("../MatStat-R/data/JLJfiler/Tampere.csv", sep = ',') %>% 
   mutate(across(c(L1,L2,L3,Hoejde,Bredde,Vaegt), as.numeric))
 dat0
 Art <- dat0[,1]
@@ -91,16 +91,16 @@ var.test(logAborre, logBrasen)
 
 
 ## 6.3 (d-e)
-![](6.3.png)
+![](../Øvelser/billeder/6.3.png)
 ## 2.4
-![](2.4.png)
+![](../Øvelser/billeder/2.4.png)
 
 ## 2.1 
 
-![](2.1.png)
+![](../Øvelser/billeder/2.1.png)
 
 ```{r}
-chatbot <- read.csv("MatStat-R/data/JLJfiler/Chatbot.csv")
+chatbot <- read.csv("../MatStat-R/data/JLJfiler/Chatbot.csv")
 
 text <- subset(chatbot, Chatbot == 'Text')
 avatar   <- subset(chatbot, Chatbot == 'Avatar')
@@ -173,7 +173,7 @@ $$
 
 ## eksamensopgave forår 2018 opgave 2, 
 
-![](mseks18-2.png)
+![](../Øvelser/billeder/mseks18-2.png)
 
 
 

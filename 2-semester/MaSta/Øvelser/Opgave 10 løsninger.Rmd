@@ -11,14 +11,14 @@ library(tidyverse)
 
 ## webbog opgave 4.1
 
-![](4.1.png)
+![](../Øvelser/billeder/4.1.png)
 
 ### a) ensider variansanalyse
 
 Indlæs  data,  og  dan  de  to  variableOmraadeogkornstrmed  indholdet  af  de  to  søj-ler.  Undersøg,  omOmraadeer  en  faktor.  Svaret  afhænger  af,  hvilken  version  afRmankører.  HvisOmraadeikke  er  en  faktor,  skal  du  omdanne  den  til  en  faktor  med  funk-tionenfactor.   Lav   en   figur,   hvorkornstrafsættes  modOmraadekodet   som   1   til   3(dette  kan  du  gøre  ved  at  brugeas.numeric(Omraade)).  Prøv  også  at  lave  et  qqplotmed  kommandoenqqnormFlere(kornstr,Omraade)(se  omtalen  afqqnormFlerei  detskjulte  punktBoxplot  og  qqploti  afsnit  4.6)  og  dernæst  et  boxplot  med  kommandoenboxplot(kornstr∼Omraade). Overvej, hvad disse figurer viser om forholdet mellem spred-ningerne i de tre områder og forholdet mellem middelværdierne.
 
 ```{r}
-data_a <- read.csv("MatStat-R/data/JLJfiler/Sandproever.csv")
+data_a <- read.csv("../MatStat-R/data/JLJfiler/Sandproever.csv")
 data_a %>% head()
 ```
 
@@ -37,7 +37,7 @@ plot(as.numeric(område), kornstr)
 level 1 og 2 har nogenlunde samme værider.
 
 ```{r}
-source("MatStat-R/source/Rfunktioner.R")
+source("../MatStat-R/source/Rfunktioner.R")
 qqnormFlere(kornstr, område)
 ```
 
@@ -135,7 +135,7 @@ I  artiklen  Environmental  heterogeneity  does  not  affect  levels  of  phenot
 Data i artiklen kan findes underDryad Digital Repository. Data til opgaven her er i filenBanan-fluer.csv, hvor søjle 1 angiver land, søjle 2 angiver behandling og søjle 3 angiver tiden i minutter,indtil fluen går i koma.
 
 ```{r}
-data_b <- read.csv("MatStat-R/data/JLJfiler/Bananfluer.csv")
+data_b <- read.csv("../MatStat-R/data/JLJfiler/Bananfluer.csv")
 data_b %>% head()
 ```
 
@@ -228,11 +228,11 @@ Angiv inden for den addititve model et 95%-konfidensinterval for forskellen i mi
 
 ## webbog opgave 4.5
 
-![](4.5.png)
+![](../Øvelser/billeder/4.5.png)
 
 ## webbog opgave 4.6
 
-![](4.6.png)
+![](../Øvelser/billeder/4.6.png)
 ### a)
 
 ```{r}

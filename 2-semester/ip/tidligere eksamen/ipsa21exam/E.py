@@ -50,3 +50,24 @@ for _  in range(n):
         for kv in scores.items():
             print(kv[1], end = ' ')
 
+#%%
+from collections import Counter
+scores = []
+n = int(input())
+for _  in range(n):
+    player, score = input().split()
+    scores.append(score)
+    #if player == 'insert':
+     #   scores.append(score)
+    if player == 'delete':
+        scores.remove(score)
+
+
+test = [int(i) for i in scores]
+test.sort()
+test_count = Counter(test)
+print(*test_count, sep = ' ')
+        
+# %%
+test.sort()
+# %%

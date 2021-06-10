@@ -2,21 +2,21 @@
 title: "Aflevering 11"
 subtitle: "Lucas Bagge"
 output:
-  pdf_document: default
   html_document: default
+  pdf_document: default
 ---
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-![](ms-alf11-1.png)
+![](../Øvelser/billeder/ms-alf11-1.png)
 
 
 
 
 
-![](ms-alf11-2.png)
+![](../Øvelser/billeder/ms-alf11-2.png)
 
 ### a)
 

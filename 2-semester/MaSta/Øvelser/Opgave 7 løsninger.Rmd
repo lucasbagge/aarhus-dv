@@ -1,6 +1,8 @@
 ---
 title: "Opgave 7 løsninger"
-output: pdf_document
+output:
+  html_document:
+    df_print: paged
 ---
 
 ```{r setup, include=FALSE}
@@ -10,7 +12,7 @@ knitr::opts_chunk$set(echo = TRUE)
 
 ## 7.12, 
 
-![](7.12.png)
+![](../Øvelser/billeder/7.12.png)
 ```{r}
 n_1 = 43
 x_1 = 5.8
@@ -33,12 +35,12 @@ vi kan med 95% sikkerhed sige at forskellen i mellem de to populations mean ligg
 
 ## 7.14
 
-![](7.14.png)
+![](../Øvelser/billeder/7.14.png)
 
 ### a)
 
 ```{r}
-girls <- read.csv("MatStat-R/data/Girls2004.csv")
+girls <- read.csv("../MatStat-R/data/Girls2004.csv")
 
 head(girls)
 ```
@@ -64,12 +66,9 @@ t.test(girls_no, girls_smoker, alternative = "greater", conf.level = 0.95)
 vi er sikek rpå at mean vægt er mellem de to konfidensbånd.
 
 
-
-
-
 ## 7.24
 
-![](7.24.png)
+![](../Øvelser/billeder/7.24.png)
 
 ### a) 
 
@@ -87,20 +86,15 @@ prop.test(426, 759, correct = TRUE)
 
 ## 7.39
 
-![](7.39.png)
+![](../Øvelser/billeder/7.39.png)
 ```{r}
 qchisq(p = c(0.025, 0.975),
        df = 4)
 ```
 
-```{r}
-
-```
-
-
 ## 7.A
 
-![](7.A.png)
+![](../Øvelser/billeder/7.A.png)
 ### a)
 
 vi har følgende
@@ -161,13 +155,9 @@ ved hver simulation bør vi have 90% dermed er sand
 
 ca 4%
 
-
-
-
-
 ## 7.40
 
-![](7.40.png)
+![](../Øvelser/billeder/7.40.png)
 > pivotal statistic: er en funktion af observationer og uboseverede parameter
 så sandsynligheds fordelingen ikke afhænger af den ukendte parameter.
 
@@ -187,7 +177,7 @@ intervallet for Xmax er en del mere snævert. det kan dog skyldes at for store s
 
 ## 7.22
 
-![](7.22.png)
+![](../Øvelser/billeder/7.22.png)
 
 har givet følgende kode
 
@@ -230,11 +220,10 @@ jo tætter sample sizee er på hinaden er de lig hinanden.
 
 ## 8.15, professor
 
-![](8.15.png)
+![](../Øvelser/billeder/8.15.png)
 
 ```{r}
 # profesro har observeret
-# 
 value <- 69 / 310
 value
 ```
@@ -253,10 +242,10 @@ dbinom er pdf vi skal brug pbinom. accepter h0.
 
 ## 8.11, t-test, permutation test, 
 
-![](8.11.png)
+![](../Øvelser/billeder/8.11.png)
 
 ```{r}
-Salaries <- read.csv("MatStat-R/data/Salaries.csv")
+Salaries <- read.csv("../MatStat-R/data/Salaries.csv")
 head(Salaries)
 ```
 
@@ -328,16 +317,16 @@ per er bedst i dette tilfælde. Da vi har et normal fordeling.
 
 ## 7.14, den har du lavet
 
-![](7.14.png)
+![](../Øvelser/billeder/7.14.png)
 
 ## 7.29, confidence, bootstrp confidence intervals.
 
-![](7.29.png)
+![](../Øvelser/billeder/7.29.png)
 
 ### a)
 
 ```{r}
-Bangladesh <- read.csv("MatStat-R/data/Bangladesh.csv")
+Bangladesh <- read.csv("../MatStat-R/data/Bangladesh.csv")
 cholorine <- with(Bangladesh, Chlorine[!is.na(Chlorine)])
 ```
 
@@ -356,13 +345,11 @@ skæv fordeling
 
 ```{r}
 t.test(cholorine)
-
 ```
 
 
 
 ### c) bootstrap t test
-
 
 ```{r}
 xbar <- mean(cholorine)
@@ -394,21 +381,21 @@ bootstrap er smart da den laver korrektur på en skæv fordeling.
 
 ## 7.43, cereal problem,
 
-![](7.43.png)
+![](../Øvelser/billeder/7.43.png)
 
 hun måler morgen mads produkter. opgaven er vi skal findes konfidens interval
 
 lige over fik op formlen
 
-![](formel7.43.png)
+![](../Øvelser/billeder/formel7.43.png)
 
-![](løsning7.43.png)
+![](../Øvelser/billeder/løsning7.43.png)
 
 bredt interval men som man får med lille data. 
 
 ## 8.6, model poisson
 
-![](8.6.png)
+![](../Øvelser/billeder/8.6.png)
 $$
 \begin{aligned}
   H0: \lambda > 15 \\

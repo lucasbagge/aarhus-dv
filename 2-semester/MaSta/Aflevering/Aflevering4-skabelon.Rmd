@@ -3,9 +3,9 @@ title: "Aflevering 3"
 author: "Lucas Bagge"
 date: "2021-03-06"
 output:
-  pdf_document: default
-  word_document: default
   html_document: default
+  word_document: default
+  pdf_document: default
 documentclass: article
 classoption: a4paper
 ---
@@ -19,7 +19,7 @@ Til at starte med skal vi indlæse vores data
 ```{r}
 library(glue)
 #setwd("MatStat-R/data/")
-data <- read.csv("MatStat-R/data/Service.csv")
+data <- read.csv("../MatStat-R/data/Service.csv")
 
 head(data)
 ```

@@ -3,9 +3,9 @@ title: "Aflevering 2"
 author: "Lucas Bagge"
 date: "2021-02-16"
 output:
-  pdf_document: default
-  word_document: default
   html_document: default
+  word_document: default
+  pdf_document: default
 documentclass: article
 classoption: a4paper
 ---
@@ -17,7 +17,7 @@ classoption: a4paper
 Indsæt `Groceries` data.
 
 ```{r}
-data <- read.csv("MatStat-R/data/Groceries.csv")
+data <- read.csv("../MatStat-R/data/Groceries.csv")
 ```
 
 Så vil vi se på selve data:
@@ -79,17 +79,26 @@ $$
 Jeg benytter mig af at lave et for løkke magen til det vi har set i bogen
 og beregne p værdien.
 
+
 ```{r}
-Diff <- data$Walmart - data$Target  
-observed <- abs(mean(Diff))                           
-N <- 10^5-1
-result <- numeric(N)
-for (i in 1:N){
-  Sign <- sample(nrow(data) + nrow(data), nrow(data), replace=TRUE) 
-  Diff2 <-  Sign*Diff
-  result[i] <- mean(Diff2)
+
+Walmart <- data$Walmart
+Target <- data$Target
+
+two_sided <- function(data, col_1, col_2) {
+  Diff <- col_1 - col_2
+  
+  observed <- abs(mean(Diff))                           
+  N <- 10^5-1
+  result <- numeric(N)
+  for (i in 1:N){
+    Sign <- sample(nrow(data) + nrow(data), nrow(data), replace=TRUE) 
+    Diff2 <-  Sign*Diff
+    result[i] <- mean(Diff2)
+  }
+  2 * (sum(result >= observed + 1)/(N+1))
 }
-2*(sum(result >= observed + 1)/(N+1))
+two_sided(data, Walmart, Target)
 ```
 
 

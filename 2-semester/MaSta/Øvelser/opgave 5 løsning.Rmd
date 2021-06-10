@@ -88,7 +88,7 @@ negativ binomial kunne være antall af opkald indtil 4 succeser.
 
 # 6.10 MLE  
 
-![](6.10.png)
+![](../Øvelser/billeder/6.10.png)
 
 $$
 L(\mu|x=95,y=130)=\frac{1}{15\cdot \sqrt(2\pi)}e^{-\frac{(95-\mu)^2}{2*15^2}} \cdot 
@@ -145,7 +145,7 @@ $$
 
 # 6.30 bias estimator
 
-![](6.30.png)
+![](../Øvelser/billeder/6.30.png)
 
 Vi husker at $\bar X$ er en unbiased estimator for mu.
 Lad $h(x)=5x^2$. Vi vil gerne vise, at $h(\bar X)$ er en biased estimator for $h(\mu)$.
@@ -167,7 +167,7 @@ for h(mu), da sigma2/n hvor n vil gå mod nul og derfor får vi 5mu.
 
 # 6.34 mse ad smaller estimator
 
-![](6.34.png)
+![](../Øvelser/billeder/6.34.png)
 
 ### a) 
 
@@ -214,7 +214,7 @@ konvergere den mod den først så clt.
 Er den konsisten? betyder at den også konvergere med en hvis sandsynlighed.
 Brug her proposition 6.3.4
 
-![](6.3.4.png)
+![](../Øvelser/billeder/6.3.4.png)
 
 I kapitel 6 som Eskild gennegår ser vi bare desto større n bliver vil vi få
 den samme fordeling. Husk proposition 6.3.4.
@@ -342,7 +342,7 @@ De minder om hinanden bootstrap, sample og pop.
 ## a) Create a histogram or boxplot of the data. What do you observe?
 
 ```{r}
-fish <- read.csv("MatStat-R/data/FishMercury.csv")
+fish <- read.csv("../MatStat-R/data/FishMercury.csv")
 boxplot(fish)
 ```
 
@@ -417,13 +417,13 @@ I bootstrop tager man stikprøver af sin stikprøver.
 
 # 6.14 
 
-![](6.14.png)
+![](../Øvelser/billeder/6.14.png)
 Vi har at $X_1,..,X_n\sim Gamma(r,\lambda)$
 med pdf $f(x)=\frac{\lambda^r}{\Gamma(r)}x^{r-1}e^{-\lambda x}$
 
 Vores likelihood funktion er givet ved
 
-![](6.14løsnign.png)
+![](../Øvelser/billeder/6.14løsnign.png)
 gamme fordeling som vi skal finde estimer r og lambda.
 vi skal finde log lieklihood estimator.
 opstil log likelihood.

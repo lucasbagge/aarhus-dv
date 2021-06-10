@@ -61,7 +61,7 @@ Conduct a two-sided test to see if the difference in these proportions
 is statistically significant (see the R Note in Example 3.6).
 
 ```{r}
-data <- read.csv("MatStat-R/data/FlightDelays.csv")
+data <- read.csv("../MatStat-R/data/FlightDelays.csv")
 ```
 
 ```{r}
@@ -218,7 +218,7 @@ pvalue
 #### a) Inspect the data set, then explain why this is an example of matched pairs data.
 
 ```{r}
-data <- read.csv("MatStat-R/data/IceCream.csv")
+data <- read.csv("../MatStat-R/data/IceCream.csv")
 ```
 
 ```{r}
@@ -296,7 +296,7 @@ What is the variance of P̂?
 the mean and standard deviation.
 
 ```{r}
-data <- read.csv("MatStat-R/data/FlightDelays.csv")
+data <- read.csv("../MatStat-R/data/FlightDelays.csv")
 library(dplyr)
 glimpse(data)
 ```
