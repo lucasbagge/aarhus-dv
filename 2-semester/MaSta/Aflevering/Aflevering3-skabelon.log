@@ -1,11 +1,11 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.21 (TeX Live 2020) (preloaded format=pdflatex 2021.2.24)  7 MAR 2021 21:33
+This is pdfTeX, Version 3.141592653-2.6-1.40.22 (TeX Live 2021) (preloaded format=pdflatex 2021.5.10)  7 JUN 2021 22:30
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
-**aflevering-2.tex
-(./aflevering-2.tex
+**Aflevering3-skabelon.tex
+(./Aflevering3-skabelon.tex
 LaTeX2e <2020-10-01> patch level 4
-L3 programming layer <2021-02-18> (/Users/lucasbagge/Library/TinyTeX/texmf-dist
+L3 programming layer <2021-05-07> (/Users/lucasbagge/Library/TinyTeX/texmf-dist
 /tex/latex/base/article.cls
 Document Class: article 2020/04/10 v1.4m Standard LaTeX document class
 (/Users/lucasbagge/Library/TinyTeX/texmf-dist/tex/latex/base/size10.clo
@@ -23,7 +23,7 @@ File: size10.clo 2020/04/10 v1.4m Standard LaTeX file (size option)
 \belowcaptionskip=\skip48
 \bibindent=\dimen138
 ) (/Users/lucasbagge/Library/TinyTeX/texmf-dist/tex/latex/lm/lmodern.sty
-Package: lmodern 2009/10/30 v1.6 Latin Modern Fonts
+Package: lmodern 2015/05/01 v1.6.1 Latin Modern Fonts
 LaTeX Font Info:    Overwriting symbol font `operators' in version `normal'
 (Font)                  OT1/cmr/m/n --> OT1/lmr/m/n on input line 22.
 LaTeX Font Info:    Overwriting symbol font `letters' in version `normal'
@@ -120,7 +120,7 @@ Package: fontenc 2020/08/10 v2.0s Standard LaTeX package
 LaTeX Font Info:    Trying to load font information for T1+lmr on input line 11
 2.
 (/Users/lucasbagge/Library/TinyTeX/texmf-dist/tex/latex/lm/t1lmr.fd
-File: t1lmr.fd 2009/10/30 v1.6 Font defs for Latin Modern
+File: t1lmr.fd 2015/05/01 v1.6.1 Font defs for Latin Modern
 )) (/Users/lucasbagge/Library/TinyTeX/texmf-dist/tex/latex/base/inputenc.sty
 Package: inputenc 2020/08/01 v1.3d Input encoding file
 \inpenc@prehook=\toks20
@@ -156,7 +156,7 @@ Package xcolor Info: Model `HSB' substituted by `hsb' on input line 1369.
 Package xcolor Info: Model `Gray' substituted by `gray' on input line 1370.
 Package xcolor Info: Model `wave' substituted by `hsb' on input line 1371.
 ) (/Users/lucasbagge/Library/TinyTeX/texmf-dist/tex/latex/hyperref/hyperref.sty
-Package: hyperref 2021-02-10 v7.00j Hypertext links for LaTeX
+Package: hyperref 2021-02-27 v7.00k Hypertext links for LaTeX
 (/Users/lucasbagge/Library/TinyTeX/texmf-dist/tex/generic/ltxcmds/ltxcmds.sty
 Package: ltxcmds 2020-05-10 v1.25 LaTeX kernel commands for general use (HO)
 )
@@ -203,13 +203,13 @@ Package: kvoptions 2020-10-07 v3.14 Key value format for package options (HO)
 \Hy@linkcounter=\count199
 \Hy@pagecounter=\count266
 (/Users/lucasbagge/Library/TinyTeX/texmf-dist/tex/latex/hyperref/pd1enc.def
-File: pd1enc.def 2021-02-10 v7.00j Hyperref: PDFDocEncoding definition (HO)
+File: pd1enc.def 2021-02-27 v7.00k Hyperref: PDFDocEncoding definition (HO)
 Now handling font encoding PD1 ...
 ... no UTF-8 mapping file for font encoding PD1
 )
 (/Users/lucasbagge/Library/TinyTeX/texmf-dist/tex/latex/hyperref/hyperref-langp
 atches.def
-File: hyperref-langpatches.def 2021-02-10 v7.00j Hyperref: patches for babel la
+File: hyperref-langpatches.def 2021-02-27 v7.00k Hyperref: patches for babel la
 nguages
 ) (/Users/lucasbagge/Library/TinyTeX/texmf-dist/tex/generic/intcalc/intcalc.sty
 Package: intcalc 2019/12/15 v1.3 Expandable calculations with integers (HO)
@@ -219,7 +219,7 @@ Package: etexcmds 2019/12/15 v1.7 Avoid name clashes with e-TeX commands (HO)
 )
 \Hy@SavedSpaceFactor=\count267
 (/Users/lucasbagge/Library/TinyTeX/texmf-dist/tex/latex/hyperref/puenc.def
-File: puenc.def 2021-02-10 v7.00j Hyperref: PDF Unicode definition (HO)
+File: puenc.def 2021-02-27 v7.00k Hyperref: PDF Unicode definition (HO)
 Now handling font encoding PU ...
 ... no UTF-8 mapping file for font encoding PU
 )
@@ -269,7 +269,7 @@ with kernel methods
 )
 Package hyperref Info: Driver (autodetected): hpdftex.
 (/Users/lucasbagge/Library/TinyTeX/texmf-dist/tex/latex/hyperref/hpdftex.def
-File: hpdftex.def 2021-02-10 v7.00j Hyperref driver for pdfTeX
+File: hpdftex.def 2021-02-27 v7.00k Hyperref driver for pdfTeX
 (/Users/lucasbagge/Library/TinyTeX/texmf-dist/tex/latex/base/atveryend-ltx.sty
 Package: atveryend-ltx 2020/08/19 v1.0a Emulation of the original atvery packag
 e
@@ -290,38 +290,21 @@ Package uniquecounter Info: New unique counter `rerunfilecheck' on input line 2
 86.
 )
 \Hy@SectionHShift=\skip52
-) (/Users/lucasbagge/Library/TinyTeX/texmf-dist/tex/latex/geometry/geometry.sty
-Package: geometry 2020/01/02 v5.9 Page Geometry
-(/Users/lucasbagge/Library/TinyTeX/texmf-dist/tex/generic/iftex/ifvtex.sty
-Package: ifvtex 2019/10/25 v1.7 ifvtex legacy package. Use iftex instead.
-)
-\Gm@cnth=\count275
-\Gm@cntv=\count276
-\c@Gm@tempcnt=\count277
-\Gm@bindingoffset=\dimen152
-\Gm@wd@mp=\dimen153
-\Gm@odd@mp=\dimen154
-\Gm@even@mp=\dimen155
-\Gm@layoutwidth=\dimen156
-\Gm@layoutheight=\dimen157
-\Gm@layouthoffset=\dimen158
-\Gm@layoutvoffset=\dimen159
-\Gm@dimlist=\toks23
 ) (/Users/lucasbagge/Library/TinyTeX/texmf-dist/tex/latex/fancyvrb/fancyvrb.sty
 Package: fancyvrb 2021/01/20 v3.7 verbatim text (tvz,hv)
-\FV@CodeLineNo=\count278
+\FV@CodeLineNo=\count275
 \FV@InFile=\read2
 \FV@TabBox=\box49
-\c@FancyVerbLine=\count279
-\FV@StepNumber=\count280
+\c@FancyVerbLine=\count276
+\FV@StepNumber=\count277
 \FV@OutFile=\write3
 ) (/Users/lucasbagge/Library/TinyTeX/texmf-dist/tex/latex/framed/framed.sty
 Package: framed 2011/10/22 v 0.96: framed or shaded text with page breaks
 \OuterFrameSep=\skip53
-\fb@frw=\dimen160
-\fb@frh=\dimen161
-\FrameRule=\dimen162
-\FrameSep=\dimen163
+\fb@frw=\dimen152
+\fb@frh=\dimen153
+\FrameRule=\dimen154
+\FrameSep=\dimen155
 ) (/Users/lucasbagge/Library/TinyTeX/texmf-dist/tex/latex/graphics/graphicx.sty
 Package: graphicx 2020/09/09 v1.2b Enhanced LaTeX Graphics (DPC,SPQR)
 (/Users/lucasbagge/Library/TinyTeX/texmf-dist/tex/latex/graphics/graphics.sty
@@ -335,16 +318,17 @@ File: graphics.cfg 2016/06/04 v1.11 sample graphics configuration
 )
 Package graphics Info: Driver file: pdftex.def on input line 105.
 )
-\Gin@req@height=\dimen164
-\Gin@req@width=\dimen165
+\Gin@req@height=\dimen156
+\Gin@req@width=\dimen157
 )
 (/Users/lucasbagge/Library/TinyTeX/texmf-dist/tex/latex/l3backend/l3backend-pdf
 tex.def
-File: l3backend-pdftex.def 2021-02-18 L3 backend support: PDF output (pdfTeX)
-\l__color_backend_stack_int=\count281
+File: l3backend-pdftex.def 2021-05-07 L3 backend support: PDF output (pdfTeX)
+\l__color_backend_stack_int=\count278
 \l__pdf_internal_box=\box50
-) (./aflevering-2.aux)
-\openout1 = `aflevering-2.aux'.
+)
+No file Aflevering3-skabelon.aux.
+\openout1 = `Aflevering3-skabelon.aux'.
 
 LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 110.
 LaTeX Font Info:    ... okay on input line 110.
@@ -386,68 +370,33 @@ Package: refcount 2019/12/15 v3.6 Data extraction from label references (HO)
 lestring.sty
 Package: gettitlestring 2019/12/15 v1.6 Cleanup title references (HO)
 )
-\c@section@level=\count282
+\c@section@level=\count279
 )
 LaTeX Info: Redefining \ref on input line 110.
 LaTeX Info: Redefining \pageref on input line 110.
 LaTeX Info: Redefining \nameref on input line 110.
-(./aflevering-2.out) (./aflevering-2.out)
 \@outlinefile=\write4
-\openout4 = `aflevering-2.out'.
-
-*geometry* driver: auto-detecting
-*geometry* detected driver: pdftex
-*geometry* verbose mode - [ preamble ] result:
-* driver: pdftex
-* paper: <default>
-* layout: <same size as paper>
-* layoutoffset:(h,v)=(0.0pt,0.0pt)
-* modes: 
-* h-part:(L,W,R)=(72.26999pt, 469.75502pt, 72.26999pt)
-* v-part:(T,H,B)=(72.26999pt, 650.43001pt, 72.26999pt)
-* \paperwidth=614.295pt
-* \paperheight=794.96999pt
-* \textwidth=469.75502pt
-* \textheight=650.43001pt
-* \oddsidemargin=0.0pt
-* \evensidemargin=0.0pt
-* \topmargin=-37.0pt
-* \headheight=12.0pt
-* \headsep=25.0pt
-* \topskip=10.0pt
-* \footskip=30.0pt
-* \marginparwidth=65.0pt
-* \marginparsep=11.0pt
-* \columnsep=10.0pt
-* \skip\footins=9.0pt plus 4.0pt minus 2.0pt
-* \hoffset=0.0pt
-* \voffset=0.0pt
-* \mag=1000
-* \@twocolumnfalse
-* \@twosidefalse
-* \@mparswitchfalse
-* \@reversemarginfalse
-* (1in=72.27pt=25.4mm, 1cm=28.453pt)
+\openout4 = `Aflevering3-skabelon.out'.
 
 LaTeX Font Info:    Trying to load font information for OT1+lmr on input line 1
 12.
 (/Users/lucasbagge/Library/TinyTeX/texmf-dist/tex/latex/lm/ot1lmr.fd
-File: ot1lmr.fd 2009/10/30 v1.6 Font defs for Latin Modern
+File: ot1lmr.fd 2015/05/01 v1.6.1 Font defs for Latin Modern
 )
 LaTeX Font Info:    Trying to load font information for OML+lmm on input line 1
 12.
 (/Users/lucasbagge/Library/TinyTeX/texmf-dist/tex/latex/lm/omllmm.fd
-File: omllmm.fd 2009/10/30 v1.6 Font defs for Latin Modern
+File: omllmm.fd 2015/05/01 v1.6.1 Font defs for Latin Modern
 )
 LaTeX Font Info:    Trying to load font information for OMS+lmsy on input line 
 112.
 (/Users/lucasbagge/Library/TinyTeX/texmf-dist/tex/latex/lm/omslmsy.fd
-File: omslmsy.fd 2009/10/30 v1.6 Font defs for Latin Modern
+File: omslmsy.fd 2015/05/01 v1.6.1 Font defs for Latin Modern
 )
 LaTeX Font Info:    Trying to load font information for OMX+lmex on input line 
 112.
 (/Users/lucasbagge/Library/TinyTeX/texmf-dist/tex/latex/lm/omxlmex.fd
-File: omxlmex.fd 2009/10/30 v1.6 Font defs for Latin Modern
+File: omxlmex.fd 2015/05/01 v1.6.1 Font defs for Latin Modern
 )
 LaTeX Font Info:    External font `lmex10' loaded for size
 (Font)              <12> on input line 112.
@@ -466,89 +415,28 @@ LaTeX Font Info:    Trying to load font information for U+msb on input line 112
 File: umsb.fd 2013/01/14 v3.01 AMS symbols B
 )
 LaTeX Font Info:    External font `lmex10' loaded for size
-(Font)              <10> on input line 115.
+(Font)              <10> on input line 122.
 LaTeX Font Info:    External font `lmex10' loaded for size
-(Font)              <7> on input line 115.
+(Font)              <7> on input line 122.
 LaTeX Font Info:    External font `lmex10' loaded for size
-(Font)              <5> on input line 115.
-LaTeX Font Info:    Trying to load font information for T1+lmtt on input line 1
-25.
-(/Users/lucasbagge/Library/TinyTeX/texmf-dist/tex/latex/lm/t1lmtt.fd
-File: t1lmtt.fd 2009/10/30 v1.6 Font defs for Latin Modern
-)
-LaTeX Font Info:    Font shape `T1/lmtt/bx/n' in size <10> not available
-(Font)              Font shape `T1/lmtt/b/n' tried instead on input line 136.
-<aflevering-2_files/figure-latex/unnamed-chunk-2-1.pdf, id=24, 469.755pt x 325.
-215pt>
-File: aflevering-2_files/figure-latex/unnamed-chunk-2-1.pdf Graphic file (type 
-pdf)
-<use aflevering-2_files/figure-latex/unnamed-chunk-2-1.pdf>
-Package pdftex.def Info: aflevering-2_files/figure-latex/unnamed-chunk-2-1.pdf 
- used on input line 144.
-(pdftex.def)             Requested size: 469.75386pt x 325.2142pt.
-[1
+(Font)              <5> on input line 122.
 
-{/Users/lucasbagge/Library/TinyTeX/texmf-var/fonts/map/pdftex/updmap/pdftex.map
-}]
+! Package inputenc Error: Unicode character ∕ (U+2215)
+(inputenc)                not set up for use with LaTeX.
 
-LaTeX Warning: Command \o invalid in math mode on input line 153.
-
-<aflevering-2_files/figure-latex/unnamed-chunk-4-1.pdf, id=39, 469.755pt x 325.
-215pt>
-File: aflevering-2_files/figure-latex/unnamed-chunk-4-1.pdf Graphic file (type 
-pdf)
-<use aflevering-2_files/figure-latex/unnamed-chunk-4-1.pdf>
-Package pdftex.def Info: aflevering-2_files/figure-latex/unnamed-chunk-4-1.pdf 
- used on input line 173.
-(pdftex.def)             Requested size: 469.75386pt x 325.2142pt.
-[2 <./aflevering-2_files/figure-latex/unnamed-chunk-2-1.pdf>]
-<aflevering-2_files/figure-latex/unnamed-chunk-6-1.pdf, id=63, 469.755pt x 325.
-215pt>
-File: aflevering-2_files/figure-latex/unnamed-chunk-6-1.pdf Graphic file (type 
-pdf)
-<use aflevering-2_files/figure-latex/unnamed-chunk-6-1.pdf>
-Package pdftex.def Info: aflevering-2_files/figure-latex/unnamed-chunk-6-1.pdf 
- used on input line 213.
-(pdftex.def)             Requested size: 469.75386pt x 325.2142pt.
-[3 <./aflevering-2_files/figure-latex/unnamed-chunk-4-1.pdf>]
-<aflevering-2_files/figure-latex/unnamed-chunk-7-1.pdf, id=84, 469.755pt x 325.
-215pt>
-File: aflevering-2_files/figure-latex/unnamed-chunk-7-1.pdf Graphic file (type 
-pdf)
-<use aflevering-2_files/figure-latex/unnamed-chunk-7-1.pdf>
-Package pdftex.def Info: aflevering-2_files/figure-latex/unnamed-chunk-7-1.pdf 
- used on input line 247.
-(pdftex.def)             Requested size: 469.75386pt x 325.2142pt.
-[4 <./aflevering-2_files/figure-latex/unnamed-chunk-6-1.pdf>] [5 <./aflevering-
-2_files/figure-latex/unnamed-chunk-7-1.pdf>] (./aflevering-2.aux)
-Package rerunfilecheck Info: File `aflevering-2.out' has not changed.
-(rerunfilecheck)             Checksum: 0DCBFB71C6CC81D3E0535FC9231CD1B5;1814.
- ) 
+See the inputenc package documentation for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.150 ...ple-means-is-as-large-or-larger-than-12}}
+                                                   
 Here is how much of TeX's memory you used:
- 10412 strings out of 480971
- 152928 string characters out of 5906691
- 455528 words of memory out of 5000000
- 27434 multiletter control sequences out of 15000+600000
- 440360 words of font info for 64 fonts, out of 8000000 for 9000
+ 9927 strings out of 480806
+ 145320 string characters out of 5903861
+ 435902 words of memory out of 5000000
+ 27148 multiletter control sequences out of 15000+600000
+ 442718 words of font info for 63 fonts, out of 8000000 for 9000
  14 hyphenation exceptions out of 8191
- 71i,6n,74p,619b,324s stack positions out of 5000i,500n,10000p,200000b,80000s
-{/Users/lucasbagge/Library/TinyTeX/texmf-dist/fonts/enc/dvips/lm/lm-rm.enc}{/
-Users/lucasbagge/Library/TinyTeX/texmf-dist/fonts/enc/dvips/lm/lm-mathit.enc}{/
-Users/lucasbagge/Library/TinyTeX/texmf-dist/fonts/enc/dvips/lm/lm-ec.enc}{/User
-s/lucasbagge/Library/TinyTeX/texmf-dist/fonts/enc/dvips/lm/lm-mathsy.enc}</User
-s/lucasbagge/Library/TinyTeX/texmf-dist/fonts/type1/public/lm/lmbx12.pfb></User
-s/lucasbagge/Library/TinyTeX/texmf-dist/fonts/type1/public/lm/lmmi10.pfb></User
-s/lucasbagge/Library/TinyTeX/texmf-dist/fonts/type1/public/lm/lmmi7.pfb></Users
-/lucasbagge/Library/TinyTeX/texmf-dist/fonts/type1/public/lm/lmr10.pfb></Users/
-lucasbagge/Library/TinyTeX/texmf-dist/fonts/type1/public/lm/lmr17.pfb></Users/l
-ucasbagge/Library/TinyTeX/texmf-dist/fonts/type1/public/lm/lmr7.pfb></Users/luc
-asbagge/Library/TinyTeX/texmf-dist/fonts/type1/public/lm/lmsy10.pfb></Users/luc
-asbagge/Library/TinyTeX/texmf-dist/fonts/type1/public/lm/lmtk10.pfb></Users/luc
-asbagge/Library/TinyTeX/texmf-dist/fonts/type1/public/lm/lmtt10.pfb>
-Output written on aflevering-2.pdf (5 pages, 171990 bytes).
-PDF statistics:
- 165 PDF objects out of 1000 (max. 8388607)
- 107 compressed objects within 2 object streams
- 16 named destinations out of 1000 (max. 500000)
- 61 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 60i,6n,63p,254b,289s stack positions out of 5000i,500n,10000p,200000b,80000s
 
+!  ==> Fatal error occurred, no output PDF file produced!

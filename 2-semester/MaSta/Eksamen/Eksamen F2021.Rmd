@@ -1,6 +1,6 @@
 ---
 title: "Eksamens opgave"
-subtitle: "Studienr.: 202004972"
+subtitle: "Studienr.: "
 output: pdf_document
 ---
 
