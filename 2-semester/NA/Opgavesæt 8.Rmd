@@ -9,6 +9,8 @@ knitr::opts_chunk$set(echo = TRUE)
 
 ![](8.2.png)
 
+## 8.2
+
 #### a)
 
 Det indre produkt kan beregnes som:
@@ -78,6 +80,8 @@ print(u.T @ A @ v)
 ```
 
 ![](8.3.png)
+
+## 8.3
 
 ```{python}
 def switch(A, i, j):
@@ -155,9 +159,11 @@ Får en nul række igen.
 
 ![](8.4.png)
 
+## 8.4
+
 #### a)
 
-alternativ med python
+Alternativ med python
 
 ```{python}
 def f_norm(a):
@@ -176,7 +182,7 @@ B = np.array([[1., 2.],
               
 Af = f_norm(A)
 Bf = f_norm(B)
-print(f'af: {Af}\n Bf: {Bf}')
+print(f'af: {Af}, \n Bf: {Bf}')
 ```
 
 indre produkt
@@ -199,8 +205,6 @@ def inner_produkt(a,b):
 
 print(f'Inner product: {inner_produkt(A,B)}') 
 print(f'Cauchy Schwart uligheden {inner_produkt(A,B) <= Af * Bf}, da {inner_produkt(A,B)} <= {Af * Bf}')
-
-
 ```
 
 fro-ben-i-us, bestemmes med formlen
@@ -292,6 +296,8 @@ Se kode fra Ditte.
 ![](8.5.1.png)
 
 ![](8.5.2.png)
+
+## 8.5
 
 #### a)
 
@@ -388,6 +394,8 @@ def qr_simon(A):
   return np.round(Q,2), np.round(R, 2)
 ```
 
+## 8.6
+
 #### a)
 
 ```{python}
@@ -438,6 +446,16 @@ q_simon, r_simon = qr_simon(d)
 print(f'Ser på simons version \n{q_simon} \n og r: \n {r_simon}')
 ```
 
+```{python}
+d = np.array([[-1, 0, 1], [0, 1, -1], [1, -1, 0]])
+q4, r4 = klassisk_gram_schmidt(d)
+print(q4) # ikke ortonormal samling. 
+print(r4)
+print( q4.T @ q4) # ikke nær nul. 
+q_simon, r_simon = qr_simon(d)
+print(f'Ser på simons version \n{q_simon} \n og r: \n {r_simon}')
+```
+
 qr decomponering kan vi afgøre om vi har en linær uafhængighed.
 
 gs giver ikke menign når vi ikke får q er en ortonomal samling. Derfor er den numerisk ukorrekt. Beskotnig er høj.
@@ -445,6 +463,38 @@ gs giver ikke menign når vi ikke får q er en ortonomal samling. Derfor er den 
 INput til gs skal være lineær uafhængig.
 
 ![](8.7.png)
+
+## 8.7
+
+```{python}
+def simpson(f, xs, h):
+  result = h / 3.0
+  sum = f(xs[0])
+  for i in range(1, len(xs) -1):
+    if i % 2 == 0:
+      sum += 2*f(xs[i])
+    else:
+      sum += 4*f(xs[i])
+  sum += f(xs[len(x) - 1])
+  return result * sum
+
+def simpson_simon(f, a, b, n):
+  h = (b-a) / (n-1)
+  l = enumerate(np.linspace(a, b, n)[1:-1]) # 1 til -1 så vi ikke får den første med.
+  middle = sum([4*f(v) if (k % 2 == 0) else 2*f(v) for (k, v) in l])
+  return (h/3) * (f(a) + middle + f(b))
+
+def g(x):
+  return np.log(x)/(1+x)
+
+y, s = np.linspace(1/5, 5, 100, retstep = True)
+y2, s2 = np.linspace(1/5, 5, 10000, retstep = True)  
+print(simpson(g, y, s))
+print(simpson(g, y2, s2))
+print(simpson(lambda x: np.log(x)/(1+x), y, s))
+
+print("Integral of function: ", simpson_simon(lambda x: np.log(x)/(1 + x), 1/5, 5, 251))
+```
 
 ```{python}
 def simpson(f, xs, h):

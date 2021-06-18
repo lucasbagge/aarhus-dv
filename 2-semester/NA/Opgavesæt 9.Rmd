@@ -162,7 +162,7 @@ print(f'Shapen på data er: \n {iris.shape}')
 ```{python}
 # svd
 U, s, Vt = np.linalg.svd(iris, full_matrices = False)
-#print(U, s, Vt)
+print(U, s, Vt)
 ```
 
 #### d)

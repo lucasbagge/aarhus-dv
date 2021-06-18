@@ -11,62 +11,6 @@ knitr::opts_chunk$set(echo = TRUE)
 library(reticulate)
 ```
 
-# Opgave 5.1. Lad a være en ndarray med to akser. Forklar hvad de følgende operationer gøre ved a:
-
-```{python}
-import numpy as np
-```
-
-## (a) a[0, [1,3,4,6]] = 1
-
-```{python}
-a = np.array([
-  [1,2,3,4,5,6],
-  [4,3,6,2,6,8],
-  [1,2,3,4,5,5]
-])
-a
-```
-
-## (b) a[[1,2], [2,3]] = np.array([0,1])
-
-```{python}
-a[[1,2], [2,3]] = np.array([0,1])
-a
-```
-
-den giver de pladser i a nogle nye værdier.
-
-## (c) a[:, [3,1]] = a[:, [1,3]]
-
-```{python}
-a[:, [3,1]] = a[:, [1,3]]
-```
-
-```{python}
-a
-```
-
-Bytter rundt på værdierne.
-
-## (d) a[2:5, 0] = np.array([0, 1, 2])
-
-```{python}
-a.ndim  
-
-np.array([0, 1, 2])
-```
-
-i række 2, 3 og 4 sætter den væriden 0, 1 og 2.
-
-## (e) a[2, 3:8:2] += 6
-
-pluser med 6
-
-```{python}
-a[2, 3:8:2] += 6
-a
-```
 
 # Opgave 5.2. Tre klodser af brede 5 cm er forbundne med fjeder som i diagrammet.
 
@@ -99,9 +43,7 @@ centrum af første fjerder
 dem der er 1 og 0 er vorea kraft m.
 
 ```{python}
-aub = np.array([
-  [20,0,0,0,1]
-])
+aub = np.array([[20,0,0,0,1]])
 ```
 
 \# Opgave 5.3. Brug metoden fra det sidste afsnit af Notesæt 7 til at
@@ -220,7 +162,7 @@ u_3v_1 + w_3x_1 & u_3v_2 + w_3x_2 &u_3v_3 + w_3x_3 & u_3v_4 + w_3x_4
 \end{pmatrix}
 $$
 
-Gamg første rækker $u_1^{-1}$
+Gang første rækker $u_1^{-1}$
 
 $$
 \begin{pmatrix} 
@@ -228,7 +170,11 @@ v_1 + w_1x_1u_1^{-1} & v_2 + w_1x_2u_1^{-1} & v_3 + w_1x_3u_1^{-1} & v_4 + w_1x_
 u_2v_1 + w_2x_1 & u_2v_2 + w_2x_2 &u_2v_3 + w_2x_3 & u_2v_4 + w_2x_4 \\
 u_3v_1 + w_3x_1 & u_3v_2 + w_3x_2 &u_3v_3 + w_3x_3 & u_3v_4 + w_3x_4
 \end{pmatrix}
-$$ Gang første række med med $u_2$ og træk fra anden række:
+
+$$ 
+
+Gang første række med med $u_2$ og træk fra anden række:
+
 
 $$
  \begin{pmatrix} 
@@ -236,7 +182,7 @@ v_1 + w_1x_1u_1^{-1} & v_2 + w_1x_2u_1^{-1} & v_3 + w_1x_3u_1^{-1} & v_4 + w_1x_
 w_2x_1-w_1x_1u_1^{-1}u_2 & w_2x_2-w_1 x_2 u_1^{-1}u_2 & w_2x_3-w_1x_3u_1^{-1}u_2 & w_2x_4-w_1x_4u_1^{-1}u_2 \\
 u_3v_1 + w_3x_1 & u_3v_2 + w_3x_2 &u_3v_3 + w_3x_3 & u_3v_4 + w_3x_4
 \end{pmatrix}
- $$
+$$
 
 Det kan reduceres til:
 
@@ -246,7 +192,7 @@ v_1 + w_1x_1u_1^{-1} & v_2 + w_1x_2u_1^{-1} & v_3 + w_1x_3u_1^{-1} & v_4 + w_1x_
 x_1(w_2-w_1u_1^{-1}u_2) & x_2(w_2-w_1  u_1^{-1}u_2) & x_3(w_2-w_1u_1^{-1}u_2) & x_4(w_2-w_1u_1^{-1}u_2) \\
 u_3v_1 + w_3x_1 & u_3v_2 + w_3x_2 &u_3v_3 + w_3x_3 & u_3v_4 + w_3x_4
 \end{pmatrix}
- $$
+$$
 
 Nu lægger vi mærke til at anden række er egentlig vores vektor, x ganget
 med en skalar.
@@ -259,7 +205,9 @@ v_1 + w_1x_1u_1^{-1} & v_2 + w_1x_2u_1^{-1} & v_3 + w_1x_3u_1^{-1} & v_4 + w_1x_
 x_1(w_2-w_1u_1^{-1}u_2) & x_2(w_2-w_1  u_1^{-1}u_2) & x_3(w_2-w_1u_1^{-1}u_2) & x_4(w_2-w_1u_1^{-1}u_2) \\
 x_1(w_3-w_1u_1^{-1} u_3) & x_2 (w_3 - w_1  u_1^{-1} u_3) & x_3 (w_3 - w_1 u_1^{-1} u_3) & x_4 (w_3 - w_1 u_1^{-1} u_3) 
 \end{pmatrix}
- $$ Igen er det indeni parentesen blot en skalar.
+$$
+
+Igen er det indeni parentesen blot en skalar.
 
 Nu skal 3. række fjernes. 3 række er en skalaering af 2 række. Således
 kan 3. række fjernes ved at gange igennem med
@@ -272,20 +220,24 @@ v_1 + w_1x_1u_1^{-1} & v_2 + w_1x_2u_1^{-1} & v_3 + w_1x_3u_1^{-1} & v_4 + w_1x_
 x_1(w_2-w_1u_1^{-1}u_2) & x_2(w_2-w_1  u_1^{-1}u_2) & x_3(w_2-w_1u_1^{-1}u_2) & x_4(w_2-w_1u_1^{-1}u_2) \\
 0 & 0 & 0 & 0
 \end{pmatrix}
- $$
+$$
 
 Hvis $v_1$ er en skalar af $x_1$ så kan den sættes ud froan en parentes.
 
 $$
 x_1(\frac{v_1}{x_1} + w_1 u_1^{-1})
-$$ Det kan vi hvis v1 er en skalar af x1.
+$$ 
+
+Det kan vi hvis v1 er en skalar af x1.
 
 Hvis vi vil fjerne anden række, så skal første række ganges med
 
 $$\frac{w_2 - w_1 u^{-1} u_2 }{\frac{v_1}{x_1} + w_1 u_1^{-1}}$$
 
 Tager vi og ganger første række med ovenstående og tækker fra 2 række så
-får vi nul. Det kan vi så med følgende $$
+får vi nul. Det kan vi så med følgende 
+
+$$
 \frac{x_1(\frac{v_1}{x_1} + w_1 u_1^{-1}) (w_2 - w_1 u^{-1} u_2) }{\frac{v_1}{x_1} + w_1 u_1^{-1}}
 $$
 
@@ -298,6 +250,7 @@ $$
 Hvis vi trækker det fra 2 række vil den bliver nul. Så vil vi kun have 1
 pivot element. Derfor kan man sige at hvis ikke det er muligt at dele v1
 med x1 så kan vi ikke fjerne 2 række og vi vil have to pivot elementer.
+
 
 # Opgave 5.5. Betragt
 
@@ -352,13 +305,7 @@ afstand(b,c,o)
 og cos(2𝑥) evalueret på 100 punkter jævnt fordelt over intervallet [0,
 2𝜋], så disse kan betragtes som vektorer i ℝ100.
 
-```{python}
-import matplotlib.pyplot as plt
-import numpy as np
-
-```
-
--   Laver funktioenr forneden.
+Laver funktioenr forneden.
 
 ```{python}
 x = np.linspace(0.0, 2 * np.pi, 100)
@@ -368,6 +315,12 @@ v2 = np.cos(x)[:, np.newaxis]
 v3 = np.sin(2 * x)[:, np.newaxis]
 v4 = np.cos(2 * x)[:, np.newaxis]
 fig, ax = plt.subplots()
+ax.plot(x, v0)
+ax.plot(x, v1)
+ax.plot(x, v2)
+ax.plot(x, v3)
+ax.plot(x, v4)
+plt.show()
 ```
 
 Plot funktionerne:
@@ -493,14 +446,72 @@ plt.show()
 
 ![](6.2.png)
 
+## a) gør rede for de er ortogonale
+
+To vektorer er vinkelrette på hianden hvis deres indre produkt er lig 0
+(8.1)
+
+```{python}
+v_0 = np.array([[2],[1],[-2]])
+                
+v_1 = np.array([[1],[0],[1]])
+                
+v_2 = np.array([[1],[-4],[-1]])                
+```
+
+```{python}
+a = np.vdot(v_0, v_1)
+b = np.vdot(v_0, v_2)
+c = np.vdot(v_1, v_2)
+
+print(f'resultater for a, b og c \n {a}, {b} og {c}')
+```
+
+Dermed kan vi se de er nul og de er ortogonale.
+
+
+### med gram matricen
+
+```{python}
+v0 = np.array([2.0, 1.0, -2.0])[:, np.newaxis]
+v1 = np.array([1.0, 0.0, 1.0])[:, np.newaxis]
+v2 = np.array([1.0, -4.0, -1.0])[:, np.newaxis]
+V = np.hstack((v0, v1, v2))
+G = V.T @ V
+
+print('G=\n', G)
+```
+
+Ser den er diagonal så det betyder den er ortogonal.
+
+## b) Lineær kombinatoin, parsevals identitet.
+
+Brug her proposition 8.17:
+
+
+```{python}
+w = np.array([4.,5.,6])[:, np.newaxis]
+x = np.linalg.inv(V) @ w
+print('det(V)=', np.linalg.det(V))
+print('x= \n', x)
+```
+
+Ovenståender har vi løst ligning system.
+
+Parcevals identitet siger at:
+
+```{python}
+norm_w = x[0] **2 * np.linalg.norm(v0) **2 + \
+         x[1] **2 * np.linalg.norm(v1) **2 + \
+         x[2] **2 * np.linalg.norm(v2) **2 
+print('norm med parcevals identitet;', np.sqrt(norm_w[0]))         
+print('norm med numpys identitet;', np.linalg.norm(w))         
+```
+
 ## c) dan en ortogonal matrix A hvis søjler er proportionalet med v0, v1, v2.
 
 Vi kan opstile en ortogonal matrix A hvis søjler er proportionelle med
 vores samling
-
-$$
-A = 
-$$
 
 ```{python}
 A = np.array([
@@ -509,7 +520,6 @@ A = np.array([
   [-2, 1, -1]
 ])
 A
-np.linalg.inv(v_0).dot(np.array([1])) 
 
 ```
 
@@ -536,111 +546,10 @@ $$
 0 & 2b & 0 \\
 0 & 0 & 18c
 \end{pmatrix}
-$$ Hvis vi havde valgt nogle værdier for bogstaverne ville det blive
+$$ 
+
+Hvis vi havde valgt nogle værdier for bogstaverne ville det blive
 identitets matricen.
-
-## a) gør rede for de er ortogonale
-
-To vektorer er vinkelrette på hianden hvis deres indre produkt er lig 0
-(8.1)
-
-```{python}
-import numpy as np
-v_0 = np.array([[2],
-                [1],
-                [-2]])
-                
-v_1 = np.array([[1],
-                [0],
-                [1]])
-                
-v_2 = np.array([[1],
-                [-4],
-                [-1]])                
-                
-```
-
-```{python}
-a = np.vdot(v_0, v_1)
-b = np.vdot(v_0, v_2)
-c = np.vdot(v_1, v_2)
-
-print(a)
-print(b)
-print(c)
-```
-
-Dermed kan vi se de er nul og de er ortogonale.
-
-> vdot transponerer dem automatisk.
-
-### med gram matricen
-
-```{python}
-v0 = np.array([2.0, 1.0, -2.0])[:, np.newaxis]
-v1 = np.array([1.0, 0.0, 1.0])[:, np.newaxis]
-v2 = np.array([1.0, -4.0, -1.0])[:, np.newaxis]
-V = np.hstack((v0, v1, v2))
-G = V.T @ V
-
-print('G=\n', G)
-
-```
-
-Ser den er diagonal så det betyder den er ortogonal.
-
-## b) Lineær kombinatoin, parsevals identitet.
-
-Brug her proposition 8.17:
-
-![](proposition%208.17.png)
-
-```{python}
-w = 4 * v_0 + 5 * v_1 + 6 * v_2
-w
-
-x_0 = np.vdot(w, v_0) / np.linalg.norm(v_0)**2
-x_1 = np.vdot(w, v_1) / np.linalg.norm(v_1)**2
-x_2 = np.vdot(w, v_2) / np.linalg.norm(v_2)**2
-print(x_0)
-print(x_1)
-print(x_2)
-```
-
-Lidt i tvivl om det er korret.
-
-Nu skal vi vise Persavals identitet.
-
-```{python}
-x_0 **2 * (np.linalg.norm(v_0)) ** 2 + x_1**2+x_1*(np.linalg.norm(v_1))**2 + \
-x_2**2 * (np.linalg.norm(v_2))**2
-```
-
-Ud fra instruktor skal vi finde
-
-$$
-Vx = w\\
-w = (4,5,6)\\
-x=V^{-1}w
-$$
-
-```{python}
-w = np.array([4.,5.,6])[:, np.newaxis]
-x = np.linalg.inv(V) @ w
-print('det(V)=', np.linalg.det(V))
-print('x= \n', x)
-```
-
-Ovenståender har vi løst ligning system.
-
-Parcevals identitet siger at:
-
-```{python}
-norm_w = x[0]**2*np.linalg.norm(v0)**2 + x[1]**2*np.linalg.norm(v1)**2 + \
-         x[2]**2*np.linalg.norm(v2)**2 
-print('norm med parcevals identitet;', np.sqrt(norm_w[0]))         
-print('norm med numpys identitet;', np.linalg.norm(w))         
-```
 
 # Opgave 6.3
 
@@ -653,14 +562,17 @@ $$
 = (B^{-1})^{-1}A^{-1}A\\
 = BI
 = B
-$$ \#\# b)
+$$ 
+## b)
 
 $$
 A^{-1}(A^TB)^T\\
 = A^{-1}B^T(A^T)^T\\
 = B^TI\\
 B^T
-$$ \#\# c)
+$$ 
+
+## c)
 
 $$
 (AC)^{-1}(ABA^{-1})(AB)\\
@@ -669,28 +581,20 @@ C^{-1}BA^{-1}AC \\
 C^{-1}BC\\
 $$
 
-## d)
-
-\$\$ (A^{-1}B)^{T} \cdot A\^{T}\\
-
-B^T(A^{-1})\^T \cdot A\^{T}\\ B^T^\cdot (AA{-1})\^T\\ B^TI^T\\ B\^TI \\
-B\^T \$\$
-
 # Opgave 6.4
 
 ![](6.4.png)
 
 vi ved ikk hvad s, v
 
-Brug noter og se
-
-![](6.4%20hj%C3%A6lp.png)
 
 Der ønskes at
 
 $$
 H_x=te_0=\begin{pmatrix} t\\0\\0 \end{pmatrix}
-$$ hvor
+$$ 
+
+hvor
 
 $$
 H=I-svv^T
@@ -700,7 +604,9 @@ Fra noterne ved vi at:
 
 $$
 v=\frac{1}{s}(e_0-\epsilon u)
-$$ hvor u er en enhedsvektor
+$$ 
+
+hvor u er en enhedsvektor
 
 $$
 s=1-\epsilon u_0=1+|u_0|\ge1
@@ -712,14 +618,17 @@ x = (0,0,1) vi finder først enhedsvektor:
 
 $$
 u=\frac{x}{\sqrt(0^2+o^2+1^2)}=0
-$$ Vi før dermed at $u_0=x_0=0\rightarrow\epsilon=-1$, hvilket mefører
+$$ 
+
+Vi før dermed at $u_0=x_0=0\rightarrow\epsilon=-1$, hvilket mefører
 at:
 
 $$
 s=1+0=1
 $$
 
-\$\$ v=\frac{1}{s}(e\_=-\epsilon u)=\frac{1}{1} ()
+$$
+v=\frac{1}{s}(e\_=-\epsilon u)=\frac{1}{1} ()
 
 ```{=tex}
 \begin{pmatrix} 
@@ -741,7 +650,8 @@ $$
 1 \\ 0 \\ 1
 \end{pmatrix}
 ```
-\$\$ det indsætte vi ind i definitionen
+$$
+det indsætte vi ind i definitionen
 
 $$
 H =
@@ -823,7 +733,9 @@ H =
 \begin{pmatrix} 
 -2/3 & -1/3 & 2/3 \\ -1/3 & 14/15 & 2/15 \\ 2/3 & 2/15 & 11/15
 \end{pmatrix}
-$$ vi væler epsilon men det er ligegyldig hvilken værdi den får.
+$$ 
+
+vi væler epsilon men det er ligegyldig hvilken værdi den får.
 
 Det kan vi ligesom før også afprøve
 
@@ -831,34 +743,40 @@ Det kan vi ligesom før også afprøve
 
 ![](6.5.png)
 
-()## a) vis A er vinkelret
+## a) vis A er vinkelret
 
 ```{python}
-A = np.array([[2., 0.],
-              [0., 1.]])
+A = np.array([[2., 0.],[0., 1.]])
+
 e0 = np.array([1., 0.])[:, np.newaxis]              
 e1 = np.array([0., 1.])[:, np.newaxis]              
 ```
 
 ```{python}
 Ae0 = (A @ e0)
+
 Ae1 = (A @ e1)
+
 np.vdot(Ae0, Ae1)
 ```
 
-den er vinkel ret
+Den er vinkelret
 
-da scalar produktet er lig 0 er de to vektorer vinkelrette \#\# b)
-beregn vinklen
+Da scalar produktet er lig 0 er de to vektorer vinkelrette 
+
+## b)
+
+Beregn vinklen:
 
 ```{python}
 v0 = np.array([1., 1.])
 v1 = np.array([1., -1.])
+
 unit_v0 = np.linalg.norm(v0)
 unit_v1 = np.linalg.norm(v1)
 ```
 
-brug
+Brug:
 
 $$
 grader = \frac{radianer\cdot180}{\pi}\ \hat a \cdot\hat b=|a|\cdot |b|*cos(v)
@@ -866,8 +784,9 @@ $$
 
 ```{python}
 cosv = (np.dot(v0,v1)) / (unit_v0 * unit_v1)
-v    = (np.arccos(cosv)*180)/np.pi
-v
+v    = (np.arccos(cosv)*180) / np.pi
+
+print(f'Vores v \n {v}')
 ```
 
 Vinklen er 90 grader mellem v0 og v1.
@@ -875,14 +794,17 @@ Vinklen er 90 grader mellem v0 og v1.
 ```{python}
 Av0 = A @ v0
 Av1 = A @ v1
+
 unit_Av0 = np.linalg.norm(Av0) 
 unit_Av1 = np.linalg.norm(Av1)
+
 cosAv = (np.dot(Av0,Av1)) / (unit_Av0 * unit_Av1)
 Av    = (np.arccos(cosAv)*180)/np.pi
-Av
+
+print(f'vores av er \n {Av}')
 ```
 
-vinklen er 53 grader mellem av0 og av1
+Vinklen er 53 grader mellem av0 og av1
 
 ## c) hvis w0= er enheds lav en plot af vinklen mellem.
 
@@ -890,17 +812,20 @@ Vi får af vide at de to vektorer c og s. Det gælder at de i anden er 1.
 
 ```{python}
 import matplotlib.pyplot as plt
+
 co = np.linspace(-1., 1., 100)
+
 si = np.sqrt(1-co**2)
 
 w00 = np.array([co,si])
+
 w11 = np.array([-si,co])
-A   = np.array([[2., 0.],
-                [0., 1.]])
+
+A   = np.array([[2., 0.], [0., 1.]])
 A_w00 = A@w00
 A_w11 = A@w11
-costh = []
 
+costh = []
 for n in range(0,100):
   a = ((A_w00[:,n] @ A_w11[:,n]) / (np.linalg.norm(A_w00)*np.linalg.norm(A_w11)))
   costh.append(a)
@@ -926,41 +851,70 @@ c \\ s
 \begin{pmatrix} 
 2c\\s
 \end{pmatrix}
-$$ \$\$ Aw_0\bot A_w\leftarrow \rightarrow\langle Aw_0,Aw_1\rangle = 0
+$$ 
+
+$$
+Aw_0\bot A_w\leftarrow \rightarrow\langle Aw_0,Aw_1\rangle = 0
 \\ \langle 
 
-```{=tex}
 \begin{pmatrix} 
 2c \\s
 \end{pmatrix}
-```
 ,
 
-```{=tex}
 \begin{pmatrix} 
 -2s\\c
 \end{pmatrix}
-```
-\rangle=-4sc+sc=0 \$\$ dette er kun sandt hvis enten c = 0 eller s = 0,
+\rangle=-4sc+sc=0 
+$$
+
+Dette er kun sandt hvis enten c = 0 eller s = 0,
 korrsonerede med w0, w1 er parallelle med e0, e1 eller e1 e0.
 
 # Opgave 6.6
 
 ![](6.6.png)
+## a) hvis A er diagonal bestem en singulærværdidekomponerin SVD for A
+
+enhver matrix har en singulærværdikomponering, hvor u og v er ortogonal.
+sigma er en diagonal matrix. De er sorteres efter størrelse.
+
+Hvi A er en diagonal matrix så er en SVD for A:
+
+$$
+A=U\Sigma V^T
+$$
+
+hvor U og V.T er matricer der udfører rækkeoperationer på (byt om på
+rækker) sigma, som indeholde de samme værider som A, men bare sorteret
+efter størrelse. U og V.T vil kun indeholde indgange der er 0 eller 1.
+
 
 Generalt er svd ikke unik, Så der er meget stor frihed, så længde vores
-svd overholder definitionen på en svd. \#\# e) hvis A er invertibel hvad
-kan siges om singulærværdier for A
+svd overholder definitionen på en svd. 
 
-Hvis A er invertibel gælder det at det(A) forskelle 0, så
+## b) nu vilkårlig diagonal
+
+det samme som i a bortset fra at nogen af værdiern i V.T vil være
+negative for så singulærværdierne kan være positive.
+
+A må have negative værider.
+
+Sigma er den samme.
+
+En singulær værdi kan ikke være negativ.
+
+Vt må have nogle negative værdier for at udligne dem.
+
+## c) bestem svd for A.T
 
 $$
-det(A) = det(V\Sigma U^T)\\
-=det(V)det(\Sigma)det(U^T)\ne0
+A^T=(U\Sigma V^T)^T\\
+=V\Sigma^T U^T \\
+= V\Sigma U^T 
 $$
 
-idet det(sigma) = sigma0,sigma1,sigma2.., gælder det at alle sigmai er
-forskellig fra 0.
+Sigma er diagonal og når vi transponerer den får vi den selv.
 
 ## d) A er ortogonal bestem SVD
 
@@ -986,44 +940,21 @@ $$
 A=UI_nV^T=UV^T
 $$
 
-## c) bestem svd for A.T
+
+## e) 
+
+hvis A er invertibel hvad
+kan siges om singulærværdier for A
+
+Hvis A er invertibel gælder det at det(A) forskelle 0, så
 
 $$
-A^T=(U\Sigma V^T)^T\\
-=V\Sigma^T U^T \\
-= V\Sigma U^T 
+det(A) = det(V\Sigma U^T)\\
+=det(V)det(\Sigma)det(U^T)\ne0
 $$
 
-Sigma er diagonal og når vi transponerer den får vi den selv.
-
-## b) nu vilkårlig diagonal
-
-det samme som i a bortset fra at nogen af værdiern i V.T vil være
-negative for så singulærværdierne kan være positive.
-
-A må have negative værider.
-
-Sigma er den samme.
-
-En singulær værdi kan ikke være negativ.
-
-Vt må have nogle negative værdier for at udligne dem.
-
-## a) hvis A er diagonal bestem en singulærværdidekomponerin SVD for A
-
-enhver matrix har en singulærværdikomponering, hvor u og v er ortogonal.
-sigma er en diagonal matrix. De er sorteres efter størrelse.
-
-Hvi A er en diagonal matrix så er en SVD for A:
-
-$$
-A=U\Sigma V^T
-$$
-
-hvor U og V.T er matricer der udfører rækkeoperationer på (byt om på
-rækker) sigma, som indeholde de samme værider som A, men bare sorteret
-efter størrelse. U og V.T vil kun indeholde indgange der er 0 eller 1.
-
+idet det(sigma) = sigma0,sigma1,sigma2.., gælder det at alle sigmai er
+forskellig fra 0.
 
 # Opgave 7.1
 
@@ -1044,23 +975,18 @@ Hvad vhis nævner kommer tæt på nul. Så bliver fejlen uendelig stor.
 Det ser ud til vi skal bruge en formel for at lave beregningen.
 
 $$
-
 \kappa = \frac{||x||f'(x)}{f(x)}\\
 = \frac{x*cos(x)}{sin(x)}
 $$
 
 ```{python}
-import numpy as np
 x = np.linspace(0, 6, 100)
 y = np.sin(x)
 ```
 
 Her skal vi bruge den anden formel hvor vi har gradienten. 
 
-
 Her ser vi at fejlen vil vokse polomiel i stedet. 
-
-
 
 # Opgave 7.2
 
@@ -1078,9 +1004,7 @@ w = (-1.0+1.0j)
 z + w
 ```
 
-
 som er løsningen.
-
 
 ## b)
 
@@ -1107,8 +1031,8 @@ def increase(A, i, j, s):
   A[i, :] += A[j, :] * s
 ```
 
+
 ```{python}
-import numpy as np
 D = np.array([[1.0 + 1.0j, 2.0-1.0j]])
 
 print("D: \n" + str(D))
@@ -1131,13 +1055,13 @@ b = np.array([5,2,0])
 x = np.linalg.solve(E,b)
 print(np.round(x,5))
 ```
-  
+
 
 # Opgave 7.3
 
 ![](7.3.png)
 
-defition 12.1 vektorrum består af mængde V hvis elementer vi kalder vektor.
+Defition 12.1 vektorrum består af mængde V hvis elementer vi kalder vektor.
 
 definition 12.11: en ikke tim delmængde w delmænde V er et underum hvis sum og
 skalarmultiplikaiton sender element W til elementer W.
@@ -1174,8 +1098,6 @@ $$
 
 ## c) f(-1) = 1
 
- 
-
 $$
 \begin{align*}
     g=f_i+f_j,&&\text{  } g(-1) =f_i(-1)+f_j(-1)=2\\
@@ -1184,8 +1106,6 @@ $$
 $$
 
 ## d) f'(0)=0
-
-
 
 $$
 \begin{align*}
@@ -1209,9 +1129,11 @@ $$
 \nabla f(x)=(1/4-\sqrt 3 /12, \sqrt 3 / 12-1/4, -\sqrt 3 / 6) && \text{gradienten}
 \end{align*} \\
 $$
+
 $$
 \kappa(x) =\frac{||(2.0, 2.0, -1.0)||_2||(-1,0,1||_2}{|f(x)|} \\
 $$
+
 $$ 
 = \frac{\sqrt{2.0^2+2.0^2+(-1)^2}||(1/4-\sqrt 3 /12, \sqrt 3 / 12-1/4, -\sqrt 3 / 6)||_2}{|\frac{-b+\sqrt{b^2-4ac}}{2a}|}
 $$
@@ -1259,7 +1181,6 @@ Vi vil gerne have et konditionstal mellem 1 og 10, da det er til at acceptere, m
 
 
 ```{python}
-import numpy as np
 import math
 
 # definer gradient
@@ -1292,11 +1213,4 @@ c har altså den største påvirkning, hvor den er
 $$
 \kappa(x)=2.54
 $$
-
-## b) lavet foroven.
-
-# Opgave 7.5
-
-![](7.5.png)
-
 
