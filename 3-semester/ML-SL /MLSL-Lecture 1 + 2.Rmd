@@ -1,0 +1,90 @@
+---
+title: "ML + SL: Lecture 1 and 2"
+description: |
+  A new article created using the Distill format.
+author:
+  - name: Nora Jones 
+    url: https://example.com/norajones
+    affiliation: Spacely Sprockets
+    affiliation_url: https://example.com/spacelysprokets
+date: "`r Sys.Date()`"
+output: distill::distill_article
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+```
+
+## Lecture 1
+
+Denne del er om **Probability theory**.
+
+### 1.2.1 - Probability densities
+
+Hvis vi har en værdi *x* og vi gerne vil se på sandsynligheen for den
+falder i intervallet $(x, x+\delta x)$ så vil den være $p(x) \delta$. Her kalder
+vi $p(x)$ for **probability density** over x. 
+
+Sandsynligheden for x ligger i intervallet er givet ved:
+
+$$
+p(x\in (a,b)) = \int^b_a p(x)dx
+$$
+
+**Den cumulative distribution function**
+
+$$
+P(z)=\int^z_{-\infty}p(x) dx
+$$
+
+
+
+### 1.2.2 - Expectations and covariances
+
+Weigthed average af kontinuerlig variables:
+
+$$
+E[f] = \int p(x) f(x) dx
+$$
+
+Variance:
+
+$$
+var[f] = E[(f(x) - E[f(x)])^2] \\
+= E[x^2] -E[x]^2
+$$
+
+Covariance:
+
+$$
+cov[x,y] = E_{x,y}[[x-E[x]][y-E[y]]]\\
+= E_{x,y}[xy]-E[x]E[y]
+$$
+
+### 1.2.3 - bayesian probabilities
+
+**Frequencies** random og gentagende forsøg.
+
+**Prior probability** er vi har en forventning til en paramerter før vi
+observer den. 
+
+**Bayes theorem**:
+
+$$
+p(w|D) = \frac{p(D|w)p(w)}{p(D)}
+$$
+
+vi kan evaluer usikkerheden ved w efter observer data D, som er i form af
+en **posterior probability** $p(w|D)$. Den kan ses som en funktion af 
+parameter vektoe, w, hvor den så er en likelihood funktion. 
+
+### 1.2.4 Gaussian distribution
+
+Defined som
+
+$$
+N(x|\mu,\sigma^2)=\frac{1}{(2 \pi \sigma^2)^{1/2}}exp[-\frac{1}{2 \sigma^2}(x-\mu)^2]
+$$
+
+
+## Lecture 2
