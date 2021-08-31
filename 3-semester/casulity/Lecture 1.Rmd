@@ -1,0 +1,141 @@
+---
+title: "Kausal inferens - Lecture 1: Simple Regression"
+description: |
+  About linear regression.
+author:
+  - name: Nora Jones 
+date: "`r Sys.Date()`"
+output: distill::distill_article
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+```
+
+## Introduktion
+
+
+## Simple regression
+
+### Steps for empirisk analyse
+
+1) Opstil spørgsmål.
+2) Opsæt en teoretisk model.
+3) Lav modellen om til en econometric model.
+4) Saml data, estimer parameter, lav konfidens 
+  intervaller og test hypotese.
+  
+### Data typer
+
+- **Cross sectional data** samlet for individer, firmer på et 
+  tidspunkt.
+- **Panel data** samling af individer, firmar over flere 
+  periode.
+- **Time series**: En enkelt individe, firma over en
+  årrække.
+  
+### Issues
+
+1) Hvordan tillader vi andre faktor end x kan påvirke y?
+2) Hvad er den **funktionalle forhold** mellem y og x?
+3) Hvordan kan vi fange **ceteris paribus relationship**
+  mellem y og x og derved få et causal forhold?
+  
+### Assumption
+
+**Zero conditional mean assumption**:
+
+$$
+E(u|x)=0
+$$
+
+**Population regression function**
+
+$$
+E(y|x)=\beta_0+\beta_1
+$$
+
+Vores fokus er den *kausale effekt* af x på y altså **average causal effekt**. Derfor skal vi se på den partial derivative:
+
+$$
+\frac{\partial E(y|x)}{\partial x} = \frac{\partial}{\partial x }(\beta_0+\beta_1 x)=\beta_1
+$$
+
+### Sample analogs and method of moments
+
+$$
+\hat \beta=\bar y - \hat \beta _1 \bar x 
+$$
+
+$$
+\hat \beta_1 =\frac{\text{Sample covariance}(x_i,y_i)}{\text{Sample variance}(x_i)}
+$$
+
+### OLS
+
+**fitted value** er vores predict for y
+
+$$
+\hat y_i = \hat \beta _0 + \hat \beta _1 x
+$$
+Hvor vi så har **residual**
+
+$$
+\hat u_i = y_i - \hat y_i
+$$
+
+Hvor vi kan skrive: $\hat y_i = \hat \beta _0 + \hat \beta _1 x$.
+
+### Interpretation of $\beta_1$
+
++------------+-----------------------------+------------------------+
+|Model       | Change in dependent variable| change in regessor     |
++============+=============================+========================+
+|Level level |  $\beta_1$ units            | 1 unit                 |
++------------+-----------------------------+------------------------+
+|Level log   |  $\beta_1/100$ units        | 1 %                    |
++------------+-----------------------------+------------------------+
+|log level   |  $100 \beta_1$ units        | 1 unit                 |
++------------+-----------------------------+------------------------+
+|log log     |  $\beta_1$ %                | 1 %                    |
++------------+-----------------------------+------------------------+
+
+### Linear meaning
+
+Det betyder at parameterne beta0 og beta1 er lineær.
+
+### SLR assumption Gauss Markov
+
+* **SLR. 1**: Linear i parameter.
+* **SLR. 2**: Random sampling. 
+* **SLR. 3**: Sample variation in $x_i$.
+* **SLR. 4**: Zero conditional mean: error term has zero mean.
+
+### Monte Carlo Simulering
+
+$$
+x \sim Unifrom(-2,2) \\
+u\sim normal(0,1)
+$$
+
+```{r}
+sim <- 5000
+n <- 100 # sample size
+sigma <- 1 # variane of error term
+b0 <- 1 #intercept
+b1 = 0.5 # slop coefficient
+
+Ans <- rep(NA, sim)
+
+for (ii in 1:sim){
+  x <- runif(n, -2, 2) # create x variable
+  u <- rnorm(n, 0, sigma)
+  y <- b0 + b1 * x + u
+  b1_hat <- lm(y ~ x)$coefficients[2] # find slope oeff
+  Ans[[ii]] = b1_hat
+}
+
+plot(density(Ans))
+```
+
+* **SLR . 5**: Homoskedastic. 
