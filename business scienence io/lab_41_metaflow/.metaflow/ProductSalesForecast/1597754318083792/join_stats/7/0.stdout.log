@@ -1,6 +1,0 @@
-Evaluation error: AttributeError: Flow ProductSalesForecast has no attribute 'data'
-
-Detailed traceback: 
-  File "/Users/mdancho/Library/r-miniconda/envs/metaflow-test/lib/python3.6/site-packages/metaflow/flowspec.py", line 128, in __getattr__
-    (self.name, name))
-.

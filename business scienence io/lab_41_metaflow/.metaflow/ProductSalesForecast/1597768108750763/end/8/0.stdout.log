@@ -1,6 +1,0 @@
-Evaluation error: AttributeError: Flow ProductSalesForecast has no attribute 'summary'
-
-Detailed traceback: 
-  File "/Users/mdancho/Library/Python/3.7/lib/python/site-packages/metaflow/flowspec.py", line 128, in __getattr__
-    (self.name, name))
-.

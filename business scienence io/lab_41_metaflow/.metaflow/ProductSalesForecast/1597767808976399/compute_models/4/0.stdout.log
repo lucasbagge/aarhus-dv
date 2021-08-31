@@ -1,4 +1,0 @@
-[KILLED BY ORCHESTRATOR]
-Evaluation error: Problem with `filter()` input `..1`.
-[31mx[39m missing value where TRUE/FALSE needed
-[34mℹ[39m Input `..1` is `Date %>% between_time("start", idx[1] %+time% period)`..
