@@ -1,0 +1,290 @@
+---
+title: "ps_2_løsning"
+description: |
+  A new article created using the Distill format.
+author:
+  - name: Nora Jones 
+    url: https://example.com/norajones
+    affiliation: Spacely Sprockets
+    affiliation_url: https://example.com/spacelysprokets
+date: "`r Sys.Date()`"
+output: distill::distill_article
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+```
+
+## 1
+
+### i) Start by generating 500 observations xi – the explanatory variable – from the uniform distribution with range [0, 10].
+
+```{r}
+x <- runif(500, min=0, max=10)
+```
+
+### ii) Randomly generate 500 errors, ui, from Normal(0,36) (i.e. mean zero with variance of 36. Note that you need to tell R the standard devi- ation rather than variance).
+
+```{r}
+u <- rnorm(500, mean = 0, sd = 36)
+```
+
+### iii) generate y $y=1+2x+u$ Use the data to run the regression of yi on xi. What are your estimates of the intercept and slope? Are they equal to the population values in the above equation? Explain.
+
+```{r, lav y}
+y <- 1 + 2*x + u
+```
+
+```{r, regression}
+mod <- lm(y ~ x)
+
+summary(mod)
+```
+Vores estimat bliver:
+
+$$
+y=-0.9 + 2.5 \beta + u
+$$
+Nej de er ikke enes. VI har introducerede et fejled som gør vi ikke rammer plet. 
+
+### iv Obtain the OLS residuals, uˆi, and verify that equation 􏰕i uˆi = 0 (subject to rounding error).
+
+```{r}
+format(sum(resid(mod)), digits = 2)
+```
+
+Det er korrekt.
+
+### v) Compute sum i uˆixi. What do you conclude?
+
+```{r}
+options(scipen = 666)
+format(sum(resid(mod) * x), digits = 2)
+```
+
+Der er ingen fejl.
+
+## 2)
+
+### i) Does sibs have the expected effect? Explain. Holding meduc and feduc fixed, by how much does sibs have to increase to reduce predicted
+
+Min hypotese er at desto flere børn et par får desto svære har forældrene
+til at vejlede og uddanne børn og eventuel hjælp til lektie hjælp
+
+Historisk set så ses det at flere børn er en indikation for man kommer
+fra familier med knappe ressourcer, så sibs kan også være et variable for
+hvor gode evner forældre har. 
+
+### ii) Discuss the interpretation of the coefficient on meduc.
+
+0.13 som betyder at hvis vi holder alt andet fast så vil for hvert år mere 
+uddannelse morderen få have en positiv virkning på 0.13 år for barnet. 
+
+### iii) Suppose that Man A has no siblings, and his mother and father each have 12 years of education. Man B has no siblings, and his mother and father each have 16 years of education. What is the predicted difference in years of education between B and A?
+
+```{r}
+0.131 * (16) + 0.21*(16) - 0.131*(12) - 0.21*(12)
+```
+
+## 3) In a study relating college grade point average to time spent in various activities, you distribute a survey to several students. The students are asked how many hours they spend each week in four activities: studying, sleeping, working, and leisure. Any activity is put into one of the four categories, so that for each student, the sum of hours in the four activities must be 168
+
+### i) does it make sense to hold sleep, work, and leisure fixed, while changing
+study?
+
+Nej det giver ikke mening da de til sammen skal summe til 168. Så hvis vi 
+lægger 10 timer til study så skal vi trække de 10 fra et andet sted. 
+
+### ii) Explain why this model violates Assumption MLR.3.
+
+MLR 3 handler om perfekt collinearitet.
+Da vi kan opskrive study = 168 − sleep − work − leisure for hver
+observatiou så den er overtrådt. 
+
+### iii) How could you reformulate the model so that its parameters have a useful interpretation and it satisfies Assumption MLR.3?
+
+Vi kan bare droppe [leasiure](http://kevinx-chiu.weebly.com/uploads/8/9/8/3/8983380/ps_3_answer_key.pdf)
+
+## 4) Which of the following can cause OLS estimators to be biased?
+
+## 5) Use the data in ’discrim’ to answer this question. These are zip code–level data on prices for various items at fast-food restaurants, along with char- acteristics of the zip code population, in New Jersey and Pennsylvania. The idea is to see whether fast-food restaurants charge higher prices in areas with a larger concentration of black people.
+
+### i) Find the average values of prpblck and income in the sample, along with their standard deviations. What are the units of measurement of prpblck and income?
+
+```{r}
+library(tidyverse)
+library(wooldridge)
+data('discrim')
+wooldridge::discrim
+```
+
+```{r}
+discrim |> 
+  as_tibble() |> 
+  select(prpblck, income) |> 
+  drop_na() |> 
+  map_dfr(sd) 
+```
+
+```{r}
+discrim |> 
+  as_tibble() |> 
+  select(prpblck, income) |> 
+  drop_na() |> 
+  map_dfr(mean) 
+```
+
+* income: median family income, zipcode
+* prpblck: proportion black, zipcode
+
+### ii) Consider a model to explain the price of soda, psoda, in terms of the proportion of the population that is black and median income:, Estimate this model by OLS and report the results, including the sample size and R-squared. (Do not use scientific notation when reporting the estimates.) Interpret the coefficient on prpblck. Do you think it is economically large?
+
+```{r}
+mod_2 <- lm(psoda ~ prpblck + income, data = discrim)
+options(scipen = 666)
+summary(mod_2)
+```
+
+Vores koefficient prpblack 0.12 siger os at hvis andelen af sorte stiger med 10 %
+så vil prisen af sodavand stige med 0.12 dollar. 
+
+> “Economically significant” means that the coefficient is large enough that we care
+about it. “Precisely estimated” means that we are confident about its size. The
+entries in the table explain the corresponding statistical jargon. A good example of
+how even a first rate economist can be mislead by this type of jargon can be found in
+a paper by John H. Cochrane that concludes "loss of work due to strike . . . [is an
+event] that seems effectively insured, up to the sensitivity of the test." In fact, his
+regression shows that a typical strike lowers consumption over a three-year period
+by about 9 percent, and “up to the sensitivity of the test,” perhaps by as much as 21
+percent. On the other hand, the coefficient is not "statistically significant." In other
+words, the data has little information about whether or not there is effective
+insurance, but it suggests that there is not. 
+
+Nej det er ikke tilfældet. 
+
+### iii) Compare the estimate from part (ii) with a simple regression esti- mate from psoda on prpblck. Is the discrimination effect larger or smaller when you control for income? Explain.
+
+```{r}
+mod_3 <- lm(psoda ~ prpblck, data = discrim)
+options(scipen = 666)
+summary(mod_3)
+```
+
+Den er blevet mindre og mere signifikant. Det vil sige at diskriminationen falder
+når vi undlader inkomst. 
+
+```{r}
+library(ggplot2)
+plot(discrim$income, discrim$prpblck)
+```
+
+### iv) A model with a constant price elasticity with respect to income may be more appropriate. Report estimates of the model. f prpblck increases by 0.20 (20 percentage points), what is the estimated
+percentage change in psoda?
+
+```{r}
+mod_4 <- lm(log(psoda) ~ prpblck + log(income),
+            data = discrim)
+summary(mod_4)
+```
+
+Hvis den stiger med 20 percentage point så vil psoda stige med 2.44%.
+
+### v) Now add the variable prppov to the regression in part (iv).
+
+```{r}
+mod_5 <- lm(log(psoda) ~ prpblck + log(income) + prppov,
+            data = discrim)
+summary(mod_5)
+```
+
+* prppov: proportion in poverty, zipcode
+
+Her ser vi at prpblck falder mens log income stiger. 
+
+### iv) Find the correlation between log(income) and prppov. Is it roughly
+what you expected?
+
+```{r}
+library(corrr)
+```
+
+```{r}
+cor(log(discrim$income), discrim$prppov, method = "pearson", use = "complete.obs")
+```
+
+```{r}
+x <- correlate(discrim |> select(lincome, prppov))
+x
+```
+
+```{r}
+rplot(x)
+```
+
+```{r}
+discrim |>
+  select(lincome, prppov) |> 
+  correlate() %>% 
+  network_plot(min_cor = .2)
+```
+
+Der er en enorm negativ korrelation, som giver mening da en højere
+fattigheds rate må alt andet lige være lig med en laver indkomst.
+
+### vii) Evaluate the following statement: “Because log(income) and prppov are so highly correlated, they have no business being in the same regres- sion.
+
+Det skader ikke perfekt collinearytet men giver en bedre forklarende variable.
+
+## 6) The Bechdel test is a test (more of a minimum threshold) for whether a film portrays women in a ’normal/real life’ way. A film passes the Bechdel test if there are at least 2 named female characters in the film who have a conversation together that doesn’t pertain to a male character. (Whether this constitutes a good ’test’ or not is definitely up for debate, but we will use it anyway as it highlights OVB nicely!).
+The dataset ’bechdel.csv’ can be downloaded from blackboard (use the read.csv() function in R, as is used to load the flights_data.csv data on slide 47 in the multivariate regression slides).
+
+```{r}
+bec <- read.csv(
+  "Bechdel_Test.csv"
+)
+```
+
+```{r}
+bec |> 
+  glimpse()
+```
+
+### i) whether the film passes the Bechdel test: and What does this indicate about audiences preferences for films?
+
+```{r}
+bec |> 
+  head()
+```
+
+```{r}
+bec |> 
+  count(pass_test) 
+```
+
+```{r}
+bec |> 
+  select(intgross_13) |> 
+  mutate(intgross_13 = log(intgross_13))
+```
+
+
+```{r}
+mod_6 <- lm(log(intgross_13) ~ pass_test,
+            data = bec)
+summary(mod_6)
+```
+Det indikere at jo mere en film tjerner desto færre film består bechdel
+test.
+
+### ii) Now include log of the budget of the film (adjusted for inflation in 2013 dollars), in particular take this to be the . How do you interpret the coefficient on the budget? Discuss what happens to the coefficient on pass_test in comparison to part (i). In particular, what does this mean for sexism in the film industry?
+
+```{r}
+mod_7 <- lm(log(intgross_13) ~ pass_test + log(budget_13),
+            data = bec)
+summary(mod_7)
+```
+
+Koeffeficienten 0.86 fortæller os at når indtjeningen stiger 1% så stiger
+budgettet med 8.6%.
+
+
+

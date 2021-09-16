@@ -1,0 +1,174 @@
+---
+title: "MLSL-Lecture 5 + 6"
+description: |
+  A new article created using the Distill format.
+author:
+  - name: Nora Jones 
+    url: https://example.com/norajones
+    affiliation: Spacely Sprockets
+    affiliation_url: https://example.com/spacelysprokets
+date: "`r Sys.Date()`"
+output: distill::distill_article
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+```
+
+## (Lecture 5) Probability Distributions 1
+
+>Sections: 2.1, 2.1.1
+
+
+
+## (Lecture 6) Probability Distributions 2
+
+>Sections: 2.2, 2.2.1, 2.3, 2.3.1, 2.3.2, 2.3.3, 2.3.4, 2.3.5, 2.3.6, 2.3.7
+
+##Exercises: 2.1, 2.3, 2.20, 2.22
+
+## Notes from lecture
+
+VI skal buruge baysian og maximum likelihood. 
+
+### Density estimation
+
+Hører ind under unsupervised learning. 
+
+### Density estimation 1
+
+Vi vil have noget data. Vi har x data punkter. De er random, så vi
+observer noget data. Der er nogle ting som er ukendte ved data. 
+Vi prøver at få noget information fra deet data. Usikkerheden vil
+vi gerne modeller. Med proberbiluty kan vi modeller denne usikkerhed.
+Her kan vi bruge proberbility density funktion til at estimer det. 
+
+Vi vil modeller en proberbility density funktion. Vi antager noget
+omkring fordelingen. Vi vil specificer den density function. 
+Vi skal finde parameteren for en gaussian er der mean og std. Vi
+laver nogle antagelser. Vi antager den kommer fra gaussian fordeling.
+Det er ikke helt data driven. Hvis det var tilfældet ville vi
+bare kunne tage paramerer fra den. Vi skal derfor estimer paramerter 
+
+* MLE
+* bayesian estimation
+
+De to metdoer kan vi bruge. 
+
+> Estimer alpha og beta fra gaussian 
+
+Problemet givet data punkter vil vi estimer P density function
+hvor data kommer fra. For vi kan gøre det skal vi antage
+at klassen hvor data kommer fra. Den klasse vlger vi til at
+være gaussian. 
+Det næste skridt er vi skal lave P density funktion ved at estimer
+parameterne. 
+
+Fremgangsmåde:
+
+* Antag fordeling
+* Etimer parameter
+
+### Density estimation II
+
+**Ill posed** som betyder vi har uendelig mange måder at lægge en fordeling
+på ens data. Der er ingen unik læsning. 
+
+VI skal tage *informal decision*. 
+
+### Density estimation III
+
+Vi kan bruge en **gaussian distribution** vi har mu og sigma der skal
+estimeres. De er unikke og vil definer vores fordeling. 
+De kaldes **parametric distribution**. Hvor vi bare skal 
+have de to parameter så har vi fordelingen.
+
+### Bernoulli distribution
+
+En simpel fordeling for random variable. 
+Antag vi har diskret variabler. 
+
+P density funktion hvor vi har en diskret random variable.
+Det er hvor sample space er diskret. Den vil have en værdi af 0 eller 1.
+
+Bern(x|mu) er vores P density funktion
+
+* Giver den mening? 
+  * sæt x=1 så skal den være lig mu. 1-1=1 vi får bare mu derfor er p(x)=mu.
+  
+Hvordan finder vi mean af en random variable?
+
+## Desnisty estimatio using mle
+
+Først skal vi lave en likelihood funktion. 
+
+En likelihood funktion er **joint P density funktion** af vores data.
+IID antagelse. random variable er uafhængig. 
+
+P(x,x2)=p(x1)p(x2) der er sådan vi definer uafhængig.
+
+identical distreibution at de kommer fra den samme fordeling. 
+
+Hvor enkelt mu, fordi vi antager de har samme parameter. 
+
+likelihood funktion er bare joint proberbility funktion.
+
+Tager log likelihood fordi beregninger bliver letter. 
+
+Herefter kan vi optimer log likelihood.  Her skal vi diff og sæt lig
+med 0. 
+
+## Binomial distribution
+
+Er en udvidelse af bernouli hvor vi tæller antal succes og fails.
+
+Hvad er mean og variance?
+
+* mean af m er m*mu
+* variance af m er n*sigma^2
+
+## Desnity estimation via bayesian approch
+
+posterior alp likelihood function x prior
+
+* Handler om vi overvejer paramerter til at være en random variable
+  Med MLE er mu en ukendt konstant som vi vil estiemr fra data og
+  det e rmålet.
+  Med bayseian vil mu være en random variable. Når vi gør det så kan
+  vi associer density funktion med den variable. 
+  Det er filosofien ba g bayesian. 
+  Ved at gøre det er der en fordel vi kan bruge prior information
+  i vores density funktion. 
+* Hvis vi har noget prior information så kan vi inkorporer den viden
+  i vores density funktion. 
+* Kan ikke finde det tegn. Han opskriver posterior. Og nævner bayes formel.
+  Det er en applikation af bayes rule. 
+* Formularen forneden er hjertet af baysian. 
+
+1) Antag paramter er RV.
+2) sæt en prior om parameter 
+3) Posterior fortæller os givet vores input data hvad er vores P density af
+  paramteren. 
+  
+$$
+p(\mu) \text{ ses som en random variab for B} \\
+\text{Her kan vi antage en denisty p som kaldet en prior} \\
+p(\mu) \text{ prior, før vores data er observert} \\
+p(\mu|x)** p(x|\mu*p(\mu) \text{ Tilføj likelihood funktion, som er JP}
+$$
+
+## Hvordan vælges prior destribution
+
+* Bayesian approch som er kontroversielt.
+  * Tolkning af paramter er Random har skabt kontroverser
+* Frequentist
+
+* Conjugate prior: er vi vælger en funktionel form af den likehood funktion.
+  Se på beta (2) for hvordan vi laver en **conjugate prior**. 
+  
+Vi har fra MLE fundet likehood. 
+Nu skal vi have prior og posterior. 
+
+Vi vilhave at når vi ganger likelihood og prior så skal
+det giver posterior. 
+

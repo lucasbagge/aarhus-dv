@@ -1,0 +1,35 @@
+---
+title: "Kausal inferens - Lecture 2: Multiple Regression"
+description: |
+  A new article created using the Distill format.
+author:
+  - name: Nora Jones 
+    url: https://example.com/norajones
+    affiliation: Spacely Sprockets
+    affiliation_url: https://example.com/spacelysprokets
+date: "`r Sys.Date()`"
+output: distill::distill_article
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+```
+
+## Introduktion
+
+Her benyttes litteraturen:
+
++------------+-----------------------------+------------------------+
+|Mixtape     | Wooldridge                  | Mostly harmless        |
++============+=============================+========================+
+|   3        |  17                         | 3                      |
++------------+-----------------------------+------------------------+
+
+I lektionen gennemgår vi et wage and education eksempel, hvor man
+ser at det at tilføje flere regressor har betydning for koefficienterne.
+
+
+
+
+
+

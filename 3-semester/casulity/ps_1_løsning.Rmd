@@ -1,0 +1,44 @@
+---
+title: "Problem set - solution"
+description: |
+  A new article created using the Distill format.
+author:
+  - name: Nora Jones 
+    url: https://example.com/norajones
+    affiliation: Spacely Sprockets
+    affiliation_url: https://example.com/spacelysprokets
+date: "`r Sys.Date()`"
+output: distill::distill_article
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+```
+
+## 1)
+
+### i)
+
+Jeg vil tage en række klasser og dele dem op, således at
+nogle blev små, mens andre blev større.
+
+### ii)
+
+Ja det vil jeg, således at jo større klassen er desto mere
+negativ påvirkning vil de have på ens resultater. 
+
+### iii)
+
+Nej ikke nødvendigvis.
+
+Man skal tage højde for den usikkerhed der ligge i ens fejlled, således vil
+man ikke kunne måle ability for ens klasse, som ikke kan standardizeres.
+
+## 2)
+
+
+
+
+
+
+

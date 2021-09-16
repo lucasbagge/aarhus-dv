@@ -1,0 +1,62 @@
+---
+title: "ML + SL: Lecture 1 and 2"
+description: |
+  A new article created using the Distill format.
+author:
+  - name: Nora Jones 
+    url: https://example.com/norajones
+    affiliation: Spacely Sprockets
+    affiliation_url: https://example.com/spacelysprokets
+date: "`r Sys.Date()`"
+output: distill::distill_article
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+```
+
+## Lecture 3
+
+> 1.1, 1.2.5, 1.2.6
+
+### 1.1
+
+### 1.2.5 Curve fitting re visited
+
+Ser på et **probabilistic perspektiv**, hvor vi får viden om 
+error funktionen og regularization. 
+
+Vi siger vi følger en gaussian fordeling og bruger MLE til at. 
+
+Med MLE kan vi også estimere vores **presisions parameter** $\beta$.
+
+### 1.2.6
+
+
+## Lecture 4
+
+### Note om Cross validation
+
+Det bruges når vi ikke har et stort træning og testing sæt. 
+Fremgangsmåden er:
+
+1) Split træning op i **S subsets/folder**. 
+2) Her bygger vi en masse modeller med en række
+  hyperparameter som skal:
+  1) Træn modeller S gange og bruge S - 1 sæt.
+  2) Test det med de resterende sæt.
+  3) Beregn performance og standard deviation for 
+     de S eksperimenter.
+3) Vælg modellen med de bedste resultater.
+
+> 1.4, 1.5.1, 1.5.2, 1.5.3, 1.5.4
+
+### 1.4 
+
+### 1.5.1
+
+### 1.5.2
+
+### 1.5.3
+
+### 1.5.4
