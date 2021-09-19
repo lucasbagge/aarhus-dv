@@ -49,4 +49,14 @@ hvis den er korrekt og heraf vil en min af expected loss minie misklassication r
 
 ![](1.25.png)
 
+```{r}
+library(
+  ggplot2
+)
+```
+
+```{r}
+geom_histogram()
+
+```
 
