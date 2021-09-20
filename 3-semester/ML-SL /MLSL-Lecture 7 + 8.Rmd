@@ -23,11 +23,24 @@ knitr::opts_chunk$set(echo = TRUE)
 
 ![](9.1.png)
 
+Ligning 9.1 giver os distortion measure
+
+Vi forsøger er min J, og destor laver J kan bliver vil vi konvergere mod det et lavere niveau.
+Så derfor må K means algoritmen konverger efter en utal nummer af iterationer. 
+
+> noter fra undervisning
+
 
 
 #### 9.3
 
 ![](9.3.png)
+
+Fra 9.10 og 9.11 har vi
+
+$$
+p(x)=\sum_z p(x|z)
+$$
 
 #### 9.8
 
