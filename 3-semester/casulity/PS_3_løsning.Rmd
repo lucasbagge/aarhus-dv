@@ -1,0 +1,200 @@
+---
+title: "PS 3 løsning"
+description: |
+  A new article created using the Distill format.
+author:
+  - name: Nora Jones 
+    url: https://example.com/norajones
+    affiliation: Spacely Sprockets
+    affiliation_url: https://example.com/spacelysprokets
+date: "`r Sys.Date()`"
+output: distill::distill_article
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+```
+
+
+### 2) Using the data in ’sleep75’, we obtain the estimated equation: The variable sleep is total minutes per week spent sleeping at night, totwrk is total weekly minutes spent working, educ and age are measured in years, and male is a gender dummy.
+
+#### i) All other factors being equal, is there evidence that men sleep more than women? How strong is the evidence?
+
+Det ser ud til at hvis du er en mand så sover du mere, men den er
+ikke signifikant. 
+
+
+Use a one-sided t-test: we are interested in whether men sleep moret han women (rather than whether they just sleep different amounts). The **t-statistic on male is 87:75 = 34:33 = 2.556**. Now the critical value for a 5 % significance level one-sidedt-test with(7066) =700degrees of freedom is roughly1:645. Since 2: 556 > 1:645 we reject the null hypothesis that men sleep the same as women against the alternative that they sleep more than women.
+
+- The critical value for a one-sidedt-test with 700 degrees of freedom at the 1 % significance level is 2:33so we reject at the1%significance level.
+
+- 87:75 minutes is close to one and a half hours which is not a negligible amount perweek.
+
+#### ii) Is there a statistically significant tradeoff between working and sleep- ing? What is the estimated tradeoff?
+
+Koefficienten for totwrk er -0.163 mens den t statistik er 
+
+```{r}
+-0.163 / 0.018
+```
+
+
+Den er signifikant. Så for hver 6 minutter ekstra du bruger på at arbejde
+reducer søvn approximativ med 1 min..
+
+#### iii) What other regression do you need to run to test the null hypothesis that, holding other factors fixed, age has no effect on sleeping? (Note that two variables capture the effect of age)
+
+Lav regressionen
+
+```{r}
+library(wooldridge)
+sleep <- wooldridge::sleep75
+attach(sleep)
+
+mod_1 <- lm(
+  sleep ~ totwrk +  educ + age + agesq + male,
+  data = sleep
+)
+
+summary(mod_1)
+```
+
+R square for første model:
+
+```{r}
+sum_mod_1 <- summary(mod_1)
+first_r <- sum_mod_1$adj.r.squared
+paste0("first r square:  ", round(first_r, digits = 2) )
+```
+
+Lav ny regression:
+
+```{r}
+mod_2 <- lm(
+  sleep ~ totwrk + educ + male,
+  data = sleep
+)
+
+sum_mod_2 <- summary(mod_2)
+seconde_r <- sum_mod_2$adj.r.squared
+paste0("Second r square:  ", round(seconde_r, digits = 2) )
+```
+
+```{r}
+sum_mod_2
+```
+
+Lav nu en F statiktik for at teste hypotesen om
+koefficienter age og agesq er nul
+
+```{r}
+# q er antal restriktioner 
+q = 2
+n = 706
+k = 5
+
+( (first_r - seconde_r) /  q) / ( (1- first_r) / (n - k - 1) )
+```
+
+```{r}
+anova(mod_1, mod_2)
+```
+
+### 3) Using the data in ’gpa2’, the following equation was estimated
+
+#### i) Is there strong evidence that hsize2 should be included in the model? From this equation, what is the optimal high school size?
+
+```{r}
+gp2 <- wooldridge::gpa2
+attach(gp2)
+
+mod_3 <- lm(
+  sat ~ hsize + hsizesq + female + black + female * black,
+  data = gp2
+)
+
+mod_3_sum <- summary(mod_3)
+
+mod_3_sum
+```
+
+hsizesq ser signifikant ud, men hvorfor den skulle laves 
+er jeg ikke klar over. 
+
+hsize måles i 100, så den optimale graduating size er 441.
+
+#### i) Holding hsize fixed, what is the estimated difference in SAT score between nonblack females and nonblack males? How statistically signifi- cant is this estimated difference?
+
+Det er givet ved koefficienten female (since black =0): non black females har SAT score about 45 point lavere end nonblack males.
+t statistikken er omkring 10.51 så forskellen er statitical signifikant. 
+
+#### ii) What is the estimated difference in SAT score between nonblack males and black males? Test the null hypothesis that there is no difference be- tween their scores, against the alternative that there is a difference.
+
+Da female =  0, vil koefficienten på black betyde at en black male har en estimerd sat score 170 point mindre end nonblack male. 
+
+t statistikken er 13 så vi forkaster at der ingen forskel er. SOm betyder at der er en signifikant forskel. 
+
+#### iv) What is the estimated difference in SAT score between black females and nonblack females? What would you need to do to test whether the difference is statistically significant?
+
+Indsæt her black = 1, female =1 for black females og black =0 and femle =1 for nonblack females. Forskellen
+
+```{r}
+-169 + 62
+```
+
+Da estimatet afhænger af to koefficienter så kan vi ikke
+lave en t statistik fra de givet informationer. 
+
+Her kunne vi lave dummy variabler for grupperna og herfra 
+få t statikken. 
+
+### 4) Use the data in ’discrim’ to answer this question. and report the results in the usual form. Is βˆ1 statistically different from zero at the 5% level against a two-sided alternative? What about at the 2 1% level?
+
+```{r}
+discrim <- wooldridge::discrim
+attach(discrim)
+mod_4 <- lm(
+  lpsoda ~ prpblck + discrim$lincome + prppov,
+  data = discrim
+)
+
+mu_mod_4 <- summary(mod_4)
+mu_mod_4
+```
+
+prpblck er statistikal signifikan for 1%.
+
+#### ii) What is the correlation between log(income) and prppov? Is each vari- able statistically significant in any case? Report the two-sided p-values.
+
+```{r}
+cor(na.omit(discrim$lincome), na.omit(discrim$prppov))
+```
+
+Der er en høj negativ korrelation. 
+
+#### iii) To the regression in part (i), add the variable log(hseval) (the median house value in the zip code area). Interpret its coefficient and report the two-sided p-value for H0: βlog(hseval).
+
+```{r}
+mod_5 <- lm(
+  lpsoda ~ prpblck + lincome + prppov + lhseval,
+  data = discrim
+)
+
+mu_mod_5 <- summary(mod_5)
+mu_mod_5
+```
+lhseval angiver median husværdien pr zipcode.
+
+```{r}
+2 * pt(0.01768, df = mod_5$df.residual)
+```
+
+meget tæt på nul. 
+
+#### iv) In the regression in part (iii), what happens to the individual statis- tical significance of log(income) and prppov? Are these variables jointly significant? (Compute a p-value.) What do you make of your answers?
+
+```{r}
+library(car)
+linearHypothesis(mod_5, c("lincome = 0","prppov=0"))
+```
+
