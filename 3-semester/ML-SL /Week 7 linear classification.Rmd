@@ -1,0 +1,258 @@
+---
+title: "Week 7"
+description: |
+  A new article created using the Distill format.
+author:
+  - name: Lucas Bagge
+    url: https://example.com/norajones
+    affiliation: Spacely Sprockets
+    affiliation_url: https://example.com/spacelysprokets
+date: "`r Sys.Date()`"
+output: distill::distill_article
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(reticulate)
+library(dplyr)
+library(magrittr)
+```
+
+## Data
+
+```{python}
+# Dependencies
+from sklearn.datasets import load_digits
+from sklearn.decomposition import PCA 
+import matplotlib.pyplot as plt 
+import seaborn as sns; sns.set() # this import just makes the plots prettier
+import numpy as np
+```
+
+```{python}
+# We're using a subset of two classes for now
+digits = load_digits(n_class=2)
+```
+
+```{python}
+# Handy plotting functions
+x_min, x_max = -40, 40
+y_min, y_max = -40, 40
+
+def plot_examples():
+    show_num = 4
+    _, axes = plt.subplots(1, show_num)
+    images_and_labels = list(zip(digits.images, digits.target))
+    for ax, (image, label) in zip(axes[:], images_and_labels[:show_num]):
+        ax.set_axis_off()
+        ax.imshow(image, cmap=plt.cm.gray_r, interpolation='nearest')
+        ax.set_title('Label: %i' % label)
+
+def plot_scatter(data, target, n_class=2):
+    plt.scatter(data[:, 0], data[:, 1], c=target, edgecolor='none', alpha=0.5, cmap=plt.cm.get_cmap('rainbow', n_class))
+    plt.xlabel('Component 1')
+    plt.ylabel('Component 2')
+    plt.colorbar();
+    plt.xlim(x_min, x_max)
+    plt.ylim(y_min, y_max)
+
+def plot_decision_boundary(data, weights):
+    raise NotImplementedError("You should fill this is")
+```
+      
+```{python}
+plot_examples()
+plt.show()
+```
+      
+```{python}
+      # The dataset contains 2D data in the form of the `images` attribute, 
+      # as well as a 1D-version called `data`, where the images have been flattened. 
+np.array_equal(digits.images[0].flatten(), digits.data[0])
+```
+      
+```{python}
+      # We can get a 2D version of the data using PCA
+pca = PCA(n_components=2)
+X = pca.fit_transform(digits.data) # this is the representation, we'll be working with
+```
+      
+```{python}
+      # Out targets are in the set {0,1}
+t_01 = digits.target
+```
+      
+```{python}
+      # Let's plot all the data in 2D
+plot_scatter(X, t_01)
+plt.show()
+```
+      
+      
+      ## Least squares for classification
+      
+```{r}
+X_r <- py$X
+t_01_r <- py$t_01
+```
+      
+```{r}
+mydata <- X_r
+mydata <- cbind(mydata, C=t_01_r)
+head(mydata)
+```
+      
+      
+```{r}
+compute_W <- function(X, C) {
+  solve(t(X) %*% X) %*% t(X) %*% C
+}
+
+X <- matrix(cbind(rep(1,length(mydata[,1])), mydata[,1:2]), ncol=3)
+C <- matrix(mydata[,3], ncol=1)
+W <- compute_W(X, C)
+library(glue)
+X[1,]
+W
+```
+        
+```{r}
+# given a W, create a discriminant function defined by it
+discriminant_factory <- function(W) {
+  function(x) t(W) %*% c(1,x)
+  }
+
+f <- discriminant_factory(W)  # this problem's discriminant function
+```
+
+```{r}
+newdata       <-
+  mydata %>%
+  as.data.frame() %>%
+  dplyr::select(-c(C),
+  X1 = V1,
+  X2 = V2) %>%
+  as.matrix()
+```
+
+```{r}
+prediction <- ifelse(
+  apply(
+    newdata, 
+    1,
+    f) <= 0.5, 
+  1, 
+  2
+) # apply threshold
+
+plot(newdata, col=c("red","blue")[prediction], xlab="X1", ylab="X2", pch=19)
+
+# draw decision line: w0 + w1x1 + w2x2 == 1.5
+abline((0.5-W[1])/W[3], -W[2]/W[3], lty=2) 
+```
+
+
+
+
+## Perceptron
+
+```{r}
+perceptron <- function(X, Y, eta=1, epsilon=1e-3) {
+  n <- nrow(X)
+  W <- rnorm(ncol(X)+1)  # init values are small random numbers
+
+  for(i in 1:1e4) {
+    
+    W_start <- W                 # keep W for convergence comparisation
+    for (k in 1:n) {             # update W using all samples
+      
+      x <- c(1,X[k,])            # the data point
+      y <- sign(W %*% x)         # what the model estimates for x
+      d <- Y[k]                  # what we desire for x
+      W <- W + eta * (d-y) * x   # if d-y>0 then an error was found
+    }
+    
+    if (norm(as.matrix(W_start  - W), "F")<epsilon)
+      return(W)                  # convergence achieved
+
+  } # for(i)
+  
+  return(NA)                     # non convergence, give up
+}
+```
+
+
+```{r}
+X <- mydata[,1:2]
+Y <- ifelse(mydata[,3]==1,-1,1)  # convert to classes -1 & 1
+
+W <- perceptron(X, Y, eta = 0.1)
+
+plot(X, col=c("red","blue")[classes], xlab="X1", ylab="X2", pch=19)
+# draw decision line: w0 + w1x1 + w2x2 == 0
+abline(-W[1]/W[3],
+       -W[2]/W[3],
+       lty=2) 
+```
+
+
+## Logistic regression
+
+```{r}
+sigmoid <- function(x) { 
+  1 / (1 + exp(-x) ) 
+  }
+curve(sigmoid, -5, 5, col="red", lwd=2)
+```
+
+```{r}
+#cost function
+cost <- function(theta, X, y){
+  m <- length(y) # number of training examples
+  h <- sigmoid(X %*% theta)
+  J <- (t(-y)%*%log(h)-t(1-y)%*%log(1-h))/m
+  J
+}
+
+#gradient function
+grad <- function(theta, X, y){
+  m <- length(y) 
+  
+  h <- sigmoid(X%*%theta)
+  grad <- (t(X)%*%(h - y))/m
+  grad
+}
+```
+
+```{r}
+# probability of getting 1
+logisticProb <- function(theta, X){
+  X <- na.omit(X)
+  #add bias term and convert to matrix
+  X <- mutate(X, bias =1)
+  X <- as.matrix(X[,c(ncol(X), 1:(ncol(X)-1))])
+  return(sigmoid(X%*%theta))
+}
+
+# y prediction
+logisticPred <- function(prob){
+  return(round(prob, 0))
+}
+```
+
+
+```{r}
+# visualize the data:
+library(ggplot2)
+ggplot(mydata %>% as_tibble()) + 
+  geom_point(aes(x=V1, 
+                 y=V2, 
+                 color = as.character(C)),
+             size = 2) + 
+  scale_colour_discrete(name  ="Label") + 
+  coord_fixed(ratio = 1) +
+  ggtitle('Data to be classified') +
+  theme_bw(base_size = 12) 
+```
+
+## Extra: multi-class logistic regression
