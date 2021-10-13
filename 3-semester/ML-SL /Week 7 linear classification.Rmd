@@ -225,6 +225,26 @@ grad <- function(theta, X, y){
 ```
 
 ```{r}
+logisticReg <- function(X, y){
+  #remove NA rows
+  X <- na.omit(X)
+  y <- na.omit(y)
+  #add bias term and convert to matrix
+  X <- mutate(X, bias =1)
+  #move the bias column to col1
+  X <- as.matrix(X[, c(ncol(X), 1:(ncol(X)-1))])
+  y <- as.matrix(y)
+  #initialize theta
+  theta <- matrix(rep(0, ncol(X)), nrow = ncol(X))
+  #use the optim function to perform gradient descent
+  costOpti <- optim(theta, fn = cost, gr = grad, X = X, y = y)
+  #return coefficients
+  return(costOpti$par)
+}
+```
+
+
+```{r}
 # probability of getting 1
 logisticProb <- function(theta, X){
   X <- na.omit(X)
@@ -255,4 +275,81 @@ ggplot(mydata %>% as_tibble()) +
   theme_bw(base_size = 12) 
 ```
 
-## Extra: multi-class logistic regression
+```{python}
+class LogisticRegression:
+    def __init__(self, lr=0.01, num_iter=100000, fit_intercept=True, verbose=False):
+        self.lr = lr
+        self.num_iter = num_iter
+        self.fit_intercept = fit_intercept
+    
+    def __add_intercept(self, X):
+        intercept = np.ones((X.shape[0], 1))
+        return np.concatenate((intercept, X), axis=1)
+    
+    def __sigmoid(self, z):
+        return 1 / (1 + np.exp(-z))
+    def __loss(self, h, y):
+        return (-y * np.log(h) - (1 - y) * np.log(1 - h)).mean()
+    
+    def fit(self, X, y):
+        if self.fit_intercept:
+            X = self.__add_intercept(X)
+        
+        # weights initialization
+        self.theta = np.zeros(X.shape[1])
+        
+        for i in range(self.num_iter):
+            z = np.dot(X, self.theta)
+            h = self.__sigmoid(z)
+            gradient = np.dot(X.T, (h - y)) / y.size
+            self.theta -= self.lr * gradient
+            
+            if(self.verbose == True and i % 10000 == 0):
+                z = np.dot(X, self.theta)
+                h = self.__sigmoid(z)
+                print(f'loss: {self.__loss(h, y)} \t')
+    
+    def predict_prob(self, X):
+        if self.fit_intercept:
+            X = self.__add_intercept(X)
+    
+        return self.__sigmoid(np.dot(X, self.theta))
+    
+    def predict(self, X, threshold = 0.5):
+        return self.predict_prob(X) >= threshold
+```
+
+```{python}
+model = LogisticRegression(lr=0.1, num_iter=300000)
+model.fit(X, t_01)
+
+preds = model.predict(X)
+(preds == t_01).mean()
+```
+
+```{python}
+import matplotlib.pyplot as plt
+
+plt.figure(figsize=(10, 6))
+plt.scatter(X[t_01 == 0][:, 0], X[t_01 == 0][:, 1], color='b', label='0')
+plt.scatter(X[t_01 == 1][:, 0], X[t_01 == 1][:, 1], color='r', label='1')
+plt.legend()
+x1_min, x1_max = X[:,0].min(), X[:,0].max(),
+x2_min, x2_max = X[:,1].min(), X[:,1].max(),
+xx1, xx2 = np.meshgrid(np.linspace(x1_min, x1_max), np.linspace(x2_min, x2_max))
+grid = np.c_[xx1.ravel(), xx2.ravel()]
+probs = model.predict_prob(grid).reshape(xx1.shape)
+plt.contour(xx1, xx2, probs, [0.5], linewidths=1, colors='black');
+plt.show()
+```
+
+```{python}
+def sigmoid(z):
+    return 1 / (1 + np.exp(-z))
+```
+
+```{python}
+z = np.dot(X, theta)
+h = sigmoid(z)
+```
+
