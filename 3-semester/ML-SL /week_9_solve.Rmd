@@ -1,32 +1,17 @@
 ---
-title: "Untitled"
+title: "Week 9 - Kernel regression"
 output: html_document
 ---
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
+library(reticulate)
+library(tidyverse)
 ```
 
-## R Markdown
+## Load data
 
-This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
-
-When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
-
-```{r cars}
-summary(cars)
-```
-
-## Including Plots
-
-You can also embed plots, for example:
-
-```{r pressure, echo=FALSE}
-plot(pressure)
-```
-
-Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
-
+Get the data.
 
 ```{python}
 # Dependencies
@@ -51,21 +36,21 @@ plot_scatter(x, t)
 plt.show()
 ```
 
-```{r}
-library(reticulate)
-```
+Use `reticulate` to get the data in R.
 
 ```{r}
-library(tidyverse)
 x_r <- py$x %>% as.numeric()
 t_r <- py$t %>% as.numeric()
-class(x_r)
 ```
 
+
+## Modelleing
+
+Use **Nadaraya-Watson**:
 
 ```{r}
 # A naive implementation of the Nadaraya-Watson estimator
-mNW <- function(x, X, Y, h, K = dnorm) {
+mNW <- function(x, X, Y, sigma, K = dnorm) {
 
   # Arguments
   # x: evaluation points
@@ -76,7 +61,8 @@ mNW <- function(x, X, Y, h, K = dnorm) {
 
   # Matrix of size n x length(x)
   Kx <- sapply(X, function(Xi) 
-                  K( (x - Xi) / h) / h )
+                  K( -exp( ( (x - Xi)^2 / 2*sigma^2) ) )
+               )
 
   # Weights
   W <- Kx / rowSums(Kx) # Column recycling!
@@ -86,31 +72,38 @@ mNW <- function(x, X, Y, h, K = dnorm) {
 
 }
 
-# Generate some data to test the implementation
-set.seed(12345)
-n <- 100
-eps <- rnorm(n, sd = 2)
-m <- function(x) x^2 * cos(x)
-# m <- function(x) x - x^2 # Other possible regression function, works
-# equally well
-X <- rnorm(n, sd = 2)
-Y <- m(X) + eps
-xGrid <- seq(-30, 50, l = 500)
+xGrid <- seq(-50, 50, l = 500)
 
-# Bandwidth
-h <- 0.5
+fit = lm(t_r ~ x_r)
 
-# Plot data
-plot(X, Y)
-rug(X, side = 1); rug(Y, side = 2)
-lines(xGrid, m(xGrid), col = 1)
-lines(xGrid, mNW(x = xGrid, X = X, Y = Y, h = h), col = 2)
-legend("top", legend = c("True regression", "Nadaraya-Watson"),
-       lwd = 2, col = 1:2)
-```
+plot(x_r, 
+     t_r, 
+     pch=20)
+abline(fit, lwd = 2, col="red")
+lines(xGrid, 
+      mNW(x = xGrid, X = x_r, Y = t_r, sigma = 1),
+      col = "blue",
+      lty = 2,
+      lwd = 3)
+lines(xGrid, 
+      mNW(x = xGrid, X = x_r, Y = t_r, sigma = 2),
+      col = "orange",
+      lty = 3, 
+      lwd = 3)
+lines(xGrid, 
+      mNW(x = xGrid, X = x_r, Y = t_r, sigma = 10),
+      col = "purple", 
+      lty = 4, 
+      lwd = 3)
 
-```{r}
-plot(x_r, t_r)
-lines(xGrid, mNW(x = xGrid, X = x_r, Y = t_r, h = 0.5), col = 2)
+
+legend("topright",
+       c("Linear regression",
+         "Kernal regression (1)",
+         "Kernal regression (2)",
+         "Kernal regression (10)"),
+       lty = c(1, 2, 3, 4),
+       col=c("red", "blue", "orange","purple"),
+       bg = "white" )
 ```
 
